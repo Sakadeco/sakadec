@@ -1,0 +1,881 @@
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SakaDeco Group - L'élégance au service de vos moments et de vos espaces</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'gold': '#E1C16E',
+                        'skd-shop': '#F8BBD0',
+                        'skd-crea': '#D7BDE2', 
+                        'skd-rent': '#B2DFDB',
+                        'skd-events': '#FFF9C4',
+                        'skd-home': '#FFDDC1',
+                        'skd-co': '#BBDEFB'
+                    },
+                    fontFamily: {
+                        'playfair': ['Playfair Display', 'serif'],
+                        'montserrat': ['Montserrat', 'sans-serif']
+                    },
+                    animation: {
+                        'shimmer': 'shimmer 2s linear infinite',
+                        'float': 'float 3s ease-in-out infinite'
+                    }
+                }
+            }
+        };
+    </script>
+    <style>
+        @keyframes shimmer {
+            0% { background-position: -200px 0; }
+            100% { background-position: calc(200px + 100%) 0; }
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        .shimmer {
+            background: linear-gradient(90deg, transparent, rgba(225, 193, 110, 0.4), transparent);
+            background-size: 200px 100%;
+            animation: shimmer 2s infinite;
+        }
+        .metallic-gold {
+            background: linear-gradient(135deg, #E1C16E 0%, #D4AF5C 50%, #F4D675 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+    </style>
+</head>
+<body class="font-montserrat">
+    <!-- @COMPONENT: Navigation -->
+    <nav class="fixed top-0 w-full bg-white/95 backdrop-blur-sm z-50 border-b border-gold/20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <div class="flex items-center">
+                    <h1 class="text-2xl font-playfair font-bold metallic-gold">SakaDeco Group</h1>
+                    <span class="ml-3 text-sm text-gray-600 font-light">L'élégance au service de vos moments</span>
+                </div>
+                <div class="hidden lg:flex items-center space-x-8">
+                    <a href="#accueil" class="text-gray-700 hover:text-gold transition-colors">Accueil</a>
+                    <div class="flex items-center space-x-4">
+                        <a href="#shop" class="w-3 h-3 rounded-full bg-skd-shop hover:scale-125 transition-transform" title="SKD Shop"></a>
+                        <a href="#crea" class="w-3 h-3 rounded-full bg-skd-crea hover:scale-125 transition-transform" title="SKD Créa"></a>
+                        <a href="#rent" class="w-3 h-3 rounded-full bg-skd-rent hover:scale-125 transition-transform" title="SKD Rent"></a>
+                        <a href="#events" class="w-3 h-3 rounded-full bg-skd-events hover:scale-125 transition-transform" title="SKD Events"></a>
+                        <a href="#home" class="w-3 h-3 rounded-full bg-skd-home hover:scale-125 transition-transform" title="SKD Home"></a>
+                        <a href="#co" class="w-3 h-3 rounded-full bg-skd-co hover:scale-125 transition-transform" title="SKD & Co"></a>
+                    </div>
+                    <button class="bg-gold text-white px-6 py-2 rounded-full hover:bg-gold/90 transition-colors font-medium">
+                        Contact
+                    </button>
+                </div>
+                <button class="lg:hidden p-2">
+                    <i class="fas fa-bars text-gray-700"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+    <!-- @END_COMPONENT: Navigation -->
+
+    <!-- @COMPONENT: Hero Section -->
+    <section id="accueil" class="relative min-h-screen flex items-center justify-center overflow-hidden">
+        <!-- Elegant event decoration scene with soft natural lighting -->
+        <div class="absolute inset-0 bg-gradient-to-br from-gold/10 via-white to-gold/5"></div>
+        <img src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" 
+             alt="Elegant wedding decoration setup" 
+             class="absolute inset-0 w-full h-full object-cover opacity-20">
+        
+        <div class="relative z-10 text-center max-w-4xl mx-auto px-4">
+            <h1 class="text-6xl md:text-8xl font-playfair font-bold mb-6">
+                <span class="metallic-gold">SakaDeco</span>
+                <span class="text-gray-800">Group</span>
+            </h1>
+            <p class="text-xl md:text-2xl text-gray-700 mb-8 font-light">
+                L'élégance au service de vos moments et de vos espaces
+            </p>
+            <p class="text-lg text-gray-600 mb-12 max-w-2xl mx-auto">
+                « Votre Événement, Votre Idée, Notre Création »
+            </p>
+            
+            <!-- Services Grid -->
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-6 max-w-3xl mx-auto">
+                <div class="group cursor-pointer">
+                    <div class="w-20 h-20 mx-auto mb-3 rounded-full bg-skd-shop/20 flex items-center justify-center group-hover:bg-skd-shop/40 transition-colors">
+                        <i class="fas fa-shopping-bag text-skd-shop text-2xl"></i>
+                    </div>
+                    <h3 class="font-playfair font-semibold text-gray-800">Shop</h3>
+                    <p class="text-sm text-gray-600">Ballons & Fleurs</p>
+                </div>
+                
+                <div class="group cursor-pointer">
+                    <div class="w-20 h-20 mx-auto mb-3 rounded-full bg-skd-crea/20 flex items-center justify-center group-hover:bg-skd-crea/40 transition-colors">
+                        <i class="fas fa-palette text-skd-crea text-2xl"></i>
+                    </div>
+                    <h3 class="font-playfair font-semibold text-gray-800">Créa</h3>
+                    <p class="text-sm text-gray-600">Personnalisation</p>
+                </div>
+                
+                <div class="group cursor-pointer">
+                    <div class="w-20 h-20 mx-auto mb-3 rounded-full bg-skd-rent/20 flex items-center justify-center group-hover:bg-skd-rent/40 transition-colors">
+                        <i class="fas fa-handshake text-skd-rent text-2xl"></i>
+                    </div>
+                    <h3 class="font-playfair font-semibold text-gray-800">Rent</h3>
+                    <p class="text-sm text-gray-600">Location</p>
+                </div>
+                
+                <div class="group cursor-pointer">
+                    <div class="w-20 h-20 mx-auto mb-3 rounded-full bg-skd-events/20 flex items-center justify-center group-hover:bg-skd-events/40 transition-colors">
+                        <i class="fas fa-star text-skd-events text-2xl"></i>
+                    </div>
+                    <h3 class="font-playfair font-semibold text-gray-800">Events</h3>
+                    <p class="text-sm text-gray-600">Décoration</p>
+                </div>
+                
+                <div class="group cursor-pointer">
+                    <div class="w-20 h-20 mx-auto mb-3 rounded-full bg-skd-home/20 flex items-center justify-center group-hover:bg-skd-home/40 transition-colors">
+                        <i class="fas fa-home text-skd-home text-2xl"></i>
+                    </div>
+                    <h3 class="font-playfair font-semibold text-gray-800">Home</h3>
+                    <p class="text-sm text-gray-600">Intérieur</p>
+                </div>
+                
+                <div class="group cursor-pointer">
+                    <div class="w-20 h-20 mx-auto mb-3 rounded-full bg-skd-co/20 flex items-center justify-center group-hover:bg-skd-co/40 transition-colors">
+                        <i class="fas fa-users text-skd-co text-2xl"></i>
+                    </div>
+                    <h3 class="font-playfair font-semibold text-gray-800">& Co</h3>
+                    <p class="text-sm text-gray-600">Organisation</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+            <i class="fas fa-chevron-down text-gold text-2xl"></i>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: Hero Section -->
+
+    <!-- @COMPONENT: About Section -->
+    <section class="py-20 bg-gray-50">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div>
+                    <!-- Portrait of Pajusly, founder and decorator in elegant setting -->
+                    <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
+                         alt="Portrait professionnel de Pajusly, fondatrice" 
+                         class="rounded-2xl shadow-2xl w-full">
+                </div>
+                <div>
+                    <h2 class="text-4xl font-playfair font-bold text-gray-800 mb-6">
+                        À propos de <span class="metallic-gold">Pajusly</span>
+                    </h2>
+                    <p class="text-lg text-gray-700 mb-6 leading-relaxed">
+                        Je me présente, je suis Pajusly ! J'habite à Bordeaux et je suis l'heureuse maman de deux enfants. 
+                        Depuis toujours, ma véritable passion, c'est la décoration.
+                    </p>
+                    <p class="text-gray-600 mb-6 leading-relaxed">
+                        Forte de plusieurs années d'expérience dans la décoration événementielle, j'ai choisi, en 2024, 
+                        de structurer mes activités sous une identité unique, à la fois créative et professionnelle.
+                    </p>
+                    <div class="grid grid-cols-2 gap-4 mb-8">
+                        <div class="text-center p-4 bg-white rounded-lg shadow-sm">
+                            <div class="text-3xl font-playfair font-bold text-gold mb-2">2017</div>
+                            <div class="text-sm text-gray-600">Lancement de l'activité</div>
+                        </div>
+                        <div class="text-center p-4 bg-white rounded-lg shadow-sm">
+                            <div class="text-3xl font-playfair font-bold text-gold mb-2">2024</div>
+                            <div class="text-sm text-gray-600">Création SKD Group</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-map-marker-alt text-gold"></i>
+                            <span class="text-gray-600">Bordeaux Métropole</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-phone text-gold"></i>
+                            <span class="text-gray-600">06 88 00 39 28</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: About Section -->
+
+    <!-- @COMPONENT: SKD Shop Section -->
+    <section id="shop" class="py-20 bg-gradient-to-br from-skd-shop/10 to-white">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="text-center mb-16">
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-skd-shop rounded-full mb-6">
+                    <i class="fas fa-shopping-bag text-white text-2xl"></i>
+                </div>
+                <h2 class="text-4xl font-playfair font-bold text-gray-800 mb-4">SKD Shop</h2>
+                <p class="text-xl text-gray-600 mb-2">Vente de ballons, fleurs & accessoires</p>
+                <p class="text-lg font-playfair text-skd-shop italic">« Offrez la touche qui fait sourire »</p>
+            </div>
+            
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div>
+                    <!-- Colorful balloon arrangements and floral displays -->
+                    <img src="https://images.unsplash.com/photo-1530103862676-de8c9debad1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
+                         alt="Arrangements de ballons colorés et displays floraux" 
+                         class="rounded-xl shadow-lg w-full">
+                </div>
+                <div>
+                    <div class="grid grid-cols-1 gap-6">
+                        <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-skd-shop">
+                            <h3 class="font-playfair font-semibold text-gray-800 mb-3">Ballons Personnalisés</h3>
+                            <p class="text-gray-600 mb-4">Latex, mylar, bulles avec messages sur-mesure</p>
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-gray-500">À partir de 15€</span>
+                                <button class="text-skd-shop hover:text-skd-shop/80 font-medium">
+                                    Découvrir <i class="fas fa-arrow-right ml-1"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-skd-shop">
+                            <h3 class="font-playfair font-semibold text-gray-800 mb-3">Fleurs & Compositions</h3>
+                            <p class="text-gray-600 mb-4">Artificielles & naturelles pour tous événements</p>
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-gray-500">À partir de 25€</span>
+                                <button class="text-skd-shop hover:text-skd-shop/80 font-medium">
+                                    Découvrir <i class="fas fa-arrow-right ml-1"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-skd-shop">
+                            <h3 class="font-playfair font-semibold text-gray-800 mb-3">Objets Déco</h3>
+                            <p class="text-gray-600 mb-4">Vases, lanternes, guirlandes pour la maison</p>
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-gray-500">À partir de 10€</span>
+                                <button class="text-skd-shop hover:text-skd-shop/80 font-medium">
+                                    Découvrir <i class="fas fa-arrow-right ml-1"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: SKD Shop Section -->
+
+    <!-- @COMPONENT: SKD Créa Section -->
+    <section id="crea" class="py-20 bg-gradient-to-br from-skd-crea/10 to-white">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="text-center mb-16">
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-skd-crea rounded-full mb-6">
+                    <i class="fas fa-palette text-white text-2xl"></i>
+                </div>
+                <h2 class="text-4xl font-playfair font-bold text-gray-800 mb-4">SKD Créa</h2>
+                <p class="text-xl text-gray-600 mb-2">Personnalisation & papeterie</p>
+                <p class="text-lg font-playfair text-skd-crea italic">« Du sur-mesure pour vos plus belles attentions »</p>
+            </div>
+            
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div>
+                    <h3 class="text-2xl font-playfair font-semibold text-gray-800 mb-6">Nos Créations Personnalisées</h3>
+                    
+                    <!-- @COMPONENT: Product Customizer -->
+                    <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                        <h4 class="font-semibold text-gray-800 mb-4">Configurateur de Produit</h4>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Type de produit</label>
+                                <select class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-skd-crea focus:border-transparent">
+                                    <option>Mug personnalisé</option>
+                                    <option>Sac tote bag</option>
+                                    <option>Boîte cadeau</option>
+                                    <option>Invitations mariage</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Votre message</label>
+                                <input type="text" placeholder="Entrez votre texte..." 
+                                       class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-skd-crea focus:border-transparent">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Couleur</label>
+                                <div class="flex space-x-3">
+                                    <div class="w-8 h-8 bg-skd-crea rounded-full cursor-pointer border-2 border-skd-crea"></div>
+                                    <div class="w-8 h-8 bg-gold rounded-full cursor-pointer border-2 border-transparent hover:border-gold"></div>
+                                    <div class="w-8 h-8 bg-gray-800 rounded-full cursor-pointer border-2 border-transparent hover:border-gray-800"></div>
+                                </div>
+                            </div>
+                            <button class="w-full bg-skd-crea text-white py-3 rounded-lg hover:bg-skd-crea/90 transition-colors font-medium">
+                                Voir l'aperçu
+                            </button>
+                        </div>
+                    </div>
+                    <!-- @END_COMPONENT: Product Customizer -->
+                </div>
+                
+                <div class="space-y-6">
+                    <!-- Personalized gifts and stationery showcase -->
+                    <img src="https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
+                         alt="Cadeaux personnalisés et papeterie élégante" 
+                         class="rounded-xl shadow-lg w-full">
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-white p-4 rounded-lg shadow-sm text-center">
+                            <i class="fas fa-mug-hot text-skd-crea text-2xl mb-2"></i>
+                            <div class="font-medium text-gray-800">Mugs & Objets</div>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg shadow-sm text-center">
+                            <i class="fas fa-envelope text-skd-crea text-2xl mb-2"></i>
+                            <div class="font-medium text-gray-800">Papeterie</div>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg shadow-sm text-center">
+                            <i class="fas fa-birthday-cake text-skd-crea text-2xl mb-2"></i>
+                            <div class="font-medium text-gray-800">Gourmandises</div>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg shadow-sm text-center">
+                            <i class="fas fa-gift text-skd-crea text-2xl mb-2"></i>
+                            <div class="font-medium text-gray-800">Boîtes Cadeau</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: SKD Créa Section -->
+
+    <!-- @COMPONENT: SKD Rent Section -->
+    <section id="rent" class="py-20 bg-gradient-to-br from-skd-rent/10 to-white">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="text-center mb-16">
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-skd-rent rounded-full mb-6">
+                    <i class="fas fa-handshake text-white text-2xl"></i>
+                </div>
+                <h2 class="text-4xl font-playfair font-bold text-gray-800 mb-4">SKD Rent</h2>
+                <p class="text-xl text-gray-600 mb-2">Location de matériel festif</p>
+                <p class="text-lg font-playfair text-skd-rent italic">« Louez l'élégance. Célébrez sans limites »</p>
+            </div>
+            
+            <div class="grid lg:grid-cols-3 gap-8 mb-12">
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <!-- Party rental equipment display -->
+                    <img src="https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
+                         alt="Équipement de location pour fêtes et événements" 
+                         class="w-full h-48 object-cover rounded-lg mb-4">
+                    <h3 class="font-playfair font-semibold text-gray-800 mb-3">Vaisselle & Linge</h3>
+                    <p class="text-gray-600 mb-4">Nappes, serviettes, assiettes élégantes</p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-skd-rent font-semibold">Dès 5€/jour</span>
+                        <button class="bg-skd-rent text-white px-4 py-2 rounded-lg text-sm hover:bg-skd-rent/90">
+                            Réserver
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <img src="https://images.unsplash.com/photo-1511578314322-379afb476865?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
+                         alt="Structures gonflables et arches événementielles" 
+                         class="w-full h-48 object-cover rounded-lg mb-4">
+                    <h3 class="font-playfair font-semibold text-gray-800 mb-3">Structures & Arches</h3>
+                    <p class="text-gray-600 mb-4">Gonflables, arches, photobooth</p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-skd-rent font-semibold">Dès 25€/jour</span>
+                        <button class="bg-skd-rent text-white px-4 py-2 rounded-lg text-sm hover:bg-skd-rent/90">
+                            Réserver
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <img src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
+                         alt="Mobilier événementiel et accessoires" 
+                         class="w-full h-48 object-cover rounded-lg mb-4">
+                    <h3 class="font-playfair font-semibold text-gray-800 mb-3">Mobilier Festif</h3>
+                    <p class="text-gray-600 mb-4">Tables, chaises, éléments déco</p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-skd-rent font-semibold">Dès 15€/jour</span>
+                        <button class="bg-skd-rent text-white px-4 py-2 rounded-lg text-sm hover:bg-skd-rent/90">
+                            Réserver
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- @COMPONENT: Rental Schedule -->
+            <div class="bg-white rounded-xl shadow-lg p-8">
+                <h3 class="text-2xl font-playfair font-semibold text-gray-800 mb-6 text-center">Créneaux de Retrait/Retour</h3>
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="text-center p-6 bg-skd-rent/10 rounded-lg">
+                        <i class="fas fa-clock text-skd-rent text-3xl mb-4"></i>
+                        <h4 class="font-semibold text-gray-800 mb-2">Retrait</h4>
+                        <p class="text-lg font-playfair text-skd-rent">Vendredi 17h30-19h30</p>
+                    </div>
+                    <div class="text-center p-6 bg-skd-rent/10 rounded-lg">
+                        <i class="fas fa-undo text-skd-rent text-3xl mb-4"></i>
+                        <h4 class="font-semibold text-gray-800 mb-2">Retour</h4>
+                        <p class="text-lg font-playfair text-skd-rent">Dimanche 15h30-17h30</p>
+                    </div>
+                </div>
+                <p class="text-center text-gray-600 mt-4 text-sm">
+                    Veuillez vous assurer d'être disponible pendant ces créneaux horaires
+                </p>
+            </div>
+            <!-- @END_COMPONENT: Rental Schedule -->
+        </div>
+    </section>
+    <!-- @END_COMPONENT: SKD Rent Section -->
+
+    <!-- @COMPONENT: SKD Events Section -->
+    <section id="events" class="py-20 bg-gradient-to-br from-skd-events/10 to-white">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="text-center mb-16">
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-skd-events rounded-full mb-6">
+                    <i class="fas fa-star text-white text-2xl"></i>
+                </div>
+                <h2 class="text-4xl font-playfair font-bold text-gray-800 mb-4">SKD Events</h2>
+                <p class="text-xl text-gray-600 mb-2">Décoration d'événements</p>
+                <p class="text-lg font-playfair text-skd-events italic">« L'art de décorer vos plus beaux jours »</p>
+            </div>
+            
+            <div class="grid lg:grid-cols-2 gap-12 items-center mb-16">
+                <div>
+                    <!-- Wedding decoration setup with flowers and elegant arrangements -->
+                    <img src="https://images.unsplash.com/photo-1464207687429-7505649dae38?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
+                         alt="Décoration de mariage avec arche fleurie et arrangements élégants" 
+                         class="rounded-xl shadow-lg w-full">
+                </div>
+                <div>
+                    <h3 class="text-2xl font-playfair font-semibold text-gray-800 mb-6">Nos Spécialités</h3>
+                    <div class="space-y-6">
+                        <div class="flex items-start space-x-4">
+                            <div class="flex-shrink-0 w-12 h-12 bg-skd-events rounded-full flex items-center justify-center">
+                                <i class="fas fa-heart text-white"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-800 mb-2">Mariages</h4>
+                                <p class="text-gray-600">Cérémonies et réceptions sur-mesure avec arches florales, centres de table et scénographies uniques</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start space-x-4">
+                            <div class="flex-shrink-0 w-12 h-12 bg-skd-events rounded-full flex items-center justify-center">
+                                <i class="fas fa-birthday-cake text-white"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-800 mb-2">Anniversaires</h4>
+                                <p class="text-gray-600">Fêtes d'anniversaire mémorables avec thèmes personnalisés et décorations spectaculaires</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start space-x-4">
+                            <div class="flex-shrink-0 w-12 h-12 bg-skd-events rounded-full flex items-center justify-center">
+                                <i class="fas fa-baby text-white"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-800 mb-2">Baby Showers</h4>
+                                <p class="text-gray-600">Célébrations douces et raffinées pour accueillir bébé avec style et émotion</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- @COMPONENT: Event Gallery -->
+            <div class="mb-16">
+                <h3 class="text-2xl font-playfair font-semibold text-gray-800 mb-8 text-center">Galerie de nos Créations</h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <!-- Elegant ballroom wedding setup -->
+                    <img src="https://pixabay.com/get/g85cbb87001fc4b1a39464d9c011e20071cb0d46e11538f83fb5a835e31ddc35d6bc60ceff60912118cf3cc39b4a3600078e79c09308908b6bcf3fb6d0725ee0a_1280.jpg" 
+                         alt="Réception de mariage élégante en salle de bal" 
+                         class="rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer h-48 w-full object-cover">
+                    
+                    <!-- Floral centerpiece arrangements -->
+                    <img src="https://images.unsplash.com/photo-1478146896981-b80fe463b330?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" 
+                         alt="Centres de table floraux pour événements" 
+                         class="rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer h-48 w-full object-cover">
+                    
+                    <!-- Outdoor wedding ceremony setup -->
+                    <img src="https://images.unsplash.com/photo-1519741497674-611481863552?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" 
+                         alt="Cérémonie de mariage en extérieur avec arche" 
+                         class="rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer h-48 w-full object-cover">
+                    
+                    <!-- Birthday party decoration -->
+                    <img src="https://images.unsplash.com/photo-1530103862676-de8c9debad1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" 
+                         alt="Décoration d'anniversaire avec ballons" 
+                         class="rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer h-48 w-full object-cover">
+                </div>
+            </div>
+            <!-- @END_COMPONENT: Event Gallery -->
+        </div>
+    </section>
+    <!-- @END_COMPONENT: SKD Events Section -->
+
+    <!-- @COMPONENT: SKD Home Section -->
+    <section id="home" class="py-20 bg-gradient-to-br from-skd-home/10 to-white">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="text-center mb-16">
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-skd-home rounded-full mb-6">
+                    <i class="fas fa-home text-white text-2xl"></i>
+                </div>
+                <h2 class="text-4xl font-playfair font-bold text-gray-800 mb-4">SKD Home</h2>
+                <p class="text-xl text-gray-600 mb-2">Décoration intérieure & Home organizing</p>
+                <p class="text-lg font-playfair text-skd-home italic">« Des espaces qui vous ressemblent »</p>
+            </div>
+            
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div>
+                    <h3 class="text-2xl font-playfair font-semibold text-gray-800 mb-6">Transformez votre Intérieur</h3>
+                    <div class="space-y-6">
+                        <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-skd-home">
+                            <div class="flex items-center space-x-4 mb-3">
+                                <i class="fas fa-paint-brush text-skd-home text-xl"></i>
+                                <h4 class="font-semibold text-gray-800">Relooking Intérieur</h4>
+                            </div>
+                            <p class="text-gray-600">Conseils déco, aménagements fonctionnels et esthétiques pour sublimer vos espaces</p>
+                        </div>
+                        
+                        <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-skd-home">
+                            <div class="flex items-center space-x-4 mb-3">
+                                <i class="fas fa-boxes text-skd-home text-xl"></i>
+                                <h4 class="font-semibold text-gray-800">Home Organizing</h4>
+                            </div>
+                            <p class="text-gray-600">Rangement optimisé, tri et désencombrement pour retrouver sérénité chez vous</p>
+                        </div>
+                        
+                        <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-skd-home">
+                            <div class="flex items-center space-x-4 mb-3">
+                                <i class="fas fa-user-friends text-skd-home text-xl"></i>
+                                <h4 class="font-semibold text-gray-800">Coaching à Domicile</h4>
+                            </div>
+                            <p class="text-gray-600">Accompagnement personnalisé pour transformer durablement vos habitudes</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="space-y-6">
+                    <!-- Home interior decoration before and after -->
+                    <img src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
+                         alt="Intérieur moderne et organisé avec décoration élégante" 
+                         class="rounded-xl shadow-lg w-full">
+                    
+                    <!-- Before/After Comparison -->
+                    <div class="bg-white rounded-xl shadow-lg p-6">
+                        <h4 class="font-playfair font-semibold text-gray-800 mb-4 text-center">Avant/Après</h4>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="text-center">
+                                <div class="bg-gray-200 rounded-lg h-24 flex items-center justify-center mb-2">
+                                    <span class="text-gray-500 text-sm">Avant</span>
+                                </div>
+                                <p class="text-sm text-gray-600">Espace encombré</p>
+                            </div>
+                            <div class="text-center">
+                                <div class="bg-skd-home/20 rounded-lg h-24 flex items-center justify-center mb-2">
+                                    <span class="text-skd-home text-sm font-medium">Après</span>
+                                </div>
+                                <p class="text-sm text-gray-600">Harmonie & sérénité</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: SKD Home Section -->
+
+    <!-- @COMPONENT: SKD & Co Section -->
+    <section id="co" class="py-20 bg-gradient-to-br from-skd-co/10 to-white">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="text-center mb-16">
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-skd-co rounded-full mb-6">
+                    <i class="fas fa-users text-white text-2xl"></i>
+                </div>
+                <h2 class="text-4xl font-playfair font-bold text-gray-800 mb-4">SKD & Co</h2>
+                <p class="text-xl text-gray-600 mb-2">Organisation d'événements</p>
+                <p class="text-lg font-playfair text-skd-co italic">« On s'occupe de tout, vous profitez de l'instant »</p>
+            </div>
+            
+            <div class="grid lg:grid-cols-3 gap-8">
+                <div class="bg-white rounded-xl shadow-lg p-8 text-center">
+                    <div class="w-16 h-16 bg-skd-co rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-clipboard-list text-white text-2xl"></i>
+                    </div>
+                    <h3 class="font-playfair font-semibold text-gray-800 mb-4">Coordination A à Z</h3>
+                    <p class="text-gray-600 mb-6">Gestion complète de l'événement, de la planification initiale à la coordination du jour J</p>
+                    <ul class="text-sm text-gray-500 space-y-2">
+                        <li>• Recherche de prestataires</li>
+                        <li>• Gestion du budget</li>
+                        <li>• Planning détaillé</li>
+                        <li>• Suivi qualité</li>
+                    </ul>
+                </div>
+                
+                <div class="bg-white rounded-xl shadow-lg p-8 text-center">
+                    <div class="w-16 h-16 bg-skd-co rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-calendar-check text-white text-2xl"></i>
+                    </div>
+                    <h3 class="font-playfair font-semibold text-gray-800 mb-4">Gestion Jour J</h3>
+                    <p class="text-gray-600 mb-6">Présence sur place pour coordonner tous les prestataires et assurer le bon déroulement</p>
+                    <ul class="text-sm text-gray-500 space-y-2">
+                        <li>• Coordination équipes</li>
+                        <li>• Gestion des imprévus</li>
+                        <li>• Respect du timing</li>
+                        <li>• Assistance complète</li>
+                    </ul>
+                </div>
+                
+                <div class="bg-white rounded-xl shadow-lg p-8 text-center">
+                    <div class="w-16 h-16 bg-skd-co rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-lightbulb text-white text-2xl"></i>
+                    </div>
+                    <h3 class="font-playfair font-semibold text-gray-800 mb-4">Création de Concept</h3>
+                    <p class="text-gray-600 mb-6">Développement de thèmes originaux et scénographies personnalisées pour votre événement</p>
+                    <ul class="text-sm text-gray-500 space-y-2">
+                        <li>• Thèmes sur-mesure</li>
+                        <li>• Scénographie unique</li>
+                        <li>• Ambiances personnalisées</li>
+                        <li>• Innovation créative</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- @COMPONENT: Event Planning Process -->
+            <div class="mt-16">
+                <h3 class="text-2xl font-playfair font-semibold text-gray-800 mb-8 text-center">Notre Processus</h3>
+                <div class="flex flex-wrap justify-center items-center space-x-8">
+                    <div class="flex flex-col items-center mb-8">
+                        <div class="w-12 h-12 bg-skd-co text-white rounded-full flex items-center justify-center font-bold mb-3">1</div>
+                        <h4 class="font-medium text-gray-800 mb-2">Consultation</h4>
+                        <p class="text-sm text-gray-600 text-center">Écoute de vos besoins</p>
+                    </div>
+                    <i class="fas fa-arrow-right text-skd-co hidden lg:block"></i>
+                    <div class="flex flex-col items-center mb-8">
+                        <div class="w-12 h-12 bg-skd-co text-white rounded-full flex items-center justify-center font-bold mb-3">2</div>
+                        <h4 class="font-medium text-gray-800 mb-2">Conception</h4>
+                        <p class="text-sm text-gray-600 text-center">Création du concept</p>
+                    </div>
+                    <i class="fas fa-arrow-right text-skd-co hidden lg:block"></i>
+                    <div class="flex flex-col items-center mb-8">
+                        <div class="w-12 h-12 bg-skd-co text-white rounded-full flex items-center justify-center font-bold mb-3">3</div>
+                        <h4 class="font-medium text-gray-800 mb-2">Planification</h4>
+                        <p class="text-sm text-gray-600 text-center">Organisation détaillée</p>
+                    </div>
+                    <i class="fas fa-arrow-right text-skd-co hidden lg:block"></i>
+                    <div class="flex flex-col items-center mb-8">
+                        <div class="w-12 h-12 bg-skd-co text-white rounded-full flex items-center justify-center font-bold mb-3">4</div>
+                        <h4 class="font-medium text-gray-800 mb-2">Réalisation</h4>
+                        <p class="text-sm text-gray-600 text-center">Jour J parfait</p>
+                    </div>
+                </div>
+            </div>
+            <!-- @END_COMPONENT: Event Planning Process -->
+        </div>
+    </section>
+    <!-- @END_COMPONENT: SKD & Co Section -->
+
+    <!-- @COMPONENT: Contact Section -->
+    <section class="py-20 bg-gradient-to-br from-gold/10 to-gray-50">
+        <div class="max-w-4xl mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-playfair font-bold text-gray-800 mb-6">Contactez-nous</h2>
+                <p class="text-xl text-gray-600">Prêts à donner vie à vos projets ?</p>
+            </div>
+            
+            <div class="grid lg:grid-cols-2 gap-12">
+                <div>
+                    <h3 class="text-2xl font-playfair font-semibold text-gray-800 mb-6">Parlons de votre Projet</h3>
+                    <div class="space-y-6">
+                        <div class="flex items-center space-x-4">
+                            <div class="flex-shrink-0 w-12 h-12 bg-gold rounded-full flex items-center justify-center">
+                                <i class="fas fa-phone text-white"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-800">Téléphone</h4>
+                                <p class="text-gray-600">06 88 00 39 28</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center space-x-4">
+                            <div class="flex-shrink-0 w-12 h-12 bg-gold rounded-full flex items-center justify-center">
+                                <i class="fas fa-map-marker-alt text-white"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-800">Zone d'intervention</h4>
+                                <p class="text-gray-600">Bordeaux Métropole</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center space-x-4">
+                            <div class="flex-shrink-0 w-12 h-12 bg-gold rounded-full flex items-center justify-center">
+                                <i class="fas fa-clock text-white"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-800">Modalités</h4>
+                                <p class="text-gray-600">Sur rendez-vous uniquement</p>
+                                <p class="text-sm text-gray-500">Pas de showroom permanent</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-xl shadow-lg p-8">
+                    <form class="space-y-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Nom complet</label>
+                            <input type="text" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-transparent" placeholder="Votre nom">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                            <input type="email" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-transparent" placeholder="votre@email.com">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Service souhaité</label>
+                            <select class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-transparent">
+                                <option>Sélectionnez un service</option>
+                                <option>SKD Shop - Vente</option>
+                                <option>SKD Créa - Personnalisation</option>
+                                <option>SKD Rent - Location</option>
+                                <option>SKD Events - Décoration</option>
+                                <option>SKD Home - Intérieur</option>
+                                <option>SKD & Co - Organisation</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Message</label>
+                            <textarea rows="4" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-transparent" placeholder="Décrivez votre projet..."></textarea>
+                        </div>
+                        
+                        <button type="submit" class="w-full bg-gold text-white py-3 rounded-lg hover:bg-gold/90 transition-colors font-medium">
+                            Envoyer ma demande
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: Contact Section -->
+
+    <!-- @COMPONENT: Footer -->
+    <footer class="bg-gray-800 text-white py-12">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="grid lg:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-2xl font-playfair font-bold metallic-gold mb-4">SakaDeco Group</h3>
+                    <p class="text-gray-300 mb-4">L'élégance au service de vos moments et de vos espaces</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-300 hover:text-gold transition-colors">
+                            <i class="fab fa-instagram text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-300 hover:text-gold transition-colors">
+                            <i class="fab fa-facebook text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-300 hover:text-gold transition-colors">
+                            <i class="fab fa-pinterest text-xl"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold mb-4">Nos Services</h4>
+                    <ul class="space-y-2 text-gray-300">
+                        <li><a href="#shop" class="hover:text-gold transition-colors">SKD Shop</a></li>
+                        <li><a href="#crea" class="hover:text-gold transition-colors">SKD Créa</a></li>
+                        <li><a href="#rent" class="hover:text-gold transition-colors">SKD Rent</a></li>
+                        <li><a href="#events" class="hover:text-gold transition-colors">SKD Events</a></li>
+                        <li><a href="#home" class="hover:text-gold transition-colors">SKD Home</a></li>
+                        <li><a href="#co" class="hover:text-gold transition-colors">SKD & Co</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold mb-4">Contact</h4>
+                    <ul class="space-y-2 text-gray-300">
+                        <li><i class="fas fa-phone text-gold mr-2"></i> 06 88 00 39 28</li>
+                        <li><i class="fas fa-map-marker-alt text-gold mr-2"></i> Bordeaux Métropole</li>
+                        <li><i class="fas fa-clock text-gold mr-2"></i> Sur rendez-vous</li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold mb-4">Newsletter</h4>
+                    <p class="text-gray-300 mb-4">Restez informés de nos dernières créations</p>
+                    <div class="flex">
+                        <input type="email" placeholder="Votre email" class="flex-1 p-2 rounded-l-lg text-gray-800">
+                        <button class="bg-gold px-4 py-2 rounded-r-lg hover:bg-gold/90 transition-colors">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center">
+                <p class="text-gray-300">&copy; 2024 SakaDeco Group. Tous droits réservés.</p>
+            </div>
+        </div>
+    </footer>
+    <!-- @END_COMPONENT: Footer -->
+
+    <script>
+        // TODO: Implement smooth scrolling navigation
+        (function() {
+            const navLinks = document.querySelectorAll('a[href^="#"]');
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetSection = document.getElementById(targetId);
+                    if (targetSection) {
+                        targetSection.scrollIntoView({ behavior: 'smooth' });
+                    }
+                });
+            });
+
+            // TODO: Implement intersection observer for active navigation states
+            const sections = document.querySelectorAll('section[id]');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        // Update active navigation state
+                        console.log('Section in view:', entry.target.id);
+                    }
+                });
+            }, { threshold: 0.5 });
+
+            sections.forEach(section => observer.observe(section));
+
+            // TODO: Implement form validation and submission
+            const contactForm = document.querySelector('form');
+            if (contactForm) {
+                contactForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    // TODO: Add form validation logic
+                    // TODO: Implement API call to submit form data
+                    console.log('Form submitted - implement validation and API call');
+                });
+            }
+
+            // TODO: Implement product customization functionality
+            const customizer = document.querySelector('.bg-white.rounded-xl.shadow-lg.p-6');
+            if (customizer) {
+                // TODO: Add real-time preview updates
+                // TODO: Connect to product database
+                // TODO: Implement price calculation
+            }
+
+            // TODO: Implement rental booking system
+            const rentalButtons = document.querySelectorAll('button:contains("Réserver")');
+            // TODO: Add availability checking
+            // TODO: Implement booking calendar
+            // TODO: Connect to inventory management system
+        })();
+    </script>
+</body>
+</html>

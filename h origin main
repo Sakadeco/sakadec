@@ -1,0 +1,3 @@
+[33mcd7db54[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m Fix rental validation: ensure minimum 1 day rental and add date validation
+[33m97c5fbc[m[33m ([m[1;31morigin/main[m[33m)[m Fix routing order: place specific rental routes before generic rental ID route
+[33mb60434a[m Add API redirect routes for rental success/cancel to fix routing conflicts

@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: sakadeco-api
+    env: node
+    plan: free
+    buildCommand: npm install --include=dev && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+    buildpacks:
+      - https://github.com/jontewks/puppeteer-heroku-buildpack
+      - heroku/nodejs

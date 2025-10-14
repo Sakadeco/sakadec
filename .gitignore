@@ -1,0 +1,19 @@
+node_modules
+dist
+.DS_Store
+server/public
+vite.config.ts.*
+*.tar.gz
+.env
+.env.local
+.env.production
+.vercel
+.vercel
+
+# Uploaded files (keep the folder but ignore contents)
+uploads/*
+!uploads/.gitkeep
+
+# Environment setup files with sensitive data
+create-env.cjs
+test-cloudinary.cjs
