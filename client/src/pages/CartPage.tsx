@@ -177,7 +177,13 @@ const CartPage: React.FC = () => {
 
       // Rediriger vers les sessions Stripe
       if (saleData && rentalData) {
-        // Les deux sessions ont été créées, rediriger vers la vente d'abord
+        // Panier mixte : stocker les informations et rediriger vers la vente d'abord
+        console.log('🔄 Panier mixte détecté, stockage des informations...');
+        localStorage.setItem('mixedCartData', JSON.stringify({
+          saleSessionId: saleData.sessionId,
+          rentalSessionId: rentalData.sessionId,
+          isMixedCart: true
+        }));
         console.log('🔄 Redirection vers la session de vente...');
         window.location.href = saleData.url;
       } else if (saleData) {

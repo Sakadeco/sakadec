@@ -100,28 +100,70 @@ const UnifiedSuccess: React.FC = () => {
       let orderResult = null;
       let rentalResult = null;
       
-      // Essayer de récupérer les données de vente
-      try {
-        const orderResponse = await fetch(`/api/payment/orders/session/${sessionId}`);
-        if (orderResponse.ok) {
-          orderResult = await orderResponse.json();
-          setOrderData(orderResult);
-          console.log('✅ Données de vente récupérées:', orderResult);
-        }
-      } catch (orderError) {
-        console.log('ℹ️ Pas de données de vente pour cette session');
+      // Vérifier si c'est un panier mixte
+      const mixedCartData = localStorage.getItem('mixedCartData');
+      let isMixedCart = false;
+      
+      if (mixedCartData) {
+        const mixedData = JSON.parse(mixedCartData);
+        isMixedCart = mixedData.isMixedCart;
+        console.log('🛒 Panier mixte détecté:', mixedData);
       }
-
-      // Essayer de récupérer les données de location
-      try {
-        const rentalResponse = await fetch(`/api/rental/session/${sessionId}`);
-        if (rentalResponse.ok) {
-          rentalResult = await rentalResponse.json();
-          setRentalData(rentalResult);
-          console.log('✅ Données de location récupérées:', rentalResult);
+      
+      if (isMixedCart) {
+        // Pour un panier mixte, récupérer les données des deux sessions
+        const mixedData = JSON.parse(mixedCartData);
+        
+        // Récupérer les données de vente
+        try {
+          const orderResponse = await fetch(`/api/payment/orders/session/${mixedData.saleSessionId}`);
+          if (orderResponse.ok) {
+            orderResult = await orderResponse.json();
+            setOrderData(orderResult);
+            console.log('✅ Données de vente récupérées (panier mixte):', orderResult);
+          }
+        } catch (orderError) {
+          console.log('ℹ️ Erreur récupération données vente:', orderError);
         }
-      } catch (rentalError) {
-        console.log('ℹ️ Pas de données de location pour cette session');
+
+        // Récupérer les données de location
+        try {
+          const rentalResponse = await fetch(`/api/rental/session/${mixedData.rentalSessionId}`);
+          if (rentalResponse.ok) {
+            rentalResult = await rentalResponse.json();
+            setRentalData(rentalResult);
+            console.log('✅ Données de location récupérées (panier mixte):', rentalResult);
+          }
+        } catch (rentalError) {
+          console.log('ℹ️ Erreur récupération données location:', rentalError);
+        }
+        
+        // Nettoyer les données du panier mixte
+        localStorage.removeItem('mixedCartData');
+        
+      } else {
+        // Panier simple : essayer de récupérer les données avec le session_id actuel
+        try {
+          const orderResponse = await fetch(`/api/payment/orders/session/${sessionId}`);
+          if (orderResponse.ok) {
+            orderResult = await orderResponse.json();
+            setOrderData(orderResult);
+            console.log('✅ Données de vente récupérées:', orderResult);
+          }
+        } catch (orderError) {
+          console.log('ℹ️ Pas de données de vente pour cette session');
+        }
+
+        try {
+          const rentalResponse = await fetch(`/api/rental/session/${sessionId}`);
+          if (rentalResponse.ok) {
+            rentalResult = await rentalResponse.json();
+            setRentalData(rentalResult);
+            console.log('✅ Données de location récupérées:', rentalResult);
+          }
+        } catch (rentalError) {
+          console.log('ℹ️ Pas de données de location pour cette session');
+        }
       }
 
       // Déterminer si c'est un panier mixte
