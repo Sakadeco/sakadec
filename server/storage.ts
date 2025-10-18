@@ -145,31 +145,62 @@ export class DatabaseStorage implements IStorage {
   // Product operations
   async getProducts(): Promise<Product[]> {
     checkConnection();
-    return await Product.find();
+    const products = await Product.find();
+    return products.map(product => {
+      const productObj = product.toObject();
+      if (productObj.customizationOptions && productObj.customizationOptions instanceof Map) {
+        productObj.customizationOptions = Object.fromEntries(productObj.customizationOptions);
+      }
+      return productObj;
+    });
   }
 
   async getProductsByCategory(category: string): Promise<Product[]> {
     checkConnection();
-    return await Product.find({ category });
+    const products = await Product.find({ category });
+    return products.map(product => {
+      const productObj = product.toObject();
+      if (productObj.customizationOptions && productObj.customizationOptions instanceof Map) {
+        productObj.customizationOptions = Object.fromEntries(productObj.customizationOptions);
+      }
+      return productObj;
+    });
   }
 
   async getProduct(id: string): Promise<Product | undefined> {
     checkConnection();
     const product = await Product.findById(id);
-    return product || undefined;
+    if (!product) return undefined;
+    
+    const productObj = product.toObject();
+    if (productObj.customizationOptions && productObj.customizationOptions instanceof Map) {
+      productObj.customizationOptions = Object.fromEntries(productObj.customizationOptions);
+    }
+    return productObj;
   }
 
   async createProduct(productData: any): Promise<Product> {
     checkConnection();
     const product = new Product(productData);
-    return await product.save();
+    const savedProduct = await product.save();
+    
+    const productObj = savedProduct.toObject();
+    if (productObj.customizationOptions && productObj.customizationOptions instanceof Map) {
+      productObj.customizationOptions = Object.fromEntries(productObj.customizationOptions);
+    }
+    return productObj;
   }
 
   async updateProduct(id: string, updates: Partial<Product>): Promise<Product> {
     checkConnection();
     const product = await Product.findByIdAndUpdate(id, { ...updates, updatedAt: new Date() }, { new: true });
     if (!product) throw new Error('Product not found');
-    return product;
+    
+    const productObj = product.toObject();
+    if (productObj.customizationOptions && productObj.customizationOptions instanceof Map) {
+      productObj.customizationOptions = Object.fromEntries(productObj.customizationOptions);
+    }
+    return productObj;
   }
 
   async deleteProduct(id: string): Promise<void> {
