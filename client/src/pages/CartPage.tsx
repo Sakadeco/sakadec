@@ -126,23 +126,41 @@ const CartPage: React.FC = () => {
     setIsLoading(true);
 
     try {
-      // Vérifier s'il y a des locations dans le panier
-      const hasRentals = cartItems.some(item => item.isRental);
+      // Séparer les produits de vente et de location
+      const saleItems = cartItems.filter(item => !item.isRental);
+      const rentalItems = cartItems.filter(item => item.isRental);
+
+      console.log('Analyse du panier:', {
+        totalItems: cartItems.length,
+        saleItems: saleItems.length,
+        rentalItems: rentalItems.length
+      });
+
+      // Vérifier s'il y a des produits mixtes
+      if (saleItems.length > 0 && rentalItems.length > 0) {
+        alert('Vous ne pouvez pas mélanger des produits de vente et de location dans le même panier. Veuillez séparer vos commandes.');
+        return;
+      }
+
+      // Déterminer l'endpoint et les données
+      const hasRentals = rentalItems.length > 0;
       const endpoint = hasRentals ? '/api/rental/create-checkout-session' : '/api/payment/create-checkout-session';
+      const itemsToProcess = hasRentals ? rentalItems : saleItems;
 
       console.log('Envoi des données de paiement:', {
-        items: cartItems,
+        items: itemsToProcess,
         customerEmail,
         shippingAddress,
         billingAddress: shippingAddress,
-        hasRentals
+        hasRentals,
+        endpoint
       });
 
       const response = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
-          items: cartItems, 
+          items: itemsToProcess, 
           customerEmail, 
           shippingAddress, 
           billingAddress: shippingAddress, 
