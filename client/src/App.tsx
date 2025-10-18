@@ -34,7 +34,6 @@ import PaymentCancel from "@/pages/PaymentCancel";
 import CartPage from "@/pages/CartPage";
 import Invoice from "@/pages/Invoice";
 import RentalDetail from "@/pages/RentalDetail";
-import RentalCart from "@/pages/RentalCart";
 import RentalSuccess from "@/pages/RentalSuccess";
 import RentalCancel from "@/pages/RentalCancel";
 import Realisations from "@/pages/Realisations";
@@ -50,7 +49,6 @@ function Router() {
       <Route path="/" component={Home} />
       <Route path="/shop" component={Shop} />
       <Route path="/product/:id" component={ProductDetail} />
-      <Route path="/rental-cart" component={RentalCart} />
       <Route path="/rental/success" component={RentalSuccess} />
       <Route path="/rental/cancel" component={RentalCancel} />
       <Route path="/rental/:id" component={RentalDetail} />

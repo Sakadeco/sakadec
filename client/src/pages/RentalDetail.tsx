@@ -102,33 +102,39 @@ const RentalDetail: React.FC = () => {
     return product.dailyRentalPrice * days * quantity;
   };
 
-  const handleAddToRentalCart = () => {
+  const handleAddToCart = () => {
     if (!product || !rentalStartDate || !rentalEndDate) {
       alert('Veuillez sélectionner les dates de location');
       return;
     }
 
-    const rentalItem = {
+    const cartItem = {
       productId: product._id,
-      product: product,
+      name: product.name,
+      price: product.dailyRentalPrice,
       quantity,
-      dailyPrice: product.dailyRentalPrice,
+      image: product.mainImageUrl,
+      isRental: true,
+      customizations,
+      customMessage,
       rentalStartDate: rentalStartDate.toISOString(),
       rentalEndDate: rentalEndDate.toISOString(),
       rentalDays: calculateRentalDays(),
-      totalPrice: calculateTotalPrice(),
-      customizations,
-      customMessage
+      dailyPrice: product.dailyRentalPrice,
+      totalPrice: calculateTotalPrice()
     };
 
-    // Ajouter au panier de location (localStorage)
-    const existingRentalCart = JSON.parse(localStorage.getItem('rentalCart') || '[]');
-    const updatedRentalCart = [...existingRentalCart, rentalItem];
-    localStorage.setItem('rentalCart', JSON.stringify(updatedRentalCart));
+    // Ajouter au panier principal (localStorage)
+    const existingCart = JSON.parse(localStorage.getItem('cart') || '[]');
+    const updatedCart = [...existingCart, cartItem];
+    localStorage.setItem('cart', JSON.stringify(updatedCart));
+
+    // Déclencher l'événement de mise à jour du panier
+    window.dispatchEvent(new CustomEvent('cartUpdated'));
 
     // Notification
-    alert('Produit ajouté au panier de location !');
-    setLocation('/rental-cart');
+    alert('Produit ajouté au panier !');
+    setLocation('/cart');
   };
 
   const handleCustomizationChange = (option: string, value: string) => {
@@ -399,11 +405,11 @@ const RentalDetail: React.FC = () => {
 
           {/* Bouton d'action */}
           <Button
-            onClick={handleAddToRentalCart}
+            onClick={handleAddToCart}
             disabled={!rentalStartDate || !rentalEndDate}
             className="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 text-lg"
           >
-            Ajouter au panier de location
+            Ajouter au panier
           </Button>
         </div>
       </div>

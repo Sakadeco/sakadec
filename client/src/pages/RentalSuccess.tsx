@@ -94,8 +94,8 @@ const RentalSuccess: React.FC = () => {
   };
 
   const clearRentalCart = () => {
-    localStorage.removeItem('rentalCart');
-    window.dispatchEvent(new Event('rentalCartUpdated'));
+    // Le panier de location a été fusionné avec le panier principal
+    // Pas besoin de vider un panier séparé
   };
 
   if (loading) {

@@ -20,7 +20,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import CartIcon from "./CartIcon";
-import RentalCartIcon from "./RentalCartIcon";
 import Logo from "./Logo";
 
 export default function Navigation() {
@@ -263,7 +262,6 @@ export default function Navigation() {
                 className="flex items-center gap-2"
               >
                 <CartIcon />
-                <RentalCartIcon />
               </motion.div>
 
               {/* User Menu */}
@@ -315,7 +313,6 @@ export default function Navigation() {
             {/* Mobile Cart Icons - Always Visible */}
             <div className="xl:hidden flex items-center gap-2 mr-2">
               <CartIcon />
-              <RentalCartIcon />
             </div>
 
             {/* Mobile Menu Button */}

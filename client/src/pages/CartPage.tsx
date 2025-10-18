@@ -19,6 +19,12 @@ interface CartItem {
   isRental: boolean;
   customizations?: any;
   customMessage?: string;
+  // Propriétés spécifiques à la location
+  rentalStartDate?: string;
+  rentalEndDate?: string;
+  rentalDays?: number;
+  dailyPrice?: number;
+  totalPrice?: number;
 }
 
 const CartPage: React.FC = () => {
@@ -72,15 +78,22 @@ const CartPage: React.FC = () => {
   };
 
   const subtotal = cartItems.reduce((total, item) => {
-    let itemTotal = item.price * item.quantity;
+    let itemTotal;
     
-    // Ajouter les prix de personnalisation
-    if (item.customizations) {
-      Object.values(item.customizations).forEach((customization: any) => {
-        if (typeof customization === 'object' && customization.price) {
-          itemTotal += customization.price * item.quantity;
-        }
-      });
+    // Calcul différent pour les locations
+    if (item.isRental && item.totalPrice) {
+      itemTotal = item.totalPrice;
+    } else {
+      itemTotal = item.price * item.quantity;
+      
+      // Ajouter les prix de personnalisation pour les achats
+      if (item.customizations) {
+        Object.values(item.customizations).forEach((customization: any) => {
+          if (typeof customization === 'object' && customization.price) {
+            itemTotal += customization.price * item.quantity;
+          }
+        });
+      }
     }
     
     return total + itemTotal;
@@ -113,15 +126,19 @@ const CartPage: React.FC = () => {
     setIsLoading(true);
 
     try {
+      // Vérifier s'il y a des locations dans le panier
+      const hasRentals = cartItems.some(item => item.isRental);
+      const endpoint = hasRentals ? '/api/rental/create-checkout-session' : '/api/payment/create-checkout-session';
+
       console.log('Envoi des données de paiement:', {
         items: cartItems,
         customerEmail,
         shippingAddress,
         billingAddress: shippingAddress,
-        isRental: false
+        hasRentals
       });
 
-      const response = await fetch('/api/payment/create-checkout-session', {
+      const response = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
@@ -129,7 +146,7 @@ const CartPage: React.FC = () => {
           customerEmail, 
           shippingAddress, 
           billingAddress: shippingAddress, 
-          isRental: false 
+          isRental: hasRentals 
         }),
       });
 
@@ -220,19 +237,39 @@ const CartPage: React.FC = () => {
                       />
                       <div className="flex-1">
                         <h3 className="font-semibold text-gray-900">{item.name}</h3>
+                        <div className="flex items-center gap-2 mb-2">
+                          {item.isRental ? (
+                            <span className="bg-orange-100 text-orange-800 text-xs px-2 py-1 rounded-full">
+                              📅 Location
+                            </span>
+                          ) : (
+                            <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">
+                              🛒 Achat
+                            </span>
+                          )}
+                        </div>
                         <p className="text-gray-600">
                           {(() => {
-                            let totalPrice = item.price;
-                            if (item.customizations) {
-                              Object.values(item.customizations).forEach((customization: any) => {
-                                if (typeof customization === 'object' && customization.price) {
-                                  totalPrice += customization.price;
-                                }
-                              });
+                            if (item.isRental && item.dailyPrice && item.rentalDays) {
+                              return `${item.dailyPrice.toFixed(2)}€/jour × ${item.rentalDays} jours = ${item.totalPrice?.toFixed(2)}€`;
+                            } else {
+                              let totalPrice = item.price;
+                              if (item.customizations) {
+                                Object.values(item.customizations).forEach((customization: any) => {
+                                  if (typeof customization === 'object' && customization.price) {
+                                    totalPrice += customization.price;
+                                  }
+                                });
+                              }
+                              return `${totalPrice.toFixed(2)}€`;
                             }
-                            return `${totalPrice.toFixed(2)}€`;
                           })()}
                         </p>
+                        {item.isRental && item.rentalStartDate && item.rentalEndDate && (
+                          <p className="text-sm text-gray-500">
+                            Du {new Date(item.rentalStartDate).toLocaleDateString('fr-FR')} au {new Date(item.rentalEndDate).toLocaleDateString('fr-FR')}
+                          </p>
+                        )}
                         {item.customizations && Object.keys(item.customizations).length > 0 && (
                           <div className="text-sm text-gray-500 mt-1">
                             {Object.entries(item.customizations).map(([key, value]) => {
@@ -284,34 +321,45 @@ const CartPage: React.FC = () => {
                         )}
                       </div>
                       <div className="flex items-center space-x-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => updateQuantity(item.productId, item.quantity - 1)}
-                        >
-                          <Minus className="w-4 h-4" />
-                        </Button>
-                        <span className="w-12 text-center font-medium">{item.quantity}</span>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => updateQuantity(item.productId, item.quantity + 1)}
-                        >
-                          <Plus className="w-4 h-4" />
-                        </Button>
+                        {!item.isRental && (
+                          <>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => updateQuantity(item.productId, item.quantity - 1)}
+                            >
+                              <Minus className="w-4 h-4" />
+                            </Button>
+                            <span className="w-12 text-center font-medium">{item.quantity}</span>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => updateQuantity(item.productId, item.quantity + 1)}
+                            >
+                              <Plus className="w-4 h-4" />
+                            </Button>
+                          </>
+                        )}
+                        {item.isRental && (
+                          <span className="w-12 text-center font-medium">{item.quantity}</span>
+                        )}
                       </div>
                       <div className="text-right">
                         <p className="font-semibold text-gray-900">
                           {(() => {
-                            let totalPrice = item.price;
-                            if (item.customizations) {
-                              Object.values(item.customizations).forEach((customization: any) => {
-                                if (typeof customization === 'object' && customization.price) {
-                                  totalPrice += customization.price;
-                                }
-                              });
+                            if (item.isRental && item.totalPrice) {
+                              return `${item.totalPrice.toFixed(2)}€`;
+                            } else {
+                              let totalPrice = item.price;
+                              if (item.customizations) {
+                                Object.values(item.customizations).forEach((customization: any) => {
+                                  if (typeof customization === 'object' && customization.price) {
+                                    totalPrice += customization.price;
+                                  }
+                                });
+                              }
+                              return `${(totalPrice * item.quantity).toFixed(2)}€`;
                             }
-                            return `${(totalPrice * item.quantity).toFixed(2)}€`;
                           })()}
                         </p>
                         <Button
@@ -339,7 +387,13 @@ const CartPage: React.FC = () => {
                  <CardContent className="space-y-4">
                    <div className="flex justify-between">
                      <span>Sous-total produits</span>
-                     <span>{cartItems.reduce((total, item) => total + (item.price * item.quantity), 0).toFixed(2)}€</span>
+                     <span>{cartItems.reduce((total, item) => {
+                       if (item.isRental && item.totalPrice) {
+                         return total + item.totalPrice;
+                       } else {
+                         return total + (item.price * item.quantity);
+                       }
+                     }, 0).toFixed(2)}€</span>
                    </div>
                    
                    {/* Prix de personnalisation */}
