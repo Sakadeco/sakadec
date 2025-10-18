@@ -287,8 +287,17 @@ router.get('/products', adminAuth, async (req: AdminRequest, res: Response) => {
 
     const total = await Product.countDocuments(query);
 
+    // Convertir les Map en objets pour le frontend
+    const serializedProducts = products.map(product => {
+      const productObj = product.toObject();
+      if (productObj.customizationOptions && productObj.customizationOptions instanceof Map) {
+        productObj.customizationOptions = Object.fromEntries(productObj.customizationOptions);
+      }
+      return productObj;
+    });
+
     res.json({
-      products,
+      products: serializedProducts,
       totalPages: Math.ceil(total / parseInt(limit as string)),
       currentPage: parseInt(page as string),
       total
@@ -308,7 +317,13 @@ router.get('/products/:id', adminAuth, async (req: AdminRequest, res: Response) 
       return res.status(404).json({ message: 'Produit non trouvé' });
     }
 
-    res.json({ product });
+    // Convertir les Map en objets pour le frontend
+    const productObj = product.toObject();
+    if (productObj.customizationOptions && productObj.customizationOptions instanceof Map) {
+      productObj.customizationOptions = Object.fromEntries(productObj.customizationOptions);
+    }
+
+    res.json({ product: productObj });
   } catch (error) {
     console.error('Erreur récupération produit:', error);
     res.status(500).json({ message: 'Erreur serveur' });
@@ -366,7 +381,13 @@ router.put('/products/:id', adminAuth, async (req: AdminRequest, res: Response) 
       return res.status(404).json({ message: 'Product not found' });
     }
 
-    res.json(product);
+    // Convertir les Map en objets pour le frontend
+    const productObj = product.toObject();
+    if (productObj.customizationOptions && productObj.customizationOptions instanceof Map) {
+      productObj.customizationOptions = Object.fromEntries(productObj.customizationOptions);
+    }
+
+    res.json(productObj);
   } catch (error) {
     console.error('Error updating product:', error);
     res.status(500).json({ message: 'Error updating product', error: error.message });

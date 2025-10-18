@@ -450,7 +450,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const products = await Product.find(query).sort({ createdAt: -1 });
         console.log(`📦 Found ${products.length} products in database`);
         
-        res.json(products);
+        // Convertir les Map en objets pour le frontend
+        const serializedProducts = products.map(product => {
+          const productObj = product.toObject();
+          if (productObj.customizationOptions && productObj.customizationOptions instanceof Map) {
+            productObj.customizationOptions = Object.fromEntries(productObj.customizationOptions);
+          }
+          return productObj;
+        });
+        
+        res.json(serializedProducts);
       } else {
         console.log('⚠️ Database not connected, using mock data');
         // Mock products with new structure
