@@ -20,7 +20,7 @@ router.post('/create-checkout-session', async (req: Request, res: Response) => {
       return res.status(503).json({ message: 'Stripe non configuré' });
     }
 
-    const { items } = req.body;
+    const { items, isMixedCart, cartType } = req.body;
 
     if (!items || items.length === 0) {
       return res.status(400).json({ message: 'Aucun article dans la location' });
@@ -84,7 +84,9 @@ router.post('/create-checkout-session', async (req: Request, res: Response) => {
       cancel_url: `https://sakadeco-api.onrender.com/api/rental/cancel`,
       metadata: {
         rentalStartDate: items[0].rentalStartDate,
-        rentalEndDate: items[0].rentalEndDate
+        rentalEndDate: items[0].rentalEndDate,
+        isMixedCart: isMixedCart ? 'true' : 'false',
+        cartType: cartType || 'rental'
       }
     });
 

@@ -39,7 +39,7 @@ router.post('/create-checkout-session', async (req: Request, res: Response) => {
       });
     }
 
-    const { items, shippingAddress, billingAddress, isRental } = req.body;
+    const { items, shippingAddress, billingAddress, isRental, isMixedCart, cartType } = req.body;
 
     if (!items || items.length === 0) {
       return res.status(400).json({ message: 'Aucun article dans le panier' });
@@ -144,6 +144,8 @@ router.post('/create-checkout-session', async (req: Request, res: Response) => {
       metadata: {
         isRental: isRental ? 'true' : 'false',
         itemsCount: items.length.toString(),
+        isMixedCart: isMixedCart ? 'true' : 'false',
+        cartType: cartType || 'sale',
       },
       shipping_address_collection: {
         allowed_countries: ['FR', 'BE', 'CH', 'CA'],

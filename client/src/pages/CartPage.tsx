@@ -112,6 +112,78 @@ const CartPage: React.FC = () => {
     total: total.toFixed(2)
   });
 
+  // Fonction pour traiter les paniers mixtes
+  const processMixedCart = async (saleItems: any[], rentalItems: any[], email: string, address: any) => {
+    try {
+      console.log('🛒 Traitement panier mixte:', {
+        ventes: saleItems.length,
+        locations: rentalItems.length
+      });
+
+      // Créer session de vente
+      if (saleItems.length > 0) {
+        console.log('💳 Création session de vente...');
+        const saleResponse = await fetch('/api/payment/create-checkout-session', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            items: saleItems, 
+            customerEmail: email, 
+            shippingAddress: address, 
+            billingAddress: address, 
+            isRental: false,
+            isMixedCart: true,
+            cartType: 'sale'
+          }),
+        });
+
+        if (!saleResponse.ok) {
+          const errorData = await saleResponse.json();
+          throw new Error(`Erreur session vente: ${errorData.message}`);
+        }
+
+        const saleData = await saleResponse.json();
+        console.log('✅ Session vente créée:', saleData.sessionId);
+      }
+
+      // Créer session de location
+      if (rentalItems.length > 0) {
+        console.log('🏠 Création session de location...');
+        const rentalResponse = await fetch('/api/rental/create-checkout-session', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            items: rentalItems, 
+            customerEmail: email, 
+            shippingAddress: address, 
+            billingAddress: address, 
+            isRental: true,
+            isMixedCart: true,
+            cartType: 'rental'
+          }),
+        });
+
+        if (!rentalResponse.ok) {
+          const errorData = await rentalResponse.json();
+          throw new Error(`Erreur session location: ${errorData.message}`);
+        }
+
+        const rentalData = await rentalResponse.json();
+        console.log('✅ Session location créée:', rentalData.sessionId);
+      }
+
+      // Afficher message de confirmation
+      alert('Vos commandes ont été traitées séparément. Vous recevrez deux factures distinctes : une pour les achats et une pour les locations.');
+      
+      // Vider le panier
+      clearCart();
+      
+    } catch (error) {
+      console.error('Erreur panier mixte:', error);
+      alert(`Erreur lors du traitement des commandes: ${error.message}`);
+    }
+  };
+
   const handleCheckout = async () => {
     if (!customerEmail) {
       alert('Veuillez entrer votre email');
@@ -136,13 +208,14 @@ const CartPage: React.FC = () => {
         rentalItems: rentalItems.length
       });
 
-      // Vérifier s'il y a des produits mixtes
+      // Gérer les paniers mixtes - créer des sessions séparées
       if (saleItems.length > 0 && rentalItems.length > 0) {
-        alert('Vous ne pouvez pas mélanger des produits de vente et de location dans le même panier. Veuillez séparer vos commandes.');
+        console.log('Panier mixte détecté - traitement séparé des commandes');
+        await processMixedCart(saleItems, rentalItems, customerEmail, shippingAddress);
         return;
       }
 
-      // Déterminer l'endpoint et les données
+      // Déterminer l'endpoint et les données pour panier simple
       const hasRentals = rentalItems.length > 0;
       const endpoint = hasRentals ? '/api/rental/create-checkout-session' : '/api/payment/create-checkout-session';
       const itemsToProcess = hasRentals ? rentalItems : saleItems;
@@ -234,6 +307,22 @@ const CartPage: React.FC = () => {
               Vider le panier
             </Button>
           </div>
+
+          {/* Alerte pour panier mixte */}
+          {cartItems.some(item => item.isRental) && cartItems.some(item => !item.isRental) && (
+            <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+              <div className="flex items-center space-x-2">
+                <div className="text-blue-600">ℹ️</div>
+                <div>
+                  <h3 className="font-semibold text-blue-900">Panier mixte détecté</h3>
+                  <p className="text-blue-700 text-sm">
+                    Votre panier contient des produits de vente et de location. 
+                    Vous recevrez deux factures séparées lors du paiement.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Cart Items */}
