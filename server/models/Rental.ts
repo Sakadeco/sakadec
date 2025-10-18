@@ -98,6 +98,10 @@ const rentalSchema = new mongoose.Schema({
     phone: String
   },
   notes: String,
+  customerEmail: {
+    type: String,
+    required: true
+  },
   orderNumber: {
     type: String,
     unique: true

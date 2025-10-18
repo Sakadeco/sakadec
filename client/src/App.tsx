@@ -36,6 +36,7 @@ import Invoice from "@/pages/Invoice";
 import RentalDetail from "@/pages/RentalDetail";
 import RentalSuccess from "@/pages/RentalSuccess";
 import RentalCancel from "@/pages/RentalCancel";
+import RentalInvoice from "@/pages/RentalInvoice";
 import Realisations from "@/pages/Realisations";
 import ProductCustomizationDemo from "@/pages/ProductCustomizationDemo";
 import TestCustomization from "@/pages/TestCustomization";
@@ -51,6 +52,7 @@ function Router() {
       <Route path="/product/:id" component={ProductDetail} />
       <Route path="/rental/success" component={RentalSuccess} />
       <Route path="/rental/cancel" component={RentalCancel} />
+      <Route path="/rental/invoice/:rentalId" component={RentalInvoice} />
       <Route path="/rental/:id" component={RentalDetail} />
       <Route path="/cart" component={CartPage} />
       <Route path="/crea" component={Crea} />

@@ -67,14 +67,14 @@ const RentalSuccess: React.FC = () => {
 
   const handleViewInvoice = () => {
     if (rentalData) {
-      window.open(`/invoice/${rentalData._id}`, '_blank');
+      window.open(`/rental/invoice/${rentalData._id}`, '_blank');
     }
   };
 
   const handleDownloadInvoice = async () => {
     if (rentalData) {
       try {
-        const response = await fetch(`/api/invoice/${rentalData._id}/download`);
+        const response = await fetch(`/api/rental/invoice/${rentalData._id}`);
         if (response.ok) {
           const blob = await response.blob();
           const url = window.URL.createObjectURL(blob);
@@ -85,6 +85,8 @@ const RentalSuccess: React.FC = () => {
           a.click();
           window.URL.revokeObjectURL(url);
           document.body.removeChild(a);
+        } else {
+          alert('Erreur lors du téléchargement de la facture');
         }
       } catch (error) {
         console.error('Erreur téléchargement:', error);

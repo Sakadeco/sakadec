@@ -20,7 +20,7 @@ router.post('/create-checkout-session', async (req: Request, res: Response) => {
       return res.status(503).json({ message: 'Stripe non configuré' });
     }
 
-    const { items, isMixedCart, cartType } = req.body;
+    const { items, customerEmail, shippingAddress, isMixedCart, cartType } = req.body;
 
     if (!items || items.length === 0) {
       return res.status(400).json({ message: 'Aucun article dans la location' });
@@ -103,6 +103,8 @@ router.post('/create-checkout-session', async (req: Request, res: Response) => {
         customizations: item.customizations || {},
         customMessage: item.customMessage || ''
       })),
+      customerEmail,
+      shippingAddress,
       subtotal,
       tax,
       deposit,
@@ -258,6 +260,31 @@ router.get('/session/:sessionId', async (req: Request, res: Response) => {
   } catch (error) {
     console.error('Erreur récupération location par session:', error);
     res.status(500).json({ message: 'Erreur lors de la récupération de la location' });
+  }
+});
+
+// Télécharger la facture PDF de location
+router.get('/invoice/:rentalId', async (req: Request, res: Response) => {
+  try {
+    const { rentalId } = req.params;
+    const rental = await Rental.findById(rentalId)
+      .populate('items.product');
+
+    if (!rental) {
+      return res.status(404).json({ message: 'Location non trouvée' });
+    }
+
+    // Générer le PDF de la facture
+    const InvoiceService = (await import('../services/invoiceService')).InvoiceService;
+    const pdfBuffer = await InvoiceService.generateInvoiceForRental(rental);
+
+    // Envoyer le PDF
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename="facture-location-${rental._id}.pdf"`);
+    res.send(pdfBuffer);
+  } catch (error) {
+    console.error('Erreur génération facture location PDF:', error);
+    res.status(500).json({ message: 'Erreur génération facture' });
   }
 });
 
