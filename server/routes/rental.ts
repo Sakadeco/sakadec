@@ -80,8 +80,8 @@ router.post('/create-checkout-session', async (req: Request, res: Response) => {
       payment_method_types: ['card'],
       line_items: lineItems,
       mode: 'payment',
-      success_url: `https://sakadeco.fr/rental/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `https://sakadeco.fr/rental/cancel`,
+      success_url: `https://sakadeco.fr/payment/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `https://sakadeco.fr/payment/cancel`,
       metadata: {
         rentalStartDate: items[0].rentalStartDate,
         rentalEndDate: items[0].rentalEndDate,
@@ -129,66 +129,8 @@ router.post('/create-checkout-session', async (req: Request, res: Response) => {
   }
 });
 
-// Webhook Stripe pour les locations
-router.post('/webhook', async (req: Request, res: Response) => {
-  const sig = req.headers['stripe-signature'];
-  const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
-
-  let event: Stripe.Event;
-
-  try {
-    event = stripe!.webhooks.constructEvent(req.body, sig as string, endpointSecret!);
-  } catch (err) {
-    console.error('Erreur webhook location:', err);
-    return res.status(400).send(`Webhook Error: ${err.message}`);
-  }
-
-  try {
-    switch (event.type) {
-      case 'checkout.session.completed':
-        const session = event.data.object as Stripe.Checkout.Session;
-        
-        // Mettre à jour la location
-        const rental = await Rental.findOne({ stripeSessionId: session.id });
-        if (rental) {
-          rental.status = 'confirmed';
-          rental.paymentStatus = 'paid';
-          rental.stripePaymentIntentId = session.payment_intent as string;
-          await rental.save();
-          
-          console.log(`Location ${rental._id} confirmée`);
-          
-          // Envoyer automatiquement la facture de location avec PDF
-          try {
-            console.log('📧 Envoi facture de location avec PDF pour:', rental._id);
-            
-            // Envoyer facture au client avec PDF
-            const clientResult = await emailService.sendRentalInvoiceWithPDF(rental);
-            
-            // Envoyer notification admin avec facture PDF
-            const adminResult = await emailService.sendAdminInvoiceNotification(rental, true);
-            
-            console.log('📧 Résultats envoi emails:');
-            console.log('  - Facture client (avec PDF):', clientResult ? '✅' : '❌');
-            console.log('  - Notification admin (avec PDF):', adminResult ? '✅' : '❌');
-            
-            console.log(`✅ Factures PDF de location envoyées automatiquement pour ${rental._id}`);
-          } catch (emailError) {
-            console.error('❌ Erreur envoi factures PDF location:', emailError);
-          }
-        }
-        break;
-
-      default:
-        console.log(`Événement non géré: ${event.type}`);
-    }
-
-    res.json({ received: true });
-  } catch (error) {
-    console.error('Erreur traitement webhook location:', error);
-    res.status(500).json({ message: 'Erreur traitement webhook' });
-  }
-});
+// Note: Le webhook de location a été supprimé car les locations
+// utilisent maintenant le webhook unifié dans /api/payment/webhook
 
 // Récupérer les locations d'un utilisateur
 router.get('/user/:userId', async (req: Request, res: Response) => {
