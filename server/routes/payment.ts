@@ -164,6 +164,7 @@ router.post('/create-checkout-session', async (req: Request, res: Response) => {
     // Créer la commande en base de données
     const order = new Order({
       user: req.body.userId || null,
+      customerEmail: req.body.customerEmail,
       items: items.map((item: any) => {
         // Calculer le prix total de l'article (produit + personnalisations)
         let itemPrice = item.price;
@@ -369,6 +370,32 @@ router.get('/orders/session/:sessionId', async (req: Request, res: Response) => 
   } catch (error) {
     console.error('Erreur récupération commande par session:', error);
     res.status(500).json({ message: 'Erreur serveur' });
+  }
+});
+
+// Télécharger la facture PDF
+router.get('/invoice/:orderId', async (req: Request, res: Response) => {
+  try {
+    const { orderId } = req.params;
+    const order = await Order.findById(orderId)
+      .populate('items.product')
+      .populate('user');
+
+    if (!order) {
+      return res.status(404).json({ message: 'Commande non trouvée' });
+    }
+
+    // Générer le PDF de la facture
+    const InvoiceService = (await import('../services/invoiceService')).InvoiceService;
+    const pdfBuffer = await InvoiceService.generateInvoiceForOrder(order);
+
+    // Envoyer le PDF
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename="facture-${order._id}.pdf"`);
+    res.send(pdfBuffer);
+  } catch (error) {
+    console.error('Erreur génération facture PDF:', error);
+    res.status(500).json({ message: 'Erreur génération facture' });
   }
 });
 

@@ -331,7 +331,7 @@ class EmailService {
           name: "SakaDeco Group",
           address: process.env.EMAIL_USER || ''
         },
-        to: invoice.user.email,
+        to: invoice.customerEmail,
         subject: `Facture SakaDeco - Commande ${invoice.orderNumber}`,
         html: `
           <!DOCTYPE html>
@@ -400,7 +400,7 @@ class EmailService {
     }
 
     try {
-      console.log('📧 Envoi email confirmation à:', invoice.user.email);
+      console.log('📧 Envoi email confirmation à:', invoice.customerEmail);
       
       let pdfBuffer: Buffer | null = null;
       let hasPDF = false;
@@ -421,7 +421,7 @@ class EmailService {
           name: "SakaDeco Group",
           address: process.env.EMAIL_USER || ''
         },
-        to: invoice.user.email,
+        to: invoice.customerEmail,
         subject: `Confirmation de commande - ${invoice.orderNumber}`,
         html: `
           <!DOCTYPE html>

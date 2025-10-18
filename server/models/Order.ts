@@ -108,6 +108,10 @@ const orderSchema = new mongoose.Schema({
     phone: String
   },
   notes: String,
+  customerEmail: {
+    type: String,
+    required: true
+  },
   isRental: {
     type: Boolean,
     default: false
