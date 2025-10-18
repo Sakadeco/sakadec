@@ -282,14 +282,32 @@ export class InvoiceService {
       customerEmail: order.customerEmail,
       customerName: order.customerName,
       shippingAddress: order.shippingAddress,
-      items: order.items.map((item: any) => ({
-        name: item.product.name,
-        description: item.product.description,
-        quantity: item.quantity,
-        unitPrice: item.price,
-        totalPrice: item.price * item.quantity,
-        isRental: false
-      })),
+      items: order.items.map((item: any) => {
+        let description = item.product.description || '';
+        
+        // Ajouter les personnalisations à la description
+        if (item.customizations && Object.keys(item.customizations).length > 0) {
+          description += '\n\nPersonnalisations:';
+          Object.entries(item.customizations).forEach(([key, value]) => {
+            if (typeof value === 'object' && value.type === 'text' && value.value) {
+              description += `\n- ${key.replace(/_/g, ' ')} (texte): ${value.value}`;
+            } else if (typeof value === 'object' && value.type === 'image' && value.value) {
+              description += `\n- ${key.replace(/_/g, ' ')} (image): Image personnalisée`;
+            } else if (typeof value === 'string') {
+              description += `\n- ${key.replace(/_/g, ' ')}: ${value}`;
+            }
+          });
+        }
+        
+        return {
+          name: item.product.name,
+          description: description,
+          quantity: item.quantity,
+          unitPrice: item.price,
+          totalPrice: item.price * item.quantity,
+          isRental: false
+        };
+      }),
       subtotal: order.subtotal,
       tax: order.tax,
       shipping: order.shipping,
@@ -307,16 +325,34 @@ export class InvoiceService {
       customerEmail: rental.customerEmail,
       customerName: rental.customerName,
       shippingAddress: rental.shippingAddress,
-      items: rental.items.map((item: any) => ({
-        name: item.product.name,
-        description: item.product.description,
-        quantity: item.quantity,
-        unitPrice: item.dailyPrice,
-        totalPrice: item.totalPrice,
-        isRental: true,
-        rentalStartDate: item.rentalStartDate,
-        rentalEndDate: item.rentalEndDate
-      })),
+      items: rental.items.map((item: any) => {
+        let description = item.product.description || '';
+        
+        // Ajouter les personnalisations à la description
+        if (item.customizations && Object.keys(item.customizations).length > 0) {
+          description += '\n\nPersonnalisations:';
+          Object.entries(item.customizations).forEach(([key, value]) => {
+            if (typeof value === 'object' && value.type === 'text' && value.value) {
+              description += `\n- ${key.replace(/_/g, ' ')} (texte): ${value.value}`;
+            } else if (typeof value === 'object' && value.type === 'image' && value.value) {
+              description += `\n- ${key.replace(/_/g, ' ')} (image): Image personnalisée`;
+            } else if (typeof value === 'string') {
+              description += `\n- ${key.replace(/_/g, ' ')}: ${value}`;
+            }
+          });
+        }
+        
+        return {
+          name: item.product.name,
+          description: description,
+          quantity: item.quantity,
+          unitPrice: item.dailyPrice,
+          totalPrice: item.totalPrice,
+          isRental: true,
+          rentalStartDate: item.rentalStartDate,
+          rentalEndDate: item.rentalEndDate
+        };
+      }),
       subtotal: rental.subtotal,
       tax: rental.tax,
       shipping: 0,

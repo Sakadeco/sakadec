@@ -477,15 +477,46 @@ class EmailService {
         `
       };
 
-      // Ajouter le PDF en pièce jointe seulement s'il a été généré avec succès
+      // Ajouter le PDF et les images personnalisables en pièces jointes
+      const attachments: any[] = [];
+      
       if (hasPDF && pdfBuffer) {
-        mailOptions.attachments = [
-          {
-            filename: `facture-${invoice.orderNumber}.pdf`,
-            content: pdfBuffer,
-            contentType: 'application/pdf'
+        attachments.push({
+          filename: `facture-${invoice.orderNumber}.pdf`,
+          content: pdfBuffer,
+          contentType: 'application/pdf'
+        });
+      }
+      
+      // Ajouter les images personnalisables en pièces jointes
+      if (invoice.items) {
+        for (const item of invoice.items) {
+          if (item.customizations) {
+            for (const [key, customization] of Object.entries(item.customizations)) {
+              if (typeof customization === 'object' && customization.type === 'image' && customization.value) {
+                try {
+                  // Télécharger l'image depuis l'URL
+                  const imageResponse = await fetch(customization.value);
+                  if (imageResponse.ok) {
+                    const imageBuffer = Buffer.from(await imageResponse.arrayBuffer());
+                    attachments.push({
+                      filename: `personnalisation-${key}-${item.product.name || 'produit'}.jpg`,
+                      content: imageBuffer,
+                      contentType: 'image/jpeg'
+                    });
+                    console.log(`📎 Image personnalisée ajoutée: ${key}`);
+                  }
+                } catch (imageError) {
+                  console.warn(`⚠️  Impossible de télécharger l'image personnalisée ${key}:`, imageError);
+                }
+              }
+            }
           }
-        ];
+        }
+      }
+      
+      if (attachments.length > 0) {
+        mailOptions.attachments = attachments;
       }
 
       const info = await this.transporter.sendMail(mailOptions);
@@ -1173,6 +1204,42 @@ class EmailService {
         ? await InvoiceService.generateInvoiceForRental(order)
         : await InvoiceService.generateInvoiceForOrder(order);
       
+      // Préparer les pièces jointes
+      const attachments: any[] = [
+        {
+          filename: `Facture_${isRental ? 'Location' : 'Commande'}_${order._id}.pdf`,
+          content: invoicePDF,
+          contentType: 'application/pdf'
+        }
+      ];
+      
+      // Ajouter les images personnalisables en pièces jointes
+      if (order.items) {
+        for (const item of order.items) {
+          if (item.customizations) {
+            for (const [key, customization] of Object.entries(item.customizations)) {
+              if (typeof customization === 'object' && customization.type === 'image' && customization.value) {
+                try {
+                  // Télécharger l'image depuis l'URL
+                  const imageResponse = await fetch(customization.value);
+                  if (imageResponse.ok) {
+                    const imageBuffer = Buffer.from(await imageResponse.arrayBuffer());
+                    attachments.push({
+                      filename: `personnalisation-${key}-${item.product?.name || 'produit'}.jpg`,
+                      content: imageBuffer,
+                      contentType: 'image/jpeg'
+                    });
+                    console.log(`📎 Image personnalisée ajoutée pour admin: ${key}`);
+                  }
+                } catch (imageError) {
+                  console.warn(`⚠️  Impossible de télécharger l'image personnalisée ${key} pour admin:`, imageError);
+                }
+              }
+            }
+          }
+        }
+      }
+
       const mailOptions = {
         from: {
           name: "SakaDeco Group",
@@ -1193,6 +1260,7 @@ class EmailService {
               .header { text-align: center; margin-bottom: 30px; }
               .notification { color: #3b82f6; font-size: 24px; margin-bottom: 10px; }
               .order-details { background-color: #f9fafb; padding: 20px; border-radius: 8px; margin: 20px 0; }
+              .customization { background-color: #e0f2fe; padding: 10px; border-radius: 6px; margin: 8px 0; }
             </style>
           </head>
           <body>
@@ -1213,20 +1281,43 @@ class EmailService {
                 <p><strong>Date:</strong> ${format(new Date(order.createdAt), 'dd MMMM yyyy à HH:mm', { locale: fr })}</p>
                 <p><strong>Total:</strong> ${order.total.toFixed(2)}€</p>
                 <p><strong>Articles:</strong> ${order.items.length} produit(s)</p>
+                
+                ${order.items.map(item => {
+                  let customizationHTML = '';
+                  if (item.customizations && Object.keys(item.customizations).length > 0) {
+                    customizationHTML = `
+                      <div class="customization">
+                        <strong>Personnalisations pour ${item.product?.name || 'Produit'}:</strong>
+                        <ul style="margin: 5px 0; padding-left: 20px;">
+                          ${Object.entries(item.customizations).map(([key, value]) => {
+                            if (typeof value === 'object' && value.type === 'text' && value.value) {
+                              return `<li><strong>${key.replace(/_/g, ' ')} (texte):</strong> ${value.value}</li>`;
+                            } else if (typeof value === 'object' && value.type === 'image' && value.value) {
+                              return `<li><strong>${key.replace(/_/g, ' ')} (image):</strong> Image téléchargée (voir pièce jointe)</li>`;
+                            } else if (typeof value === 'string') {
+                              return `<li><strong>${key.replace(/_/g, ' ')}:</strong> ${value}</li>`;
+                            }
+                            return '';
+                          }).join('')}
+                        </ul>
+                      </div>
+                    `;
+                  }
+                  return `
+                    <div style="margin: 10px 0; padding: 10px; border: 1px solid #e5e7eb; border-radius: 6px;">
+                      <strong>${item.product?.name || 'Produit'}</strong> (x${item.quantity}) - ${item.price.toFixed(2)}€
+                      ${customizationHTML}
+                    </div>
+                  `;
+                }).join('')}
               </div>
               
-              <p>La facture est jointe à cet email.</p>
+              <p>La facture et les images personnalisables sont jointes à cet email.</p>
             </div>
           </body>
           </html>
         `,
-        attachments: [
-          {
-            filename: `Facture_${isRental ? 'Location' : 'Commande'}_${order._id}.pdf`,
-            content: invoicePDF,
-            contentType: 'application/pdf'
-          }
-        ]
+        attachments: attachments
       };
 
       await this.transporter.sendMail(mailOptions);
