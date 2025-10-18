@@ -737,8 +737,22 @@ router.get('/rentals', adminAuth, async (req: AdminRequest, res: Response) => {
       .populate('user')
       .sort({ createdAt: -1 });
 
+    // Convertir les Map en objets pour les produits
+    const serializedRentals = rentals.map(rental => {
+      const rentalObj = rental.toObject();
+      if (rentalObj.items) {
+        rentalObj.items = rentalObj.items.map((item: any) => {
+          if (item.product && item.product.customizationOptions && item.product.customizationOptions instanceof Map) {
+            item.product.customizationOptions = Object.fromEntries(item.product.customizationOptions);
+          }
+          return item;
+        });
+      }
+      return rentalObj;
+    });
+
     res.json({
-      rentals: rentals.map(rental => ({
+      rentals: serializedRentals.map(rental => ({
         _id: rental._id,
         orderNumber: rental.orderNumber,
         user: rental.user,
@@ -778,7 +792,18 @@ router.get('/rentals/:rentalId', adminAuth, async (req: AdminRequest, res: Respo
       return res.status(404).json({ message: 'Location non trouvée' });
     }
 
-    res.json({ rental });
+    // Convertir les Map en objets pour les produits
+    const rentalObj = rental.toObject();
+    if (rentalObj.items) {
+      rentalObj.items = rentalObj.items.map((item: any) => {
+        if (item.product && item.product.customizationOptions && item.product.customizationOptions instanceof Map) {
+          item.product.customizationOptions = Object.fromEntries(item.product.customizationOptions);
+        }
+        return item;
+      });
+    }
+
+    res.json({ rental: rentalObj });
   } catch (error) {
     console.error('Erreur récupération location admin:', error);
     res.status(500).json({ message: 'Erreur serveur' });

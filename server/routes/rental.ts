@@ -233,7 +233,18 @@ router.get('/detail/:rentalId', async (req: Request, res: Response) => {
       return res.status(404).json({ message: 'Location non trouvée' });
     }
     
-    res.json({ rental });
+    // Convertir les Map en objets pour les produits
+    const rentalObj = rental.toObject();
+    if (rentalObj.items) {
+      rentalObj.items = rentalObj.items.map((item: any) => {
+        if (item.product && item.product.customizationOptions && item.product.customizationOptions instanceof Map) {
+          item.product.customizationOptions = Object.fromEntries(item.product.customizationOptions);
+        }
+        return item;
+      });
+    }
+    
+    res.json({ rental: rentalObj });
   } catch (error) {
     console.error('Erreur récupération détails location:', error);
     res.status(500).json({ message: 'Erreur lors de la récupération des détails' });
@@ -251,7 +262,18 @@ router.get('/session/:sessionId', async (req: Request, res: Response) => {
       return res.status(404).json({ message: 'Location non trouvée' });
     }
     
-    res.json(rental);
+    // Convertir les Map en objets pour les produits
+    const rentalObj = rental.toObject();
+    if (rentalObj.items) {
+      rentalObj.items = rentalObj.items.map((item: any) => {
+        if (item.product && item.product.customizationOptions && item.product.customizationOptions instanceof Map) {
+          item.product.customizationOptions = Object.fromEntries(item.product.customizationOptions);
+        }
+        return item;
+      });
+    }
+    
+    res.json(rentalObj);
   } catch (error) {
     console.error('Erreur récupération location par session:', error);
     res.status(500).json({ message: 'Erreur lors de la récupération de la location' });
