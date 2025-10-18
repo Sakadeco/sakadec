@@ -120,6 +120,9 @@ const CartPage: React.FC = () => {
         locations: rentalItems.length
       });
 
+      let saleData = null;
+      let rentalData = null;
+
       // Créer session de vente
       if (saleItems.length > 0) {
         console.log('💳 Création session de vente...');
@@ -142,7 +145,7 @@ const CartPage: React.FC = () => {
           throw new Error(`Erreur session vente: ${errorData.message}`);
         }
 
-        const saleData = await saleResponse.json();
+        saleData = await saleResponse.json();
         console.log('✅ Session vente créée:', saleData.sessionId);
       }
 
@@ -168,15 +171,24 @@ const CartPage: React.FC = () => {
           throw new Error(`Erreur session location: ${errorData.message}`);
         }
 
-        const rentalData = await rentalResponse.json();
+        rentalData = await rentalResponse.json();
         console.log('✅ Session location créée:', rentalData.sessionId);
       }
 
-      // Afficher message de confirmation
-      alert('Vos commandes ont été traitées séparément. Vous recevrez deux factures distinctes : une pour les achats et une pour les locations.');
-      
-      // Vider le panier
-      clearCart();
+      // Rediriger vers les sessions Stripe
+      if (saleData && rentalData) {
+        // Les deux sessions ont été créées, rediriger vers la vente d'abord
+        console.log('🔄 Redirection vers la session de vente...');
+        window.location.href = saleData.url;
+      } else if (saleData) {
+        // Seulement la vente
+        console.log('🔄 Redirection vers la session de vente...');
+        window.location.href = saleData.url;
+      } else if (rentalData) {
+        // Seulement la location
+        console.log('🔄 Redirection vers la session de location...');
+        window.location.href = rentalData.url;
+      }
       
     } catch (error) {
       console.error('Erreur panier mixte:', error);
