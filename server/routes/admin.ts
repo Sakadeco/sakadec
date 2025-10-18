@@ -236,7 +236,7 @@ router.post('/products', adminAuth, upload.fields([
       isForRent: isForRentBool,
       stockQuantity: parseInt(stockQuantity) || 0,
       dailyRentalPrice: isForRentBool ? parseFloat(dailyRentalPrice) : undefined,
-      customizationOptions: parsedCustomizationOptions
+      customizationOptions: new Map(Object.entries(parsedCustomizationOptions))
     });
 
     await product.save();
@@ -334,6 +334,19 @@ router.put('/products/:id', adminAuth, async (req: AdminRequest, res: Response) 
       customizationOptions
     } = req.body;
 
+    // Parser customizationOptions si c'est une chaîne JSON
+    let parsedCustomizationOptions = {};
+    if (customizationOptions) {
+      try {
+        parsedCustomizationOptions = typeof customizationOptions === 'string' 
+          ? JSON.parse(customizationOptions) 
+          : customizationOptions;
+      } catch (parseError) {
+        console.warn('⚠️  Erreur parsing customizationOptions:', parseError);
+        parsedCustomizationOptions = {};
+      }
+    }
+
     const product = await Product.findByIdAndUpdate(id, {
       name,
       description,
@@ -346,7 +359,7 @@ router.put('/products/:id', adminAuth, async (req: AdminRequest, res: Response) 
       isRentable: isRentable === 'true',
       stockQuantity: parseInt(stockQuantity) || 0,
       dailyRentalPrice: dailyRentalPrice ? parseFloat(dailyRentalPrice) : undefined,
-      customizationOptions: customizationOptions || {}
+      customizationOptions: new Map(Object.entries(parsedCustomizationOptions))
     }, { new: true });
 
     if (!product) {
