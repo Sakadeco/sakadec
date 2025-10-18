@@ -4,6 +4,7 @@ import Stripe from 'stripe';
 import Order from '../models/Order';
 import { Rental } from '../models/Rental.js';
 import emailService from '../services/emailService';
+import { SendGridEmailService } from '../services/sendGridService';
 import { Product } from '../models/Product';
 
 const router = Router();
@@ -249,11 +250,19 @@ router.post('/webhook', async (req: Request, res: Response) => {
           try {
             console.log('📧 Envoi facture de vente avec PDF pour la commande:', order._id);
             
-            // Envoyer facture au client avec PDF
-            const clientResult = await emailService.sendSaleInvoiceWithPDF(order);
+            // Essayer SendGrid d'abord, puis fallback sur Nodemailer
+            let clientResult = false;
+            let adminResult = false;
             
-            // Envoyer notification admin avec facture PDF
-            const adminResult = await emailService.sendAdminInvoiceNotification(order, false);
+            if (SendGridEmailService.isConfigured()) {
+              console.log('📧 Utilisation de SendGrid...');
+              clientResult = await SendGridEmailService.sendSaleInvoiceWithPDF(order);
+              adminResult = await SendGridEmailService.sendAdminInvoiceNotification(order, false);
+            } else {
+              console.log('📧 Fallback sur Nodemailer...');
+              clientResult = await emailService.sendSaleInvoiceWithPDF(order);
+              adminResult = await emailService.sendAdminInvoiceNotification(order, false);
+            }
             
             console.log('📧 Résultats envoi emails:');
             console.log('  - Facture client (avec PDF):', clientResult ? '✅' : '❌');
