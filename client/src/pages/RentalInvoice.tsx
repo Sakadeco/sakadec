@@ -176,11 +176,11 @@ const RentalInvoice: React.FC = () => {
                 <div>
                   <h4 className="font-semibold text-gray-900 mb-4">Informations client</h4>
                   <div className="space-y-2 text-sm">
-                    <p><strong>Nom:</strong> {rental.shippingAddress.firstName} {rental.shippingAddress.lastName}</p>
-                    <p><strong>Adresse:</strong> {rental.shippingAddress.address}</p>
-                    <p><strong>Ville:</strong> {rental.shippingAddress.postalCode} {rental.shippingAddress.city}</p>
-                    <p><strong>Pays:</strong> {rental.shippingAddress.country}</p>
-                    <p><strong>Téléphone:</strong> {rental.shippingAddress.phone}</p>
+                    <p><strong>Nom:</strong> {rental.shippingAddress?.firstName || 'N/A'} {rental.shippingAddress?.lastName || 'N/A'}</p>
+                    <p><strong>Adresse:</strong> {rental.shippingAddress?.address || 'N/A'}</p>
+                    <p><strong>Ville:</strong> {rental.shippingAddress?.postalCode || 'N/A'} {rental.shippingAddress?.city || 'N/A'}</p>
+                    <p><strong>Pays:</strong> {rental.shippingAddress?.country || 'N/A'}</p>
+                    <p><strong>Téléphone:</strong> {rental.shippingAddress?.phone || 'N/A'}</p>
                   </div>
                 </div>
 

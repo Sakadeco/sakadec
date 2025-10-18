@@ -37,6 +37,7 @@ import RentalDetail from "@/pages/RentalDetail";
 import RentalSuccess from "@/pages/RentalSuccess";
 import RentalCancel from "@/pages/RentalCancel";
 import RentalInvoice from "@/pages/RentalInvoice";
+import UnifiedSuccess from "@/pages/UnifiedSuccess";
 import Realisations from "@/pages/Realisations";
 import ProductCustomizationDemo from "@/pages/ProductCustomizationDemo";
 import TestCustomization from "@/pages/TestCustomization";
@@ -50,7 +51,7 @@ function Router() {
       <Route path="/" component={Home} />
       <Route path="/shop" component={Shop} />
       <Route path="/product/:id" component={ProductDetail} />
-      <Route path="/rental/success" component={RentalSuccess} />
+      <Route path="/rental/success" component={UnifiedSuccess} />
       <Route path="/rental/cancel" component={RentalCancel} />
       <Route path="/rental/invoice/:rentalId" component={RentalInvoice} />
       <Route path="/rental/:id" component={RentalDetail} />
@@ -68,7 +69,7 @@ function Router() {
       <Route path="/test-customization" component={TestCustomization} />
       <Route path="/orders" component={Orders} />
       <Route path="/invoice/:orderId" component={Invoice} />
-      <Route path="/payment/success" component={PaymentSuccess} />
+      <Route path="/payment/success" component={UnifiedSuccess} />
       <Route path="/payment/cancel" component={PaymentCancel} />
       <Route path="/themes" component={Themes} />
              <Route path="/admin/login" component={AdminLogin} />
