@@ -93,7 +93,7 @@ export function Features() {
 
       <div className="text-center">
         <Badge className="px-4 py-2 bg-gradient-to-r from-gold to-yellow-500 text-white border-none">
-          Plus de 10,000 clients satisfaits
+          Plus de 35 clients
         </Badge>
       </div>
     </div>
