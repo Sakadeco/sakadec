@@ -111,12 +111,12 @@ const UnifiedSuccess: React.FC = () => {
       }
       
       if (isMixedCart) {
-        // Pour un panier mixte, récupérer les données des deux sessions
+        // Pour un panier mixte, utiliser les données stockées
         const mixedData = JSON.parse(mixedCartData);
         
-        // Récupérer les données de vente
+        // Récupérer les données de vente (session actuelle)
         try {
-          const orderResponse = await fetch(`/api/payment/orders/session/${mixedData.saleSessionId}`);
+          const orderResponse = await fetch(`/api/payment/orders/session/${sessionId}`);
           if (orderResponse.ok) {
             orderResult = await orderResponse.json();
             setOrderData(orderResult);
@@ -126,16 +126,38 @@ const UnifiedSuccess: React.FC = () => {
           console.log('ℹ️ Erreur récupération données vente:', orderError);
         }
 
-        // Récupérer les données de location
-        try {
-          const rentalResponse = await fetch(`/api/rental/session/${mixedData.rentalSessionId}`);
-          if (rentalResponse.ok) {
-            rentalResult = await rentalResponse.json();
-            setRentalData(rentalResult);
-            console.log('✅ Données de location récupérées (panier mixte):', rentalResult);
-          }
-        } catch (rentalError) {
-          console.log('ℹ️ Erreur récupération données location:', rentalError);
+        // Créer des données de location simulées à partir des items stockés
+        if (mixedData.rentalItems && mixedData.rentalItems) {
+          const rentalSimulated = {
+            _id: 'temp-rental-' + Date.now(),
+            orderNumber: 'RENT-TEMP-' + Date.now(),
+            items: mixedData.rentalItems.map((item: any) => ({
+              product: {
+                _id: item.productId,
+                name: item.productName || 'Produit de location',
+                mainImageUrl: item.productImage || ''
+              },
+              quantity: item.quantity,
+              dailyPrice: item.dailyPrice,
+              rentalStartDate: item.rentalStartDate,
+              rentalEndDate: item.rentalEndDate,
+              rentalDays: item.rentalDays || 1,
+              totalPrice: item.totalPrice,
+              customizations: item.customizations || {}
+            })),
+            subtotal: mixedData.rentalItems.reduce((sum: number, item: any) => sum + (item.totalPrice || 0), 0),
+            tax: 0,
+            deposit: 0,
+            total: mixedData.rentalItems.reduce((sum: number, item: any) => sum + (item.totalPrice || 0), 0),
+            status: 'confirmed',
+            paymentStatus: 'paid',
+            customerEmail: mixedData.customerEmail,
+            shippingAddress: mixedData.shippingAddress,
+            createdAt: new Date().toISOString()
+          };
+          
+          setRentalData(rentalSimulated);
+          console.log('✅ Données de location simulées (panier mixte):', rentalSimulated);
         }
         
         // Nettoyer les données du panier mixte

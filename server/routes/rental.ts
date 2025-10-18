@@ -132,6 +132,72 @@ router.post('/create-checkout-session', async (req: Request, res: Response) => {
 // Note: Le webhook de location a été supprimé car les locations
 // utilisent maintenant le webhook unifié dans /api/payment/webhook
 
+// Route de test temporaire pour diagnostiquer l'email de location
+router.post('/test-email', async (req: Request, res: Response) => {
+  try {
+    console.log('🧪 Test email de location...');
+    
+    const testRental = {
+      _id: 'test-rental-' + Date.now(),
+      orderNumber: 'TEST-RENT-' + Date.now(),
+      customerEmail: 'test@example.com',
+      items: [{
+        product: { 
+          _id: 'test-product',
+          name: 'Produit test location',
+          mainImageUrl: 'https://via.placeholder.com/300'
+        },
+        quantity: 1,
+        dailyPrice: 50,
+        rentalStartDate: new Date(),
+        rentalEndDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+        rentalDays: 7,
+        totalPrice: 350,
+        customizations: {}
+      }],
+      subtotal: 350,
+      tax: 70,
+      deposit: 105,
+      total: 525,
+      status: 'confirmed',
+      paymentStatus: 'paid',
+      shippingAddress: {
+        firstName: 'Test',
+        lastName: 'User',
+        address: '123 Test St',
+        city: 'Test City',
+        postalCode: '12345',
+        country: 'France',
+        phone: '0123456789'
+      },
+      createdAt: new Date()
+    };
+
+    const emailService = (await import('../services/emailService')).default;
+    
+    // Test envoi au client
+    console.log('📧 Test envoi email client...');
+    const clientResult = await emailService.sendRentalInvoiceWithPDF(testRental);
+    console.log('📧 Email client:', clientResult ? '✅' : '❌');
+    
+    // Test envoi à l'admin
+    console.log('📧 Test envoi email admin...');
+    const adminResult = await emailService.sendAdminInvoiceNotification(testRental, true);
+    console.log('📧 Email admin:', adminResult ? '✅' : '❌');
+    
+    res.json({ 
+      success: true, 
+      clientEmail: clientResult,
+      adminEmail: adminResult,
+      message: 'Test emails envoyés',
+      testRental: testRental
+    });
+  } catch (error) {
+    console.error('❌ Erreur test email:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Récupérer les locations d'un utilisateur
 router.get('/user/:userId', async (req: Request, res: Response) => {
   try {

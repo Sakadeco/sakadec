@@ -182,6 +182,10 @@ const CartPage: React.FC = () => {
         localStorage.setItem('mixedCartData', JSON.stringify({
           saleSessionId: saleData.sessionId,
           rentalSessionId: rentalData.sessionId,
+          saleItems: saleItems,
+          rentalItems: rentalItems,
+          customerEmail: email,
+          shippingAddress: address,
           isMixedCart: true
         }));
         console.log('🔄 Redirection vers la session de vente...');
