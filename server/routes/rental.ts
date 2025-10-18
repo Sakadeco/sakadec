@@ -304,11 +304,11 @@ router.get('/product/:productId/booked-dates', async (req: Request, res: Respons
       });
     });
     
-      res.json({ dates: bookedDates });
-} catch (error) {
-  console.error('Erreur récupération dates réservées:', error);
-  res.status(500).json({ message: 'Erreur lors de la récupération des dates réservées' });
-}
+    res.json({ dates: bookedDates });
+  } catch (error) {
+    console.error('Erreur récupération dates réservées:', error);
+    res.status(500).json({ message: 'Erreur lors de la récupération des dates réservées' });
+  }
 });
 
 // Route de redirection pour le succès de location
