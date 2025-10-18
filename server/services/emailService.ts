@@ -981,8 +981,13 @@ class EmailService {
 
   // Envoyer facture de vente avec PDF
   async sendSaleInvoiceWithPDF(order: any): Promise<boolean> {
+    console.log('📧 Tentative d\'envoi facture de vente avec PDF...');
+    console.log('📧 Transporter disponible:', !!this.transporter);
+    console.log('📧 Email client:', order.customerEmail);
+    
     if (!this.transporter) {
       console.warn('⚠️  Service email non configuré - facture de vente non envoyée');
+      console.warn('⚠️  Vérifiez les variables d\'environnement EMAIL_* sur Render');
       return false;
     }
 
@@ -1062,8 +1067,13 @@ class EmailService {
 
   // Envoyer facture de location avec PDF
   async sendRentalInvoiceWithPDF(rental: any): Promise<boolean> {
+    console.log('📧 Tentative d\'envoi facture de location avec PDF...');
+    console.log('📧 Transporter disponible:', !!this.transporter);
+    console.log('📧 Email client:', rental.customerEmail);
+    
     if (!this.transporter) {
       console.warn('⚠️  Service email non configuré - facture de location non envoyée');
+      console.warn('⚠️  Vérifiez les variables d\'environnement EMAIL_* sur Render');
       return false;
     }
 
@@ -1144,8 +1154,13 @@ class EmailService {
 
   // Envoyer notification admin avec facture PDF
   async sendAdminInvoiceNotification(order: any, isRental: boolean = false): Promise<boolean> {
+    console.log('📧 Tentative d\'envoi notification admin avec PDF...');
+    console.log('📧 Transporter disponible:', !!this.transporter);
+    console.log('📧 Type:', isRental ? 'location' : 'commande');
+    
     if (!this.transporter) {
       console.warn('⚠️  Service email non configuré - notification admin facture non envoyée');
+      console.warn('⚠️  Vérifiez les variables d\'environnement EMAIL_* sur Render');
       return false;
     }
 
