@@ -501,18 +501,28 @@ export default function ProductCustomization({
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
-          {Object.entries(customizationOptions).map(([key, option]) => (
-            <div key={key} className="space-y-2">
-              <Label htmlFor={key} className="text-sm font-medium">
-                {option.label}
-                {option.required && <span className="text-red-500 ml-1">*</span>}
-              </Label>
-              {renderCustomizationField(key, option)}
-              {option.placeholder && (
-                <p className="text-xs text-gray-500">{option.placeholder}</p>
-              )}
-            </div>
-          ))}
+          {(() => {
+            // Gérer les Map et les objets JavaScript
+            let optionsEntries;
+            if (customizationOptions instanceof Map) {
+              optionsEntries = Array.from(customizationOptions.entries());
+            } else {
+              optionsEntries = Object.entries(customizationOptions || {});
+            }
+            
+            return optionsEntries.map(([key, option]) => (
+              <div key={key} className="space-y-2">
+                <Label htmlFor={key} className="text-sm font-medium">
+                  {option.label}
+                  {option.required && <span className="text-red-500 ml-1">*</span>}
+                </Label>
+                {renderCustomizationField(key, option)}
+                {option.placeholder && (
+                  <p className="text-xs text-gray-500">{option.placeholder}</p>
+                )}
+              </div>
+            ));
+          })()}
 
           {/* Résumé des prix de personnalisation */}
           {customizationPrice > 0 && (

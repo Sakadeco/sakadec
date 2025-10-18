@@ -334,26 +334,58 @@ const RentalDetail: React.FC = () => {
                 <CardTitle>Options de personnalisation</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                {Object.entries(product.customizationOptions || {}).map(([key, values]) => (
-                  <div key={key}>
-                    <Label>{key}</Label>
-                    <Select
-                      value={customizations[key] || ''}
-                      onValueChange={(value) => handleCustomizationChange(key, value)}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder={`Choisir ${key.toLowerCase()}`} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {values.map((value) => (
-                          <SelectItem key={value} value={value}>
-                            {value}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                ))}
+                {(() => {
+                  // Gérer les Map et les objets JavaScript
+                  let optionsEntries;
+                  if (product.customizationOptions instanceof Map) {
+                    optionsEntries = Array.from(product.customizationOptions.entries());
+                  } else {
+                    optionsEntries = Object.entries(product.customizationOptions || {});
+                  }
+                  
+                  return optionsEntries.map(([key, option]) => (
+                    <div key={key}>
+                      <Label>{option.label || key}</Label>
+                      {option.type === 'dropdown' && option.options ? (
+                        <Select
+                          value={customizations[key] || ''}
+                          onValueChange={(value) => handleCustomizationChange(key, value)}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder={`Choisir ${option.label || key.toLowerCase()}`} />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {option.options.map((value) => (
+                              <SelectItem key={value} value={value}>
+                                {value}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      ) : option.type === 'text' ? (
+                        <input
+                          type="text"
+                          value={customizations[key] || ''}
+                          onChange={(e) => handleCustomizationChange(key, e.target.value)}
+                          placeholder={option.placeholder || `Entrez ${option.label || key.toLowerCase()}`}
+                          className="w-full p-2 border border-gray-300 rounded-md"
+                        />
+                      ) : option.type === 'textarea' ? (
+                        <textarea
+                          value={customizations[key] || ''}
+                          onChange={(e) => handleCustomizationChange(key, e.target.value)}
+                          placeholder={option.placeholder || `Entrez ${option.label || key.toLowerCase()}`}
+                          className="w-full p-2 border border-gray-300 rounded-md"
+                          rows={3}
+                        />
+                      ) : (
+                        <div className="text-gray-500">
+                          Type de personnalisation non supporté: {option.type}
+                        </div>
+                      )}
+                    </div>
+                  ));
+                })()}
               </CardContent>
             </Card>
           )}
