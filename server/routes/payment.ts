@@ -245,54 +245,23 @@ router.post('/webhook', async (req: Request, res: Response) => {
           
           console.log(`Commande ${order._id} marquée comme payée`);
           
-          // Envoyer automatiquement la facture par email
+          // Envoyer automatiquement la facture par email avec PDF
           try {
-            console.log('📧 Préparation des emails pour la commande:', order._id);
+            console.log('📧 Envoi facture de vente avec PDF pour la commande:', order._id);
             
-            const invoiceData = {
-              orderNumber: order.orderNumber || order._id.toString(),
-              user: {
-                email: session.customer_email || order.user?.email || 'client@example.com',
-                firstName: order.shippingAddress?.firstName,
-                lastName: order.shippingAddress?.lastName
-              },
-              items: order.items.map(item => ({
-                product: {
-                  name: item.product?.name || 'Produit',
-                  price: item.price
-                },
-                quantity: item.quantity,
-                price: item.price,
-                customizations: item.customizations,
-                customMessage: item.customMessage
-              })),
-              subtotal: order.subtotal,
-              tax: order.tax,
-              shipping: order.shipping,
-              total: order.total,
-              shippingAddress: order.shippingAddress,
-              billingAddress: order.billingAddress,
-              createdAt: order.createdAt.toISOString()
-            };
+            // Envoyer facture au client avec PDF
+            const clientResult = await emailService.sendSaleInvoiceWithPDF(order);
             
-            console.log('📧 Email client:', invoiceData.user.email);
-            console.log('📧 Email admin:', process.env.ADMIN_EMAIL || process.env.EMAIL_USER);
-            console.log('📧 Session customer_email:', session.customer_email);
-            console.log('📧 Order user email:', order.user?.email);
-            
-            // Envoyer l'email de confirmation avec facture PDF incluse
-            const confirmationResult = await emailService.sendOrderConfirmationEmail(invoiceData);
-            
-            // Envoyer notification à l'admin
-            const adminResult = await emailService.sendAdminNotificationEmail(invoiceData);
+            // Envoyer notification admin avec facture PDF
+            const adminResult = await emailService.sendAdminInvoiceNotification(order, false);
             
             console.log('📧 Résultats envoi emails:');
-            console.log('  - Confirmation client (avec PDF):', confirmationResult ? '✅' : '❌');
-            console.log('  - Notification admin:', adminResult ? '✅' : '❌');
+            console.log('  - Facture client (avec PDF):', clientResult ? '✅' : '❌');
+            console.log('  - Notification admin (avec PDF):', adminResult ? '✅' : '❌');
             
-            console.log(`✅ Facture envoyée automatiquement pour la commande ${order._id}`);
+            console.log(`✅ Factures PDF envoyées automatiquement pour la commande ${order._id}`);
           } catch (emailError) {
-            console.error('❌ Erreur envoi facture automatique:', emailError);
+            console.error('❌ Erreur envoi factures PDF:', emailError);
           }
         } else if (rental) {
           // Traitement d'une location
@@ -303,44 +272,23 @@ router.post('/webhook', async (req: Request, res: Response) => {
           
           console.log(`Location ${rental._id} confirmée`);
           
-          // Envoyer les emails de location
+          // Envoyer automatiquement la facture de location avec PDF
           try {
-            const rentalData = {
-              orderNumber: rental.orderNumber,
-              user: {
-                email: session.customer_email || session.customer_details?.email || 'client@example.com',
-                firstName: rental.shippingAddress?.firstName || session.customer_details?.name?.split(' ')[0],
-                lastName: rental.shippingAddress?.lastName || session.customer_details?.name?.split(' ').slice(1).join(' ')
-              },
-              items: rental.items.map(item => ({
-                product: {
-                  name: item.product?.name || 'Produit',
-                  price: item.dailyPrice
-                },
-                quantity: item.quantity,
-                rentalDays: item.rentalDays,
-                rentalStartDate: item.rentalStartDate,
-                rentalEndDate: item.rentalEndDate,
-                totalPrice: item.totalPrice
-              })),
-              subtotal: rental.subtotal,
-              tax: rental.tax,
-              deposit: rental.deposit,
-              total: rental.total,
-              shippingAddress: rental.shippingAddress,
-              billingAddress: rental.billingAddress,
-              createdAt: rental.createdAt.toISOString()
-            };
+            console.log('📧 Envoi facture de location avec PDF pour:', rental._id);
             
-            // Envoyer email de confirmation au client
-            await emailService.sendRentalConfirmationEmail(rentalData);
+            // Envoyer facture au client avec PDF
+            const clientResult = await emailService.sendRentalInvoiceWithPDF(rental);
             
-            // Envoyer notification à l'admin
-            await emailService.sendRentalAdminNotificationEmail(rentalData);
+            // Envoyer notification admin avec facture PDF
+            const adminResult = await emailService.sendAdminInvoiceNotification(rental, true);
             
-            console.log(`✅ Emails de location envoyés pour ${rental._id}`);
+            console.log('📧 Résultats envoi emails:');
+            console.log('  - Facture client (avec PDF):', clientResult ? '✅' : '❌');
+            console.log('  - Notification admin (avec PDF):', adminResult ? '✅' : '❌');
+            
+            console.log(`✅ Factures PDF de location envoyées automatiquement pour ${rental._id}`);
           } catch (emailError) {
-            console.error('❌ Erreur envoi emails location:', emailError);
+            console.error('❌ Erreur envoi factures PDF location:', emailError);
           }
         } else {
           console.log(`⚠️ Session ${session.id} non trouvée dans les commandes ni les locations`);

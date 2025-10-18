@@ -156,44 +156,23 @@ router.post('/webhook', async (req: Request, res: Response) => {
           
           console.log(`Location ${rental._id} confirmée`);
           
-          // Envoyer les emails
+          // Envoyer automatiquement la facture de location avec PDF
           try {
-            const rentalData = {
-              orderNumber: rental.orderNumber,
-              user: {
-                email: session.customer_email || session.customer_details?.email || 'client@example.com',
-                firstName: rental.shippingAddress?.firstName || session.customer_details?.name?.split(' ')[0],
-                lastName: rental.shippingAddress?.lastName || session.customer_details?.name?.split(' ').slice(1).join(' ')
-              },
-              items: rental.items.map(item => ({
-                product: {
-                  name: item.product?.name || 'Produit',
-                  price: item.dailyPrice
-                },
-                quantity: item.quantity,
-                rentalDays: item.rentalDays,
-                rentalStartDate: item.rentalStartDate,
-                rentalEndDate: item.rentalEndDate,
-                totalPrice: item.totalPrice
-              })),
-              subtotal: rental.subtotal,
-              tax: rental.tax,
-              deposit: rental.deposit,
-              total: rental.total,
-              shippingAddress: rental.shippingAddress,
-              billingAddress: rental.billingAddress,
-              createdAt: rental.createdAt.toISOString()
-            };
+            console.log('📧 Envoi facture de location avec PDF pour:', rental._id);
             
-            // Envoyer email de confirmation au client
-            await emailService.sendRentalConfirmationEmail(rentalData);
+            // Envoyer facture au client avec PDF
+            const clientResult = await emailService.sendRentalInvoiceWithPDF(rental);
             
-            // Envoyer notification à l'admin
-            await emailService.sendRentalAdminNotificationEmail(rentalData);
+            // Envoyer notification admin avec facture PDF
+            const adminResult = await emailService.sendAdminInvoiceNotification(rental, true);
             
-            console.log(`✅ Emails de location envoyés pour ${rental._id}`);
+            console.log('📧 Résultats envoi emails:');
+            console.log('  - Facture client (avec PDF):', clientResult ? '✅' : '❌');
+            console.log('  - Notification admin (avec PDF):', adminResult ? '✅' : '❌');
+            
+            console.log(`✅ Factures PDF de location envoyées automatiquement pour ${rental._id}`);
           } catch (emailError) {
-            console.error('❌ Erreur envoi emails location:', emailError);
+            console.error('❌ Erreur envoi factures PDF location:', emailError);
           }
         }
         break;

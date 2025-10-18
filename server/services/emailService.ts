@@ -2,6 +2,7 @@ import { createTransport } from 'nodemailer';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import pdfService from './pdfService';
+import { InvoiceService } from './invoiceService';
 
 // Logo SKD GROUP en base64 (SVG)
 const SKD_LOGO_BASE64 = `data:image/svg+xml;base64,${Buffer.from(`<svg width="300" height="200" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
@@ -974,6 +975,250 @@ class EmailService {
       return true;
     } catch (error) {
       console.error('❌ Erreur envoi notification admin devis:', error);
+      return false;
+    }
+  }
+
+  // Envoyer facture de vente avec PDF
+  async sendSaleInvoiceWithPDF(order: any): Promise<boolean> {
+    if (!this.transporter) {
+      console.warn('⚠️  Service email non configuré - facture de vente non envoyée');
+      return false;
+    }
+
+    try {
+      console.log('📧 Génération et envoi facture de vente avec PDF...');
+      
+      // Générer la facture PDF
+      const invoicePDF = await InvoiceService.generateInvoiceForOrder(order);
+      
+      const mailOptions = {
+        from: {
+          name: "SakaDeco Group",
+          address: process.env.EMAIL_USER || ''
+        },
+        to: order.customerEmail,
+        subject: `🧾 Facture de votre commande - ${order._id}`,
+        html: `
+          <!DOCTYPE html>
+          <html lang="fr">
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Facture de commande</title>
+            <style>
+              body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+              .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+              .header { text-align: center; margin-bottom: 30px; }
+              .invoice-icon { color: #10b981; font-size: 24px; margin-bottom: 10px; }
+              .order-details { background-color: #f0fdf4; padding: 20px; border-radius: 8px; margin: 20px 0; }
+              .button { display: inline-block; background-color: #10b981; color: white; padding: 12px 24px; 
+                        text-decoration: none; border-radius: 6px; margin: 20px 0; }
+            </style>
+          </head>
+          <body>
+            <div class="container">
+              <div class="header">
+                <div class="invoice-icon">🧾</div>
+                <h1 style="color: #10b981;">Facture de votre commande</h1>
+              </div>
+              
+              <p>Bonjour,</p>
+              
+              <p>Votre commande a été confirmée ! Vous trouverez votre facture en pièce jointe.</p>
+              
+              <div class="order-details">
+                <h3>Détails de la commande</h3>
+                <p><strong>Numéro de commande:</strong> ${order._id}</p>
+                <p><strong>Date:</strong> ${format(new Date(order.createdAt), 'dd MMMM yyyy à HH:mm', { locale: fr })}</p>
+                <p><strong>Total:</strong> ${order.total.toFixed(2)}€</p>
+                <p><strong>Articles:</strong> ${order.items.length} produit(s)</p>
+              </div>
+              
+              <p>Merci pour votre confiance !</p>
+              
+              <p>L'équipe SakaDeco</p>
+            </div>
+          </body>
+          </html>
+        `,
+        attachments: [
+          {
+            filename: `Facture_${order._id}.pdf`,
+            content: invoicePDF,
+            contentType: 'application/pdf'
+          }
+        ]
+      };
+
+      await this.transporter.sendMail(mailOptions);
+      console.log('✅ Facture de vente envoyée avec PDF');
+      return true;
+    } catch (error) {
+      console.error('❌ Erreur envoi facture de vente:', error);
+      return false;
+    }
+  }
+
+  // Envoyer facture de location avec PDF
+  async sendRentalInvoiceWithPDF(rental: any): Promise<boolean> {
+    if (!this.transporter) {
+      console.warn('⚠️  Service email non configuré - facture de location non envoyée');
+      return false;
+    }
+
+    try {
+      console.log('📧 Génération et envoi facture de location avec PDF...');
+      
+      // Générer la facture PDF
+      const invoicePDF = await InvoiceService.generateInvoiceForRental(rental);
+      
+      const mailOptions = {
+        from: {
+          name: "SakaDeco Group",
+          address: process.env.EMAIL_USER || ''
+        },
+        to: rental.customerEmail,
+        subject: `🏠 Facture de votre location - ${rental._id}`,
+        html: `
+          <!DOCTYPE html>
+          <html lang="fr">
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Facture de location</title>
+            <style>
+              body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+              .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+              .header { text-align: center; margin-bottom: 30px; }
+              .invoice-icon { color: #f59e0b; font-size: 24px; margin-bottom: 10px; }
+              .rental-details { background-color: #fffbeb; padding: 20px; border-radius: 8px; margin: 20px 0; }
+              .button { display: inline-block; background-color: #f59e0b; color: white; padding: 12px 24px; 
+                        text-decoration: none; border-radius: 6px; margin: 20px 0; }
+            </style>
+          </head>
+          <body>
+            <div class="container">
+              <div class="header">
+                <div class="invoice-icon">🏠</div>
+                <h1 style="color: #f59e0b;">Facture de votre location</h1>
+              </div>
+              
+              <p>Bonjour,</p>
+              
+              <p>Votre location a été confirmée ! Vous trouverez votre facture en pièce jointe.</p>
+              
+              <div class="rental-details">
+                <h3>Détails de la location</h3>
+                <p><strong>Numéro de location:</strong> ${rental._id}</p>
+                <p><strong>Date:</strong> ${format(new Date(rental.createdAt), 'dd MMMM yyyy à HH:mm', { locale: fr })}</p>
+                <p><strong>Total:</strong> ${rental.total.toFixed(2)}€</p>
+                <p><strong>Dépôt de garantie:</strong> ${rental.deposit.toFixed(2)}€</p>
+                <p><strong>Articles:</strong> ${rental.items.length} produit(s)</p>
+              </div>
+              
+              <p>Merci pour votre confiance !</p>
+              
+              <p>L'équipe SakaDeco</p>
+            </div>
+          </body>
+          </html>
+        `,
+        attachments: [
+          {
+            filename: `Facture_Location_${rental._id}.pdf`,
+            content: invoicePDF,
+            contentType: 'application/pdf'
+          }
+        ]
+      };
+
+      await this.transporter.sendMail(mailOptions);
+      console.log('✅ Facture de location envoyée avec PDF');
+      return true;
+    } catch (error) {
+      console.error('❌ Erreur envoi facture de location:', error);
+      return false;
+    }
+  }
+
+  // Envoyer notification admin avec facture PDF
+  async sendAdminInvoiceNotification(order: any, isRental: boolean = false): Promise<boolean> {
+    if (!this.transporter) {
+      console.warn('⚠️  Service email non configuré - notification admin facture non envoyée');
+      return false;
+    }
+
+    try {
+      const adminEmail = process.env.ADMIN_EMAIL || process.env.EMAIL_USER;
+      console.log('📧 Envoi notification admin facture à:', adminEmail);
+      
+      // Générer la facture PDF
+      const invoicePDF = isRental 
+        ? await InvoiceService.generateInvoiceForRental(order)
+        : await InvoiceService.generateInvoiceForOrder(order);
+      
+      const mailOptions = {
+        from: {
+          name: "SakaDeco Group",
+          address: process.env.EMAIL_USER || ''
+        },
+        to: adminEmail,
+        subject: `📋 Nouvelle ${isRental ? 'location' : 'commande'} - ${order._id}`,
+        html: `
+          <!DOCTYPE html>
+          <html lang="fr">
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Nouvelle ${isRental ? 'location' : 'commande'}</title>
+            <style>
+              body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+              .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+              .header { text-align: center; margin-bottom: 30px; }
+              .notification { color: #3b82f6; font-size: 24px; margin-bottom: 10px; }
+              .order-details { background-color: #f9fafb; padding: 20px; border-radius: 8px; margin: 20px 0; }
+            </style>
+          </head>
+          <body>
+            <div class="container">
+              <div class="header">
+                <div class="notification">📋</div>
+                <h1 style="color: #3b82f6;">Nouvelle ${isRental ? 'location' : 'commande'} !</h1>
+              </div>
+              
+              <p>Bonjour Admin,</p>
+              
+              <p>Une nouvelle ${isRental ? 'location' : 'commande'} vient d'être confirmée.</p>
+              
+              <div class="order-details">
+                <h3>Détails de la ${isRental ? 'location' : 'commande'}</h3>
+                <p><strong>Numéro:</strong> ${order._id}</p>
+                <p><strong>Client:</strong> ${order.customerEmail}</p>
+                <p><strong>Date:</strong> ${format(new Date(order.createdAt), 'dd MMMM yyyy à HH:mm', { locale: fr })}</p>
+                <p><strong>Total:</strong> ${order.total.toFixed(2)}€</p>
+                <p><strong>Articles:</strong> ${order.items.length} produit(s)</p>
+              </div>
+              
+              <p>La facture est jointe à cet email.</p>
+            </div>
+          </body>
+          </html>
+        `,
+        attachments: [
+          {
+            filename: `Facture_${isRental ? 'Location' : 'Commande'}_${order._id}.pdf`,
+            content: invoicePDF,
+            contentType: 'application/pdf'
+          }
+        ]
+      };
+
+      await this.transporter.sendMail(mailOptions);
+      console.log(`✅ Notification admin ${isRental ? 'location' : 'commande'} envoyée avec PDF`);
+      return true;
+    } catch (error) {
+      console.error(`❌ Erreur envoi notification admin ${isRental ? 'location' : 'commande'}:`, error);
       return false;
     }
   }
