@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { XCircle, ArrowLeft, ShoppingCart } from 'lucide-react';
 
 const PaymentCancel: React.FC = () => {
-  const [setLocation] = useLocation();
+  const [, setLocation] = useLocation();
 
   return (
     <Layout>

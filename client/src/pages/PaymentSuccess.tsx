@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { CheckCircle, Package, ArrowRight } from 'lucide-react';
 
 const PaymentSuccess: React.FC = () => {
-  const [setLocation] = useLocation();
+  const [, setLocation] = useLocation();
   const [orderDetails, setOrderDetails] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 

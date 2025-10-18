@@ -57,7 +57,7 @@ interface Order {
 const Orders: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
-  const [setLocation] = useLocation();
+  const [, setLocation] = useLocation();
 
   useEffect(() => {
     fetchOrders();
