@@ -443,7 +443,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const { Product } = await import('./models/Product');
         
         const query: any = {
-          isActive: true // Seulement les produits actifs côté client
+          // Inclure les produits actifs OU les produits sans le champ isActive (anciens produits)
+          $or: [
+            { isActive: true },
+            { isActive: { $exists: false } }
+          ]
         };
         if (category) {
           query.category = category;
@@ -579,7 +583,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.log('✅ Database connected, fetching real product');
         const { Product } = await import('./models/Product');
         
-        const product = await Product.findOne({ _id: id, isActive: true });
+        const product = await Product.findOne({
+          _id: id,
+          $or: [
+            { isActive: true },
+            { isActive: { $exists: false } }
+          ]
+        });
         if (!product) {
           return res.status(404).json({ message: 'Product not found' });
         }

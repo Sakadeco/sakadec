@@ -11,6 +11,7 @@
     "db:push": "drizzle-kit push",
     "seed": "cross-env NODE_ENV=development tsx server/seedProducts.ts",
     "test-db": "cross-env NODE_ENV=development tsx server/test-db-connection.ts",
+    "migrate:isActive": "cross-env NODE_ENV=development tsx server/migrate-products-isActive.ts",
     "create-admin": "node scripts/createAdmin.js",
     "create-sale-products": "node scripts/create-sale-products.js",
     "create-rental-products": "node scripts/create-rental-products.js",
