@@ -7,7 +7,7 @@ import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { Calendar } from '../components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '../components/ui/popover';
-import { CalendarIcon, Plus, Minus, Calendar as CalendarIcon2 } from 'lucide-react';
+import { CalendarIcon, Plus, Minus, Calendar as CalendarIcon2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import ImageWithFallback from '../components/ImageWithFallback';
@@ -20,6 +20,7 @@ interface Product {
   dailyRentalPrice: number;
   category: string;
   mainImageUrl: string;
+  additionalImages?: string[];
   isForRent: boolean;
   isCustomizable: boolean;
   customizationOptions?: Record<string, string[]>;
@@ -41,6 +42,7 @@ const RentalDetail: React.FC = () => {
   const [customMessage, setCustomMessage] = useState('');
   const [bookedDates, setBookedDates] = useState<RentalDate[]>([]);
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
   // Récupérer l'ID du produit depuis l'URL
   const productId = window.location.pathname.split('/rental/')[1];
@@ -180,27 +182,89 @@ const RentalDetail: React.FC = () => {
     );
   }
 
+  // Combiner l'image principale et les images supplémentaires
+  const allImages = product ? [product.mainImageUrl, ...(product.additionalImages || [])] : [];
+  const currentImage = allImages[selectedImageIndex] || product?.mainImageUrl || '';
+
+  const nextImage = () => {
+    setSelectedImageIndex((prev) => (prev + 1) % allImages.length);
+  };
+
+  const prevImage = () => {
+    setSelectedImageIndex((prev) => (prev - 1 + allImages.length) % allImages.length);
+  };
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Image du produit */}
-        <div>
+        {/* Images du produit avec galerie */}
+        <div className="space-y-4">
+          {/* Image principale */}
           <Card>
             <CardHeader className="p-0">
-              <ImageWithFallback
-                src={product.mainImageUrl}
-                alt={product.name}
-                className="w-full h-96 object-cover rounded-t-lg"
-              />
+              <div className="aspect-square overflow-hidden rounded-lg border-2 border-gray-200 relative">
+                <ImageWithFallback
+                  src={currentImage}
+                  alt={product.name}
+                  className="w-full h-full object-cover"
+                />
+                
+                {/* Navigation arrows */}
+                {allImages.length > 1 && (
+                  <>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={prevImage}
+                      className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white/80 hover:bg-white"
+                    >
+                      <ChevronLeft className="w-4 h-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={nextImage}
+                      className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white/80 hover:bg-white"
+                    >
+                      <ChevronRight className="w-4 h-4" />
+                    </Button>
+                  </>
+                )}
+              </div>
             </CardHeader>
           </Card>
+
+          {/* Galerie de miniatures */}
+          {allImages.length > 1 && (
+            <div className="grid grid-cols-4 gap-2">
+              {allImages.map((image, index) => (
+                <button
+                  key={index}
+                  onClick={() => setSelectedImageIndex(index)}
+                  className={`aspect-square overflow-hidden rounded-lg border-2 transition-colors ${
+                    index === selectedImageIndex 
+                      ? 'border-orange-500' 
+                      : 'border-gray-200 hover:border-gray-300'
+                  }`}
+                >
+                  <ImageWithFallback
+                    src={image}
+                    alt={`${product.name} - Image ${index + 1}`}
+                    className="w-full h-full object-cover"
+                    width={150}
+                    height={150}
+                  />
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Détails et configuration */}
         <div className="space-y-6">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 mb-2">{product.name}</h1>
-            <p className="text-gray-600 mb-4">{product.description}</p>
+            <p className="text-gray-600 mb-4 whitespace-pre-wrap">{product.description}</p>
             <div className="flex items-center gap-2 mb-4">
               <Badge className="bg-orange-500">Location</Badge>
               {product.isCustomizable && (

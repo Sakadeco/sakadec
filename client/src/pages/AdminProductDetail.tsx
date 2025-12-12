@@ -274,7 +274,7 @@ export default function AdminProductDetail() {
                 
                 <div>
                   <h4 className="font-medium text-gray-900 mb-2">Description</h4>
-                  <p className="text-gray-600">{product.description}</p>
+                  <p className="text-gray-600 whitespace-pre-wrap">{product.description}</p>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">

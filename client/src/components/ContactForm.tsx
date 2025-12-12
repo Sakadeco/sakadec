@@ -218,6 +218,9 @@ export default function ContactForm({ serviceType }: ContactFormProps) {
                 ))}
               </SelectContent>
             </Select>
+            <p className="text-xs text-gray-600 italic">
+              (Notre minimum de commande est de 600 € pour la décoration. Nos prestations décoration mariage commencent à partir de 2 500 €.)
+            </p>
           </div>
 
           {/* Description */}

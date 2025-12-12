@@ -86,7 +86,7 @@ const Rent: React.FC = () => {
     <Layout>
       <div className="container mx-auto px-4 py-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">SDK Rend</h1>
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">SDK Rent</h1>
         <p className="text-gray-600">Louez nos produits pour vos événements</p>
       </div>
 
@@ -138,7 +138,7 @@ const Rent: React.FC = () => {
             </CardHeader>
             <CardContent className="p-4">
               <CardTitle className="text-lg mb-2">{product.name}</CardTitle>
-              <p className="text-gray-600 text-sm mb-3 line-clamp-2">
+              <p className="text-gray-600 text-sm mb-3 line-clamp-2 whitespace-pre-line">
                 {product.description}
               </p>
               <div className="flex justify-between items-center mb-3">

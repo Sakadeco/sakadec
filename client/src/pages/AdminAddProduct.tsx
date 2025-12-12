@@ -213,6 +213,11 @@ export default function AdminAddProduct() {
 
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
 
+  // Synchroniser les fichiers avec les images uploadées
+  const handleFilesSelected = (files: File[]) => {
+    setUploadedFiles(files);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -452,7 +457,7 @@ export default function AdminAddProduct() {
             <CardContent>
               <ProductImageUpload
                 onImagesUploaded={handleImagesUploaded}
-                onFilesSelected={setUploadedFiles}
+                onFilesSelected={handleFilesSelected}
                 multiple={true}
                 maxImages={10}
               />

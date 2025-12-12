@@ -22,6 +22,7 @@ export default function ProductImageUpload({
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [uploadedImages, setUploadedImages] = useState<string[]>([]);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const validateFile = (file: File): boolean => {
@@ -86,13 +87,37 @@ export default function ProductImageUpload({
   const handleFilesUpload = async (files: FileList) => {
     const fileArray = Array.from(files);
     
+    // Vérifier la limite de nombre d'images
+    const totalImages = uploadedImages.length + fileArray.length;
+    if (totalImages > maxImages) {
+      setError(`Vous ne pouvez pas ajouter plus de ${maxImages} images. Vous avez déjà ${uploadedImages.length} image(s).`);
+      return;
+    }
+
+    // Valider tous les fichiers avant de continuer
+    const validFiles: File[] = [];
+    for (const file of fileArray) {
+      if (validateFile(file)) {
+        validFiles.push(file);
+      }
+    }
+
+    if (validFiles.length === 0) {
+      return;
+    }
+    
+    // Accumuler les fichiers sélectionnés
+    const newSelectedFiles = [...selectedFiles, ...validFiles];
+    setSelectedFiles(newSelectedFiles);
+    
     if (onFilesSelected) {
-      onFilesSelected(fileArray);
+      // Envoyer tous les fichiers accumulés
+      onFilesSelected(newSelectedFiles);
     }
 
     // Upload des images si onImagesUploaded est fourni
     if (onImagesUploaded) {
-      for (const file of fileArray) {
+      for (const file of validFiles) {
         await handleFileUpload(file);
       }
     }
@@ -139,9 +164,16 @@ export default function ProductImageUpload({
 
   const removeImage = (index: number) => {
     const newImages = uploadedImages.filter((_, i) => i !== index);
+    const newFiles = selectedFiles.filter((_, i) => i !== index);
     setUploadedImages(newImages);
+    setSelectedFiles(newFiles);
+    
     if (onImagesUploaded) {
       onImagesUploaded(newImages);
+    }
+    
+    if (onFilesSelected) {
+      onFilesSelected(newFiles);
     }
   };
 

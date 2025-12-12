@@ -36,12 +36,15 @@ interface Product {
   price: number;
   category: string;
   subcategory: string;
-  imageUrl: string;
+  mainImageUrl: string;
+  additionalImages?: string[];
   isCustomizable: boolean;
-  isRentable: boolean;
+  isForSale?: boolean;
+  isForRent?: boolean;
+  isRentable?: boolean;
   stockQuantity: number;
   dailyRentalPrice?: number;
-  isActive: boolean;
+  isActive?: boolean;
   customizationOptions?: {
     [key: string]: string[];
   };
@@ -64,13 +67,19 @@ export default function AdminEditProduct() {
     price: "",
     category: "",
     subcategory: "",
-    imageUrl: "",
     isCustomizable: false,
-    isRentable: false,
+    isForSale: true,
+    isForRent: false,
     stockQuantity: "",
     dailyRentalPrice: "",
     isActive: true
   });
+
+  // Images state
+  const [existingMainImageUrl, setExistingMainImageUrl] = useState<string>("");
+  const [existingAdditionalImages, setExistingAdditionalImages] = useState<string[]>([]);
+  const [newImageFiles, setNewImageFiles] = useState<File[]>([]);
+  const [newImageUrls, setNewImageUrls] = useState<string[]>([]);
 
   // Customization options
   const [customizationOptions, setCustomizationOptions] = useState<CustomizationOption[]>([]);
@@ -89,6 +98,12 @@ export default function AdminEditProduct() {
   const fetchProduct = async () => {
     try {
       const token = localStorage.getItem("adminToken");
+      if (!token) {
+        setError("Token d'authentification manquant");
+        setIsLoadingProduct(false);
+        return;
+      }
+
       const response = await fetch(`/api/admin/products/${productId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -96,39 +111,62 @@ export default function AdminEditProduct() {
       });
 
       if (!response.ok) {
-        throw new Error("Erreur récupération produit");
+        if (response.status === 404) {
+          setError("Produit non trouvé");
+        } else {
+          setError("Erreur lors de la récupération du produit");
+        }
+        setIsLoadingProduct(false);
+        return;
       }
 
       const data = await response.json();
       const product: Product = data.product;
 
-      // Populate form data
+      if (!product) {
+        setError("Données du produit invalides");
+        setIsLoadingProduct(false);
+        return;
+      }
+
+      // Populate form data with safe defaults
       setFormData({
-        name: product.name,
-        description: product.description,
-        price: product.price.toString(),
-        category: product.category,
-        subcategory: product.subcategory,
-        imageUrl: product.imageUrl,
-        isCustomizable: product.isCustomizable,
-        isRentable: product.isRentable,
-        stockQuantity: product.stockQuantity.toString(),
-        dailyRentalPrice: product.dailyRentalPrice?.toString() || "",
-        isActive: product.isActive
+        name: product.name || "",
+        description: product.description || "",
+        price: product.price ? product.price.toString() : "0",
+        category: product.category || "shop",
+        subcategory: product.subcategory || "",
+        isCustomizable: product.isCustomizable || false,
+        isForSale: product.isForSale !== undefined ? product.isForSale : true,
+        isForRent: product.isForRent !== undefined ? product.isForRent : (product.isRentable || false),
+        stockQuantity: product.stockQuantity ? product.stockQuantity.toString() : "0",
+        dailyRentalPrice: product.dailyRentalPrice ? product.dailyRentalPrice.toString() : "",
+        isActive: product.isActive !== undefined ? product.isActive : true
       });
+
+      // Populate existing images
+      setExistingMainImageUrl(product.mainImageUrl || "");
+      setExistingAdditionalImages(product.additionalImages || []);
 
       // Populate customization options
       if (product.customizationOptions) {
-        const options: CustomizationOption[] = Object.entries(product.customizationOptions).map(([type, values]) => ({
-          type,
-          values
-        }));
-        setCustomizationOptions(options);
+        try {
+          const options: CustomizationOption[] = Object.entries(product.customizationOptions).map(([type, values]) => ({
+            type,
+            values: Array.isArray(values) ? values : []
+          }));
+          setCustomizationOptions(options);
+        } catch (parseError) {
+          console.warn("Erreur parsing customizationOptions:", parseError);
+          setCustomizationOptions([]);
+        }
+      } else {
+        setCustomizationOptions([]);
       }
 
     } catch (error) {
-      setError("Erreur lors du chargement du produit");
       console.error("Erreur récupération produit:", error);
+      setError("Erreur lors du chargement du produit. Veuillez réessayer.");
     } finally {
       setIsLoadingProduct(false);
     }
@@ -159,6 +197,29 @@ export default function AdminEditProduct() {
     setCustomizationOptions(prev => prev.filter((_, i) => i !== index));
   };
 
+  const handleRemoveExistingImage = (index: number) => {
+    if (index === -1) {
+      // Supprimer l'image principale
+      setExistingMainImageUrl("");
+    } else {
+      // Supprimer une image supplémentaire
+      setExistingAdditionalImages(prev => prev.filter((_, i) => i !== index));
+    }
+  };
+
+  const handleRemoveNewImage = (index: number) => {
+    setNewImageFiles(prev => prev.filter((_, i) => i !== index));
+    setNewImageUrls(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const handleNewImagesUploaded = (imageUrls: string[]) => {
+    setNewImageUrls(imageUrls);
+  };
+
+  const handleNewFilesSelected = (files: File[]) => {
+    setNewImageFiles(files);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -178,19 +239,61 @@ export default function AdminEditProduct() {
         customizationOptionsObj[option.type] = option.values;
       });
 
+      // Créer FormData pour envoyer les fichiers
+      const formDataToSend = new FormData();
+      
+      // Ajouter les données du formulaire
+      formDataToSend.append('name', formData.name);
+      formDataToSend.append('description', formData.description);
+      formDataToSend.append('price', formData.price);
+      formDataToSend.append('category', formData.category);
+      formDataToSend.append('subcategory', formData.subcategory);
+      formDataToSend.append('isCustomizable', String(formData.isCustomizable));
+      formDataToSend.append('isForSale', String(formData.isForSale));
+      formDataToSend.append('isForRent', String(formData.isForRent));
+      formDataToSend.append('isActive', String(formData.isActive));
+      formDataToSend.append('stockQuantity', formData.stockQuantity);
+      formDataToSend.append('dailyRentalPrice', formData.dailyRentalPrice);
+      formDataToSend.append('customizationOptions', JSON.stringify(customizationOptionsObj));
+      
+      // Ajouter les images existantes (celles qui n'ont pas été supprimées)
+      formDataToSend.append('existingMainImageUrl', existingMainImageUrl);
+      formDataToSend.append('existingAdditionalImages', JSON.stringify(existingAdditionalImages));
+      
+      // Ajouter les nouveaux fichiers
+      if (newImageFiles.length > 0) {
+        // Si l'image principale existante a été supprimée, la première nouvelle image devient l'image principale
+        if (!existingMainImageUrl && newImageFiles[0]) {
+          formDataToSend.append('image', newImageFiles[0]);
+          // Les autres nouvelles images vont dans additionalImages
+          newImageFiles.slice(1).forEach((file) => {
+            formDataToSend.append('additionalImages', file);
+          });
+        } else {
+          // Si l'image principale existe toujours, toutes les nouvelles images vont dans additionalImages
+          newImageFiles.forEach((file) => {
+            formDataToSend.append('additionalImages', file);
+          });
+        }
+      } else if (newImageUrls.length > 0) {
+        // Si on a uploadé des images via ProductImageUpload (URLs)
+        // Si l'image principale existante a été supprimée, la première nouvelle URL devient l'image principale
+        if (!existingMainImageUrl && newImageUrls[0]) {
+          formDataToSend.append('mainImageUrl', newImageUrls[0]);
+          formDataToSend.append('additionalImages', JSON.stringify(newImageUrls.slice(1)));
+        } else {
+          // Sinon, toutes les nouvelles URLs vont dans additionalImages
+          formDataToSend.append('additionalImages', JSON.stringify(newImageUrls));
+        }
+      }
+
       const response = await fetch(`/api/admin/products/${productId}`, {
         method: "PUT",
         headers: {
-          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
+          // Ne pas définir Content-Type pour FormData
         },
-        body: JSON.stringify({
-          ...formData,
-          price: parseFloat(formData.price),
-          stockQuantity: parseInt(formData.stockQuantity),
-          dailyRentalPrice: formData.dailyRentalPrice ? parseFloat(formData.dailyRentalPrice) : undefined,
-          customizationOptions: customizationOptionsObj
-        }),
+        body: formDataToSend,
       });
 
       const data = await response.json();
@@ -341,10 +444,93 @@ export default function AdminEditProduct() {
               </div>
 
               <div>
-                <Label>Image du produit *</Label>
-                <ProductImageUpload
-                  onImagesUploaded={(imageUrls) => handleInputChange("imageUrl", imageUrls[0])}
-                />
+                <Label>Images du produit</Label>
+                <div className="space-y-4">
+                  {/* Images existantes */}
+                  {(existingMainImageUrl || existingAdditionalImages.length > 0) && (
+                    <div>
+                      <Label className="text-sm text-gray-600 mb-2 block">Images actuelles</Label>
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        {/* Image principale */}
+                        {existingMainImageUrl && (
+                          <div className="relative group">
+                            <img
+                              src={existingMainImageUrl}
+                              alt="Image principale"
+                              className="w-full h-24 object-cover rounded border"
+                            />
+                            <div className="absolute top-1 left-1 bg-blue-500 text-white text-xs px-2 py-1 rounded">
+                              Principale
+                            </div>
+                            <Button
+                              type="button"
+                              variant="destructive"
+                              size="sm"
+                              className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                              onClick={() => handleRemoveExistingImage(-1)}
+                            >
+                              <X className="w-3 h-3" />
+                            </Button>
+                          </div>
+                        )}
+                        {/* Images supplémentaires */}
+                        {existingAdditionalImages.map((imageUrl, index) => (
+                          <div key={index} className="relative group">
+                            <img
+                              src={imageUrl}
+                              alt={`Image ${index + 1}`}
+                              className="w-full h-24 object-cover rounded border"
+                            />
+                            <Button
+                              type="button"
+                              variant="destructive"
+                              size="sm"
+                              className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                              onClick={() => handleRemoveExistingImage(index)}
+                            >
+                              <X className="w-3 h-3" />
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Nouvelles images uploadées */}
+                  {newImageUrls.length > 0 && (
+                    <div>
+                      <Label className="text-sm text-gray-600 mb-2 block">Nouvelles images</Label>
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        {newImageUrls.map((imageUrl, index) => (
+                          <div key={index} className="relative group">
+                            <img
+                              src={imageUrl}
+                              alt={`Nouvelle image ${index + 1}`}
+                              className="w-full h-24 object-cover rounded border"
+                            />
+                            <Button
+                              type="button"
+                              variant="destructive"
+                              size="sm"
+                              className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                              onClick={() => handleRemoveNewImage(index)}
+                            >
+                              <X className="w-3 h-3" />
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Upload de nouvelles images */}
+                  <ProductImageUpload
+                    onImagesUploaded={handleNewImagesUploaded}
+                    onFilesSelected={handleNewFilesSelected}
+                    multiple={true}
+                    maxImages={10}
+                  />
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -378,7 +564,7 @@ export default function AdminEditProduct() {
                     value={formData.dailyRentalPrice}
                     onChange={(e) => handleInputChange("dailyRentalPrice", e.target.value)}
                     placeholder="15.00"
-                    disabled={!formData.isRentable}
+                    disabled={!formData.isForRent}
                   />
                 </div>
               </div>
@@ -386,11 +572,19 @@ export default function AdminEditProduct() {
               <div className="flex items-center space-x-4">
                 <div className="flex items-center space-x-2">
                   <Switch
-                    id="isRentable"
-                    checked={formData.isRentable}
-                    onCheckedChange={(checked) => handleInputChange("isRentable", checked)}
+                    id="isForSale"
+                    checked={formData.isForSale}
+                    onCheckedChange={(checked) => handleInputChange("isForSale", checked)}
                   />
-                  <Label htmlFor="isRentable">Disponible à la location</Label>
+                  <Label htmlFor="isForSale">Disponible à la vente</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    id="isForRent"
+                    checked={formData.isForRent}
+                    onCheckedChange={(checked) => handleInputChange("isForRent", checked)}
+                  />
+                  <Label htmlFor="isForRent">Disponible à la location</Label>
                 </div>
               </div>
             </CardContent>

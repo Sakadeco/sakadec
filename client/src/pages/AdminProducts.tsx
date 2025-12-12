@@ -12,7 +12,9 @@ import {
   Trash2, 
   Eye,
   Filter,
-  ArrowLeft
+  ArrowLeft,
+  EyeOff,
+  Eye as EyeIcon
 } from "lucide-react";
 import {
   Select,
@@ -33,6 +35,7 @@ interface Product {
   additionalImages: string[];
   isCustomizable: boolean;
   isRentable: boolean;
+  isActive?: boolean;
   stockQuantity: number;
   dailyRentalPrice?: number;
   createdAt: string;
@@ -83,6 +86,28 @@ export default function AdminProducts() {
       console.error("Erreur récupération produits:", error);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleToggleActive = async (productId: string, currentStatus: boolean) => {
+    try {
+      const token = localStorage.getItem("adminToken");
+      const response = await fetch(`/api/admin/products/${productId}/toggle-active`, {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Erreur lors du changement de statut");
+      }
+
+      // Refresh products list
+      fetchProducts();
+    } catch (error) {
+      console.error("Erreur changement statut produit:", error);
+      alert("Erreur lors du changement de statut du produit");
     }
   };
 
@@ -238,6 +263,11 @@ export default function AdminProducts() {
                 <div className="flex justify-between items-start">
                   <CardTitle className="text-lg">{product.name}</CardTitle>
                   <div className="flex space-x-1">
+                    {product.isActive === false && (
+                      <Badge variant="destructive" className="text-xs">
+                        Masqué
+                      </Badge>
+                    )}
                     {product.isCustomizable && (
                       <Badge variant="secondary" className="text-xs">
                         Personnalisable
@@ -276,7 +306,7 @@ export default function AdminProducts() {
                     onClick={() => setLocation(`/admin/products/${product._id}`)}
                     className="flex-1"
                   >
-                    <Eye className="h-4 w-4 mr-1" />
+                    <EyeIcon className="h-4 w-4 mr-1" />
                     Voir
                   </Button>
                   <Button
@@ -287,6 +317,15 @@ export default function AdminProducts() {
                   >
                     <Edit className="h-4 w-4 mr-1" />
                     Modifier
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleToggleActive(product._id, product.isActive !== false)}
+                    className={product.isActive !== false ? "text-blue-600 hover:text-blue-700" : "text-gray-600 hover:text-gray-700"}
+                    title={product.isActive !== false ? "Masquer le produit" : "Afficher le produit"}
+                  >
+                    {product.isActive !== false ? <EyeOff className="h-4 w-4" /> : <EyeIcon className="h-4 w-4" />}
                   </Button>
                   <Button
                     variant="outline"

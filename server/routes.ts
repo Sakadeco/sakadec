@@ -442,7 +442,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.log('✅ Database connected, fetching real products');
         const { Product } = await import('./models/Product');
         
-        const query: any = {};
+        const query: any = {
+          isActive: true // Seulement les produits actifs côté client
+        };
         if (category) {
           query.category = category;
         }
@@ -577,13 +579,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.log('✅ Database connected, fetching real product');
         const { Product } = await import('./models/Product');
         
-        const product = await Product.findById(id);
+        const product = await Product.findOne({ _id: id, isActive: true });
         if (!product) {
           return res.status(404).json({ message: 'Product not found' });
         }
         
         console.log('📦 Found product:', product.name);
-        res.json(product);
+        
+        // Convertir les Map en objets pour le frontend
+        const productObj = product.toObject();
+        if (productObj.customizationOptions && productObj.customizationOptions instanceof Map) {
+          productObj.customizationOptions = Object.fromEntries(productObj.customizationOptions);
+        }
+        
+        res.json(productObj);
       } else {
         console.log('⚠️ Database not connected, using mock data');
         // Return mock product for testing

@@ -4,7 +4,9 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Trash2, Plus, Minus, ShoppingCart, ArrowLeft } from 'lucide-react';
+import { Trash2, Plus, Minus, ShoppingCart, ArrowLeft, Check } from 'lucide-react';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Checkbox } from '@/components/ui/checkbox';
 import Layout from '@/components/Layout';
 import { loadStripe } from '@stripe/stripe-js';
 
@@ -41,6 +43,13 @@ const CartPage: React.FC = () => {
     country: 'France',
     phone: ''
   });
+  const [deliveryMethod, setDeliveryMethod] = useState<string>('');
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
+  
+  // Vérifier si le panier contient des produits personnalisés
+  const hasCustomizedProducts = cartItems.some(item => 
+    item.customizations && Object.keys(item.customizations).length > 0
+  );
 
   useEffect(() => {
     loadCart();
@@ -101,7 +110,30 @@ const CartPage: React.FC = () => {
   
   // Calculer la TVA (20% sur le sous-total HT)
   const tax = Math.round(subtotal * 0.20 * 100) / 100; // Arrondir à 2 décimales
-  const shipping = 0; // Frais de livraison gratuits
+  
+  // Calculer les frais de livraison selon le mode choisi
+  const getShippingCost = (): number => {
+    if (!hasCustomizedProducts) return 0; // Pas de frais pour les produits non personnalisés
+    
+    switch (deliveryMethod) {
+      case 'colissimo':
+        return 9.59;
+      case 'point-relais':
+        return 5.69;
+      case 'chronopost':
+        return 10.40;
+      case 'chrono-classic':
+        return 16.90;
+      case 'retrait':
+        return 0;
+      case 'international':
+        return 0; // Sur devis
+      default:
+        return 0;
+    }
+  };
+  
+  const shipping = getShippingCost();
   const total = Math.round((subtotal + tax + shipping) * 100) / 100; // Arrondir le total
   
   // Log pour vérification
@@ -214,6 +246,16 @@ const CartPage: React.FC = () => {
 
     if (!shippingAddress.firstName || !shippingAddress.lastName || !shippingAddress.address || !shippingAddress.city || !shippingAddress.postalCode) {
       alert('Veuillez remplir toutes les informations de livraison');
+      return;
+    }
+    
+    if (hasCustomizedProducts && !deliveryMethod) {
+      alert('Veuillez sélectionner un mode de livraison');
+      return;
+    }
+    
+    if (!acceptedTerms) {
+      alert('Veuillez accepter les Conditions Générales pour valider la commande');
       return;
     }
 
@@ -555,7 +597,13 @@ const CartPage: React.FC = () => {
                    </div>
                    <div className="flex justify-between">
                      <span>Livraison</span>
-                     <span>Gratuit</span>
+                     <span>
+                       {hasCustomizedProducts && deliveryMethod === 'international' 
+                         ? 'Sur devis' 
+                         : shipping > 0 
+                           ? `${shipping.toFixed(2)}€` 
+                           : 'Gratuit'}
+                     </span>
                    </div>
                    <div className="border-t pt-4">
                      <div className="flex justify-between font-bold text-lg">
@@ -654,6 +702,141 @@ const CartPage: React.FC = () => {
                 </CardContent>
               </Card>
 
+              {/* Livraison & Expédition - Seulement pour les produits personnalisés */}
+              {hasCustomizedProducts && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg font-bold text-blue-600">📦 Livraison & Expédition</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <RadioGroup value={deliveryMethod} onValueChange={setDeliveryMethod}>
+                      {/* France métropolitaine */}
+                      <div className="space-y-3">
+                        <Label className="text-sm font-semibold text-gray-700">📍 France métropolitaine</Label>
+                        
+                        <div className="space-y-2 pl-4">
+                          <div className="flex items-start space-x-3 p-3 border rounded-lg hover:bg-gray-50">
+                            <RadioGroupItem value="colissimo" id="colissimo" className="mt-1" />
+                            <div className="flex-1">
+                              <Label htmlFor="colissimo" className="cursor-pointer">
+                                <div className="flex justify-between items-center">
+                                  <div>
+                                    <span className="font-medium">Colissimo sans signature</span>
+                                    <p className="text-xs text-gray-600">Livraison 48-72h - Vers France Métropolitaine, Monaco et Andorre</p>
+                                  </div>
+                                  <span className="font-bold text-green-600">9,59 €</span>
+                                </div>
+                              </Label>
+                            </div>
+                          </div>
+                          
+                          <div className="flex items-start space-x-3 p-3 border rounded-lg hover:bg-gray-50">
+                            <RadioGroupItem value="point-relais" id="point-relais" className="mt-1" />
+                            <div className="flex-1">
+                              <Label htmlFor="point-relais" className="cursor-pointer">
+                                <div className="flex justify-between items-center">
+                                  <div>
+                                    <span className="font-medium">Point Relais</span>
+                                    <p className="text-xs text-gray-600">Livraison 3-5 jours</p>
+                                  </div>
+                                  <span className="font-bold text-green-600">5,69 €</span>
+                                </div>
+                              </Label>
+                            </div>
+                          </div>
+                          
+                          <div className="flex items-start space-x-3 p-3 border rounded-lg hover:bg-gray-50">
+                            <RadioGroupItem value="chronopost" id="chronopost" className="mt-1" />
+                            <div className="flex-1">
+                              <Label htmlFor="chronopost" className="cursor-pointer">
+                                <div className="flex justify-between items-center">
+                                  <div>
+                                    <span className="font-medium">Chronopost</span>
+                                    <p className="text-xs text-gray-600">Livraison le lendemain avant 18h (France métropolitaine)</p>
+                                  </div>
+                                  <span className="font-bold text-green-600">10,40 €</span>
+                                </div>
+                              </Label>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Europe */}
+                      <div className="space-y-3 mt-4">
+                        <Label className="text-sm font-semibold text-gray-700">🌍 Europe (hors DOM-TOM)</Label>
+                        
+                        <div className="flex items-start space-x-3 p-3 border rounded-lg hover:bg-gray-50 pl-4">
+                          <RadioGroupItem value="chrono-classic" id="chrono-classic" className="mt-1" />
+                          <div className="flex-1">
+                            <Label htmlFor="chrono-classic" className="cursor-pointer">
+                              <div className="flex justify-between items-center">
+                                <div>
+                                  <span className="font-medium">Chrono Classic</span>
+                                  <p className="text-xs text-gray-600">Livraison dans 38 pays européens - Délais : 2 à 3 jours dans les principaux centres économiques de l'UE</p>
+                                </div>
+                                <span className="font-bold text-green-600">16,90 €</span>
+                              </div>
+                            </Label>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* International + Outre-Mer */}
+                      <div className="space-y-3 mt-4">
+                        <Label className="text-sm font-semibold text-gray-700">✈️ International + Outre-Mer</Label>
+                        
+                        <div className="flex items-start space-x-3 p-3 border rounded-lg hover:bg-gray-50 pl-4">
+                          <RadioGroupItem value="international" id="international" className="mt-1" />
+                          <div className="flex-1">
+                            <Label htmlFor="international" className="cursor-pointer">
+                              <div>
+                                <span className="font-medium">Tarif sur devis</span>
+                                <p className="text-xs text-orange-600 font-medium mt-1">Merci de me contacter avant toute commande.</p>
+                              </div>
+                            </Label>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Retrait gratuit */}
+                      <div className="space-y-3 mt-4">
+                        <Label className="text-sm font-semibold text-gray-700">🤝 Retrait gratuit</Label>
+                        
+                        <div className="flex items-start space-x-3 p-3 border rounded-lg hover:bg-gray-50 pl-4">
+                          <RadioGroupItem value="retrait" id="retrait" className="mt-1" />
+                          <div className="flex-1">
+                            <Label htmlFor="retrait" className="cursor-pointer">
+                              <div>
+                                <span className="font-medium">Remise en main propre gratuite</span>
+                                <p className="text-xs text-gray-600">Bordeaux Caudéran</p>
+                              </div>
+                            </Label>
+                          </div>
+                        </div>
+                      </div>
+                    </RadioGroup>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Clause d'acceptation des CGV */}
+              <Card>
+                <CardContent className="pt-6">
+                  <div className="flex items-start space-x-3">
+                    <Checkbox
+                      id="terms"
+                      checked={acceptedTerms}
+                      onCheckedChange={(checked) => setAcceptedTerms(checked === true)}
+                      className="mt-1"
+                    />
+                    <Label htmlFor="terms" className="text-sm cursor-pointer">
+                      J'accepte les <a href="/cgv" target="_blank" className="text-blue-600 hover:underline font-semibold">Conditions Générales</a> pour valider la commande. *
+                    </Label>
+                  </div>
+                </CardContent>
+              </Card>
+
               {/* Checkout Button */}
               <div className="space-y-4">
                 <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
@@ -665,8 +848,8 @@ const CartPage: React.FC = () => {
                 
                 <Button
                   onClick={handleCheckout}
-                  disabled={isLoading || cartItems.length === 0}
-                  className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-4 text-xl shadow-lg"
+                  disabled={isLoading || cartItems.length === 0 || !acceptedTerms}
+                  className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-4 text-xl shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
                   size="lg"
                 >
                   {isLoading ? (

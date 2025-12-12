@@ -164,7 +164,7 @@ export default function ProductWithCustomization({ product }: ProductWithCustomi
             <div className="space-y-4">
               <div>
                 <h3 className="text-lg font-semibold text-gray-900">{product.name}</h3>
-                <p className="text-gray-600 mt-2">{product.description}</p>
+                <p className="text-gray-600 mt-2 whitespace-pre-wrap">{product.description}</p>
                 <div className="mt-4">
                   <span className="text-2xl font-bold text-green-600">
                     {product.price.toFixed(2)}€

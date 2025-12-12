@@ -277,7 +277,7 @@ export default function ProductDetail() {
                 <h1 className="text-3xl font-playfair font-bold text-gray-800 mb-2">
                   {product.name}
                 </h1>
-                <p className="text-gray-600 mb-4">
+                <p className="text-gray-600 mb-4 whitespace-pre-wrap">
                   {product.description}
                 </p>
                 <div className="flex items-center space-x-4">

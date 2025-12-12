@@ -11,6 +11,7 @@ export interface IProduct extends Document {
   isCustomizable: boolean;
   isForSale: boolean; // Disponible à la vente
   isForRent: boolean; // Disponible à la location
+  isActive: boolean; // Produit actif (visible côté client)
   stockQuantity: number;
   dailyRentalPrice?: number;
   customizationOptions: {
@@ -73,6 +74,10 @@ const ProductSchema = new Schema<IProduct>({
   isForRent: {
     type: Boolean,
     default: false
+  },
+  isActive: {
+    type: Boolean,
+    default: true
   },
   stockQuantity: {
     type: Number,

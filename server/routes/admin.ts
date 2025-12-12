@@ -234,6 +234,7 @@ router.post('/products', adminAuth, upload.fields([
       isCustomizable: isCustomizable === 'true' || isCustomizable === true,
       isForSale: isForSaleBool,
       isForRent: isForRentBool,
+      isActive: req.body.isActive !== undefined ? (req.body.isActive === 'true' || req.body.isActive === true) : true,
       stockQuantity: parseInt(stockQuantity) || 0,
       dailyRentalPrice: isForRentBool ? parseFloat(dailyRentalPrice) : undefined,
       customizationOptions: new Map(Object.entries(parsedCustomizationOptions))
@@ -331,7 +332,10 @@ router.get('/products/:id', adminAuth, async (req: AdminRequest, res: Response) 
 });
 
 // Update product
-router.put('/products/:id', adminAuth, async (req: AdminRequest, res: Response) => {
+router.put('/products/:id', adminAuth, upload.fields([
+  { name: 'image', maxCount: 1 },
+  { name: 'additionalImages', maxCount: 10 }
+]), async (req: AdminRequest, res: Response) => {
   try {
     const { id } = req.params;
     const {
@@ -342,12 +346,96 @@ router.put('/products/:id', adminAuth, async (req: AdminRequest, res: Response) 
       subcategory,
       mainImageUrl,
       additionalImages,
+      existingMainImageUrl,
+      existingAdditionalImages,
       isCustomizable,
-      isRentable,
+      isForSale,
+      isForRent,
       stockQuantity,
       dailyRentalPrice,
       customizationOptions
     } = req.body;
+
+    // Récupérer le produit existant pour préserver les images si aucune nouvelle n'est fournie
+    const existingProduct = await Product.findById(id);
+    if (!existingProduct) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+
+    let finalMainImageUrl = existingMainImageUrl || existingProduct.mainImageUrl;
+    let additionalImageUrls = existingAdditionalImages 
+      ? (typeof existingAdditionalImages === 'string' ? JSON.parse(existingAdditionalImages) : existingAdditionalImages)
+      : (existingProduct.additionalImages || []);
+
+    // Traiter les fichiers uploadés
+    if (req.files) {
+      console.log('📸 Fichiers uploadés détectés:', Object.keys(req.files));
+      
+      // Traiter l'image principale
+      if (req.files.image && req.files.image[0]) {
+        const mainFile = req.files.image[0];
+        console.log('📸 Image principale:', mainFile.originalname);
+        
+        if (isCloudinaryConfigured) {
+          try {
+            console.log('☁️  Upload image principale vers Cloudinary...');
+            const result = await cloudinary.uploader.upload(mainFile.path, {
+              folder: 'sakadeco/products',
+              public_id: `product-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+            });
+            
+            finalMainImageUrl = result.secure_url;
+            console.log('✅ Image principale uploadée vers Cloudinary:', result.secure_url);
+          } catch (cloudinaryError) {
+            console.error('❌ Erreur upload Cloudinary image principale:', cloudinaryError);
+            finalMainImageUrl = mainImageUrl || existingProduct.mainImageUrl;
+          }
+        } else {
+          console.log('⚠️  Cloudinary non configuré, utilisation de l\'image locale');
+          finalMainImageUrl = `/uploads/products/${mainFile.filename}`;
+        }
+      }
+      
+      // Traiter les images supplémentaires
+      if (req.files.additionalImages) {
+        console.log('📸 Images supplémentaires:', req.files.additionalImages.length);
+        
+        for (const file of req.files.additionalImages) {
+          if (isCloudinaryConfigured) {
+            try {
+              console.log('☁️  Upload image supplémentaire vers Cloudinary...');
+              const result = await cloudinary.uploader.upload(file.path, {
+                folder: 'sakadeco/products',
+                public_id: `product-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+              });
+              
+              additionalImageUrls.push(result.secure_url);
+              console.log('✅ Image supplémentaire uploadée vers Cloudinary:', result.secure_url);
+            } catch (cloudinaryError) {
+              console.error('❌ Erreur upload Cloudinary image supplémentaire:', cloudinaryError);
+              additionalImageUrls.push(`/uploads/products/${file.filename}`);
+            }
+          } else {
+            console.log('⚠️  Cloudinary non configuré, utilisation de l\'image locale');
+            additionalImageUrls.push(`/uploads/products/${file.filename}`);
+          }
+        }
+      }
+    } else if (mainImageUrl) {
+      // Si aucune image n'est uploadée mais qu'une URL est fournie (upload via ProductImageUpload)
+      console.log('📸 Utilisation de l\'URL d\'image principale fournie:', mainImageUrl);
+      finalMainImageUrl = mainImageUrl;
+      
+      // Traiter les images supplémentaires depuis le body
+      if (additionalImages) {
+        const parsedAdditional = typeof additionalImages === 'string' 
+          ? JSON.parse(additionalImages) 
+          : additionalImages;
+        if (Array.isArray(parsedAdditional)) {
+          additionalImageUrls = [...additionalImageUrls, ...parsedAdditional];
+        }
+      }
+    }
 
     // Parser customizationOptions si c'est une chaîne JSON
     let parsedCustomizationOptions = {};
@@ -362,18 +450,24 @@ router.put('/products/:id', adminAuth, async (req: AdminRequest, res: Response) 
       }
     }
 
+    // Validation conditionnelle selon la destination
+    const isForSaleBool = isForSale === 'true' || isForSale === true;
+    const isForRentBool = isForRent === 'true' || isForRent === true;
+
     const product = await Product.findByIdAndUpdate(id, {
       name,
       description,
-      price: parseFloat(price),
+      price: isForSaleBool ? parseFloat(price) : existingProduct.price,
       category,
       subcategory,
-      mainImageUrl,
-      additionalImages: additionalImages || [],
-      isCustomizable: isCustomizable === 'true',
-      isRentable: isRentable === 'true',
+      mainImageUrl: finalMainImageUrl,
+      additionalImages: additionalImageUrls,
+      isCustomizable: isCustomizable === 'true' || isCustomizable === true,
+      isForSale: isForSaleBool,
+      isForRent: isForRentBool,
+      isActive: req.body.isActive !== undefined ? (req.body.isActive === 'true' || req.body.isActive === true) : existingProduct.isActive,
       stockQuantity: parseInt(stockQuantity) || 0,
-      dailyRentalPrice: dailyRentalPrice ? parseFloat(dailyRentalPrice) : undefined,
+      dailyRentalPrice: isForRentBool ? (dailyRentalPrice ? parseFloat(dailyRentalPrice) : undefined) : undefined,
       customizationOptions: new Map(Object.entries(parsedCustomizationOptions))
     }, { new: true });
 
@@ -387,10 +481,41 @@ router.put('/products/:id', adminAuth, async (req: AdminRequest, res: Response) 
       productObj.customizationOptions = Object.fromEntries(productObj.customizationOptions);
     }
 
+    console.log('✅ Produit modifié avec succès, image principale:', finalMainImageUrl);
+    console.log('✅ Images supplémentaires:', additionalImageUrls.length);
     res.json(productObj);
   } catch (error) {
     console.error('Error updating product:', error);
     res.status(500).json({ message: 'Error updating product', error: error.message });
+  }
+});
+
+// Toggle product active status
+router.patch('/products/:id/toggle-active', adminAuth, async (req: AdminRequest, res: Response) => {
+  try {
+    const { id } = req.params;
+    const product = await Product.findById(id);
+    
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+    
+    product.isActive = !product.isActive;
+    await product.save();
+    
+    // Convertir les Map en objets pour le frontend
+    const productObj = product.toObject();
+    if (productObj.customizationOptions && productObj.customizationOptions instanceof Map) {
+      productObj.customizationOptions = Object.fromEntries(productObj.customizationOptions);
+    }
+    
+    res.json({
+      message: product.isActive ? 'Produit activé' : 'Produit masqué',
+      product: productObj
+    });
+  } catch (error) {
+    console.error('Error toggling product active status:', error);
+    res.status(500).json({ message: 'Error toggling product active status', error: error.message });
   }
 });
 

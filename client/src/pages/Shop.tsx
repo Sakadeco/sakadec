@@ -135,7 +135,7 @@ const Shop: React.FC = () => {
             </CardHeader>
             <CardContent className="p-4">
               <CardTitle className="text-lg mb-2">{product.name}</CardTitle>
-              <p className="text-gray-600 text-sm mb-3 line-clamp-2">
+              <p className="text-gray-600 text-sm mb-3 line-clamp-2 whitespace-pre-line">
                 {product.description}
               </p>
               <div className="flex justify-between items-center mb-3">
