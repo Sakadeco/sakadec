@@ -9,6 +9,7 @@ import { PromoCode } from '../models/PromoCode';
 import { Theme } from '../models/Theme';
 import { adminAuth, AdminRequest, requireSuperAdmin } from '../middleware/adminAuth';
 import upload from '../middleware/upload';
+import uploadThemes from '../middleware/uploadThemes';
 import { v2 as cloudinary } from 'cloudinary';
 
 // Configuration Cloudinary
@@ -1334,7 +1335,7 @@ router.get('/themes/:id', adminAuth, async (req: AdminRequest, res: Response) =>
 });
 
 // POST create theme
-router.post('/themes', adminAuth, upload.single('image'), async (req: AdminRequest, res: Response) => {
+router.post('/themes', adminAuth, uploadThemes.single('image'), async (req: AdminRequest, res: Response) => {
   try {
     const { title, isActive } = req.body;
 
@@ -1344,16 +1345,20 @@ router.post('/themes', adminAuth, upload.single('image'), async (req: AdminReque
     if (req.file) {
       if (isCloudinaryConfigured) {
         try {
+          console.log('☁️  Upload image thème vers Cloudinary...');
           const result = await cloudinary.uploader.upload(req.file.path, {
             folder: 'sakadeco/themes',
             public_id: `theme-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
           });
           imageUrl = result.secure_url;
+          console.log('✅ Image thème uploadée vers Cloudinary:', result.secure_url);
         } catch (cloudinaryError) {
-          console.error('Erreur upload Cloudinary:', cloudinaryError);
+          console.error('❌ Erreur upload Cloudinary pour thème:', cloudinaryError);
           imageUrl = `/uploads/themes/${req.file.filename}`;
+          console.warn('⚠️  Utilisation de l\'image locale (sera perdue après redéploiement)');
         }
       } else {
+        console.warn('⚠️  Cloudinary non configuré - image stockée localement (sera perdue après redéploiement)');
         imageUrl = `/uploads/themes/${req.file.filename}`;
       }
     }
@@ -1382,7 +1387,7 @@ router.post('/themes', adminAuth, upload.single('image'), async (req: AdminReque
 });
 
 // PUT update theme
-router.put('/themes/:id', adminAuth, upload.single('image'), async (req: AdminRequest, res: Response) => {
+router.put('/themes/:id', adminAuth, uploadThemes.single('image'), async (req: AdminRequest, res: Response) => {
   try {
     const { title, isActive, existingImageUrl } = req.body;
 
@@ -1392,16 +1397,20 @@ router.put('/themes/:id', adminAuth, upload.single('image'), async (req: AdminRe
     if (req.file) {
       if (isCloudinaryConfigured) {
         try {
+          console.log('☁️  Upload image thème vers Cloudinary...');
           const result = await cloudinary.uploader.upload(req.file.path, {
             folder: 'sakadeco/themes',
             public_id: `theme-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
           });
           imageUrl = result.secure_url;
+          console.log('✅ Image thème uploadée vers Cloudinary:', result.secure_url);
         } catch (cloudinaryError) {
-          console.error('Erreur upload Cloudinary:', cloudinaryError);
+          console.error('❌ Erreur upload Cloudinary pour thème:', cloudinaryError);
           imageUrl = `/uploads/themes/${req.file.filename}`;
+          console.warn('⚠️  Utilisation de l\'image locale (sera perdue après redéploiement)');
         }
       } else {
+        console.warn('⚠️  Cloudinary non configuré - image stockée localement (sera perdue après redéploiement)');
         imageUrl = `/uploads/themes/${req.file.filename}`;
       }
     }
