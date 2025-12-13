@@ -57,21 +57,6 @@ export default function Layout({ children }: LayoutProps) {
                 <li><a href="/orders" className="hover:text-gold transition-colors">Mes commandes</a></li>
               </ul>
             </div>
-            
-            <div>
-              <h4 className="font-semibold mb-4">Newsletter</h4>
-              <p className="text-gray-300 mb-4">Restez informés de nos dernières créations</p>
-              <div className="flex">
-                <input 
-                  type="email" 
-                  placeholder="Votre email" 
-                  className="flex-1 p-2 rounded-l-lg text-gray-800"
-                />
-                <button className="bg-gold px-4 py-2 rounded-r-lg hover:bg-gold/90 transition-colors">
-                  Envoyer
-                </button>
-              </div>
-            </div>
           </div>
           
           <div className="border-t border-gray-700 mt-8 pt-8 text-center">

@@ -86,8 +86,15 @@ const Rent: React.FC = () => {
     <Layout>
       <div className="container mx-auto px-4 py-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">SDK Rent</h1>
-        <p className="text-gray-600">Louez nos produits pour vos événements</p>
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">SKD Rent</h1>
+        <div className="text-gray-600 space-y-4">
+          <p className="text-lg font-semibold">SKD Rent, c'est la solution simple pour un évènement chic, bien pensé et maîtrisé en budget.</p>
+          <p>Vous choisissez, vous louez, vous créez l'ambiance.</p>
+          <p>Mariage, anniversaire, baptême, baby shower, EVJF, EVG, réception privée ou évènement professionnel…</p>
+          <p>Tout est réuni au même endroit, il ne vous reste plus qu'à profiter.</p>
+          <p className="font-semibold">Alors, pourquoi acheter quand vous pouvez louer avec style ?</p>
+          <p className="text-xl font-bold text-gold">Louez. Installez. Profitez.</p>
+        </div>
       </div>
 
       {/* Filtres */}

@@ -15,6 +15,8 @@ export interface IProduct extends Document {
   isActive: boolean; // Produit actif (visible côté client)
   stockQuantity: number;
   dailyRentalPrice?: number;
+  viewCount: number; // Nombre de vues du produit
+  salesCount: number; // Nombre de ventes du produit
   customizationOptions: {
     [key: string]: {
       type: 'dropdown' | 'checkbox' | 'text' | 'textarea' | 'text_image_upload';
@@ -92,6 +94,16 @@ const ProductSchema = new Schema<IProduct>({
   },
   dailyRentalPrice: {
     type: Number,
+    min: 0
+  },
+  viewCount: {
+    type: Number,
+    default: 0,
+    min: 0
+  },
+  salesCount: {
+    type: Number,
+    default: 0,
     min: 0
   },
   customizationOptions: {

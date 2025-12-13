@@ -5,16 +5,20 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ShoppingBag, Palette, Handshake, Star, Home, Users, Phone, MapPin, ArrowRight } from "lucide-react";
-import { Newsletter } from "@/components/Newsletter";
 import { ReviewsSection } from "@/components/ReviewsSection";
 import { GalleryShowcase } from "@/components/GalleryShowcase";
 import { Features } from "@/components/Features";
 import Logo from "@/components/Logo";
+import DSC6216 from "@/assets/images/DSC_6216.JPG";
 import type { Product } from "@shared/schema";
 
 export default function HomePage() {
   const { data: products, isLoading } = useQuery<Product[]>({
     queryKey: ["/api/products"],
+  });
+  
+  const { data: featuredProducts, isLoading: isLoadingFeatured } = useQuery<Product[]>({
+    queryKey: ["/api/products/featured"],
   });
 
   const services = [
@@ -170,7 +174,7 @@ export default function HomePage() {
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
               <img 
-                src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
+                src={DSC6216} 
                 alt="Portrait professionnel de Pajusly, fondatrice" 
                 className="rounded-2xl shadow-2xl w-full"
               />
@@ -241,7 +245,7 @@ export default function HomePage() {
       <ReviewsSection />
 
       {/* Featured Products */}
-      {!isLoading && products && products.length > 0 && (
+      {!isLoadingFeatured && featuredProducts && featuredProducts.length > 0 && (
         <section className="py-20">
           <div className="max-w-7xl mx-auto px-4">
             <div className="text-center mb-16">
@@ -250,11 +254,11 @@ export default function HomePage() {
             </div>
             
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {products.slice(0, 4).map((product: Product) => (
-                <Card key={product.id} className="group hover:shadow-lg transition-all duration-300 border-0 shadow-md hover:shadow-xl">
+              {featuredProducts.map((product: any) => (
+                <Card key={product._id || product.id} className="group hover:shadow-lg transition-all duration-300 border-0 shadow-md hover:shadow-xl">
                   <div className="aspect-square overflow-hidden rounded-t-lg relative">
                     <img 
-                      src={product.imageUrl || "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"}
+                      src={product.mainImageUrl || product.imageUrl || "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"}
                       alt={product.name}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />
@@ -268,11 +272,19 @@ export default function HomePage() {
                     <h3 className="font-semibold text-gray-800 dark:text-gray-100 mb-2 group-hover:text-gold transition-colors">{product.name}</h3>
                     <p className="text-sm text-gray-600 dark:text-gray-400 mb-3 line-clamp-2">{product.description}</p>
                     <div className="flex justify-between items-center">
-                      <span className="text-lg font-bold text-gold">{product.price}€</span>
-                      <Button size="sm" variant="outline" className="border-gold text-gold hover:bg-gold hover:text-white">
-                        Voir détails
+                      <span className="text-lg font-bold text-gold">{product.price?.toFixed(2) || '0.00'}€ HT</span>
+                      <Button 
+                        size="sm" 
+                        variant="outline" 
+                        className="border-gold text-gold hover:bg-gold hover:text-white"
+                        asChild
+                      >
+                        <Link to={`/product/${product._id || product.id}`}>
+                          Voir détails
+                        </Link>
                       </Button>
                     </div>
+                    <p className="text-xs text-gray-500 mt-1">TVA non incluse</p>
                   </CardContent>
                 </Card>
               ))}
@@ -288,9 +300,6 @@ export default function HomePage() {
           </div>
         </section>
       )}
-
-      {/* Newsletter Section */}
-      <Newsletter />
 
       {/* Contact Section */}
       <section className="py-20 bg-gradient-to-br from-gold/10 via-pink-50/50 to-gray-50 dark:from-gray-900 dark:to-gray-800">

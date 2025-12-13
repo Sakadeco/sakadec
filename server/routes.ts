@@ -432,6 +432,54 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
 
   // Product routes
+  // Route pour les produits vedettes (les plus consultés ou achetés)
+  app.get('/api/products/featured', async (req, res) => {
+    try {
+      if (db.connection.readyState === 1) {
+        const { Product } = await import('./models/Product');
+        
+        // Récupérer les produits actifs, triés par popularité (vues + ventes)
+        const products = await Product.find({
+          $or: [{ isActive: true }, { isActive: { $exists: false } }]
+        })
+        .sort({ 
+          // Trier par la somme de viewCount et salesCount (popularité totale)
+          // Utiliser une agrégation pour calculer la popularité
+        })
+        .limit(4)
+        .lean();
+
+        // Calculer la popularité pour chaque produit et trier
+        const productsWithPopularity = products.map(product => ({
+          ...product,
+          popularity: (product.viewCount || 0) + (product.salesCount || 0) * 2 // Les ventes comptent double
+        }));
+
+        // Trier par popularité décroissante
+        productsWithPopularity.sort((a, b) => b.popularity - a.popularity);
+
+        // Si aucun produit n'a de vues/ventes, prendre les 4 premiers produits actifs
+        if (productsWithPopularity.length === 0 || productsWithPopularity.every(p => p.popularity === 0)) {
+          const fallbackProducts = await Product.find({
+            $or: [{ isActive: true }, { isActive: { $exists: false } }]
+          })
+          .sort({ createdAt: -1 })
+          .limit(4)
+          .lean();
+          
+          return res.json(fallbackProducts);
+        }
+
+        res.json(productsWithPopularity.slice(0, 4));
+      } else {
+        res.json([]);
+      }
+    } catch (error) {
+      console.error('Erreur récupération produits vedettes:', error);
+      res.status(500).json({ message: 'Erreur serveur' });
+    }
+  });
+
   app.get('/api/products', async (req, res) => {
     try {
       const { category } = req.query;
@@ -582,6 +630,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (db.connection.readyState === 1) {
         console.log('✅ Database connected, fetching real product');
         const { Product } = await import('./models/Product');
+        
+        // Incrémenter le compteur de vues
+        await Product.findByIdAndUpdate(id, { $inc: { viewCount: 1 } });
         
         const product = await Product.findOne({
           _id: id,

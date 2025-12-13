@@ -275,6 +275,12 @@ router.post('/webhook', async (req: Request, res: Response) => {
           order.stripePaymentIntentId = session.payment_intent as string;
           await order.save();
           
+          // Incrémenter le compteur de ventes pour chaque produit
+          const { Product } = await import('../models/Product');
+          for (const item of order.items) {
+            await Product.findByIdAndUpdate(item.product, { $inc: { salesCount: item.quantity } });
+          }
+          
           console.log(`Commande ${order._id} marquée comme payée`);
           
           // Envoyer automatiquement la facture par email avec PDF
