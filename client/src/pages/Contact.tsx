@@ -180,14 +180,14 @@ export default function Contact() {
                       className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gold focus:border-transparent"
                     >
                       <option value="">Sélectionnez votre budget</option>
-                      <option value="moins-500">Moins de 500€ (hors décoration salle de réception)</option>
-                      <option value="500-1500">500€ et 1500€ (hors décoration salle de réception)</option>
-                      <option value="1500-3000">1500€ et 3000€ (hors mariage)</option>
+                      <option value="moins-500">Moins de 500€</option>
+                      <option value="500-1500">500€ et 1500€</option>
+                      <option value="1500-3000">1500€ et 3000€</option>
                       <option value="3000-5000">3000€ et 5000€</option>
                       <option value="plus-5000">Plus de 5000€</option>
                     </select>
                     <p className="text-xs text-gray-600 italic">
-                      (Budget Minimum 1500€ pour décor salle de réception, 3000€ décor mariage)
+                      (Notre minimum de commande est de 600 € pour la décoration. Nos prestations décoration mariage commencent à partir de 2 500 €.)
                     </p>
                   </div>
 
@@ -201,7 +201,7 @@ export default function Contact() {
                     />
                   </div>
 
-                  <Button type="submit" className="w-full bg-gold hover:bg-gold/90 text-white py-3 text-lg">
+                  <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 text-lg">
                     Envoyer ma demande
                   </Button>
                 </form>

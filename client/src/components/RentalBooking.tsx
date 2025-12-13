@@ -132,9 +132,8 @@ export default function RentalBooking({ product, onClose }: RentalBookingProps) 
   };
 
   const calculateTotal = () => {
-    if (!booking.startDate || !booking.endDate) return 0;
-    const days = Math.ceil((booking.endDate.getTime() - booking.startDate.getTime()) / (1000 * 60 * 60 * 24));
-    return days * parseFloat(product.price) * booking.quantity;
+    // Le prix ne dépend pas du nombre de jours, seulement de la quantité
+    return parseFloat(product.price) * booking.quantity;
   };
 
   const isFormValid = () => {

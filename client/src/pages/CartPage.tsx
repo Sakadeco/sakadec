@@ -503,8 +503,9 @@ const CartPage: React.FC = () => {
                         </div>
                         <p className="text-gray-600">
                           {(() => {
-                            if (item.isRental && item.dailyPrice && item.rentalDays) {
-                              return `${item.dailyPrice.toFixed(2)}€ HT/jour × ${item.rentalDays} jours = ${item.totalPrice?.toFixed(2)}€ HT`;
+                            if (item.isRental && item.dailyPrice) {
+                              // Le prix ne dépend pas du nombre de jours, seulement de la quantité
+                              return `${item.dailyPrice.toFixed(2)}€ HT × ${item.quantity} = ${item.totalPrice?.toFixed(2)}€ HT`;
                             } else {
                               // Les personnalisations sont gratuites, pas de prix supplémentaire
                               return `${item.price.toFixed(2)}€ HT`;

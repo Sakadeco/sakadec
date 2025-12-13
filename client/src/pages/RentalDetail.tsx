@@ -99,9 +99,9 @@ const RentalDetail: React.FC = () => {
   };
 
   const calculateTotalPrice = () => {
-    if (!product || !rentalStartDate || !rentalEndDate) return 0;
-    const days = calculateRentalDays();
-    return product.dailyRentalPrice * days * quantity;
+    if (!product) return 0;
+    // Le prix ne dépend pas du nombre de jours, seulement de la quantité
+    return product.dailyRentalPrice * quantity;
   };
 
   const handleAddToCart = () => {

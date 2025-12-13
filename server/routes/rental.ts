@@ -54,7 +54,8 @@ router.post('/create-checkout-session', async (req: Request, res: Response) => {
 
       const timeDiff = endDate.getTime() - startDate.getTime();
       const rentalDays = Math.max(1, Math.ceil(timeDiff / (1000 * 60 * 60 * 24)));
-      const itemTotal = (product.dailyRentalPrice || 0) * rentalDays * item.quantity;
+      // Le prix ne dépend pas du nombre de jours, seulement de la quantité
+      const itemTotal = (product.dailyRentalPrice || 0) * item.quantity;
       subtotal += itemTotal;
 
       lineItems.push({

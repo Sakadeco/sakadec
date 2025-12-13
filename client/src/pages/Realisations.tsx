@@ -223,8 +223,8 @@ export default function Realisations() {
                 Demander un devis
               </Link>
             </Button>
-            <Button asChild size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-gold">
-              <Link to="/home">
+            <Button asChild size="lg" variant="outline" className="border-white text-gray-800 hover:bg-white hover:text-gold bg-white/10">
+              <Link to="/">
                 Découvrir nos services
               </Link>
             </Button>

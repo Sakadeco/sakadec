@@ -62,7 +62,8 @@ router.post('/create-checkout-session', async (req: Request, res: Response) => {
       let price = product.price;
 
       if (isRental && product.isRentable && product.dailyRentalPrice) {
-        price = product.dailyRentalPrice * item.rentalDays;
+        // Le prix ne dépend pas du nombre de jours, seulement de la quantité
+        price = product.dailyRentalPrice;
       }
 
       // Calculer le prix de base du produit (personnalisations gratuites)

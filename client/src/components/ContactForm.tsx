@@ -29,9 +29,9 @@ interface QuoteData {
 }
 
 const budgetOptions = [
-  { value: "moins-500", label: "Moins de 500€ (hors décoration salle de réception)" },
-  { value: "500-1500", label: "500€ et 1500€ (hors décoration salle de réception)" },
-  { value: "1500-3000", label: "1500€ et 3000€ (hors mariage)" },
+  { value: "moins-500", label: "Moins de 500€" },
+  { value: "500-1500", label: "500€ et 1500€" },
+  { value: "1500-3000", label: "1500€ et 3000€" },
   { value: "3000-5000", label: "3000€ et 5000€" },
   { value: "plus-5000", label: "Plus de 5000€" },
 ];
@@ -218,7 +218,7 @@ export default function ContactForm({ serviceType }: ContactFormProps) {
               </SelectContent>
             </Select>
             <p className="text-xs text-gray-600 italic">
-              (Budget Minimum 1500€ pour décor salle de réception, 3000€ décor mariage)
+              (Notre minimum de commande est de 600 € pour la décoration. Nos prestations décoration mariage commencent à partir de 2 500 €.)
             </p>
           </div>
 

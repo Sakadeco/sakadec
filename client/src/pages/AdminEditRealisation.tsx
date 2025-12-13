@@ -205,38 +205,20 @@ export default function AdminEditRealisation() {
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="category">Catégorie *</Label>
-                    <Select value={formData.category} onValueChange={(value) => handleInputChange("category", value)}>
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Mariage">Mariage</SelectItem>
-                        <SelectItem value="Anniversaire">Anniversaire</SelectItem>
-                        <SelectItem value="Baby Shower">Baby Shower</SelectItem>
-                        <SelectItem value="Événement Corporate">Événement Corporate</SelectItem>
-                        <SelectItem value="Autre">Autre</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div>
-                    <Label htmlFor="rating">Note (1-5) *</Label>
-                    <Select value={formData.rating} onValueChange={(value) => handleInputChange("rating", value)}>
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="5">5 étoiles</SelectItem>
-                        <SelectItem value="4">4 étoiles</SelectItem>
-                        <SelectItem value="3">3 étoiles</SelectItem>
-                        <SelectItem value="2">2 étoiles</SelectItem>
-                        <SelectItem value="1">1 étoile</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
+                <div>
+                  <Label htmlFor="category">Catégorie *</Label>
+                  <Select value={formData.category} onValueChange={(value) => handleInputChange("category", value)}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Mariage">Mariage</SelectItem>
+                      <SelectItem value="Anniversaire">Anniversaire</SelectItem>
+                      <SelectItem value="Baby Shower">Baby Shower</SelectItem>
+                      <SelectItem value="Événement Corporate">Événement Corporate</SelectItem>
+                      <SelectItem value="Autre">Autre</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
