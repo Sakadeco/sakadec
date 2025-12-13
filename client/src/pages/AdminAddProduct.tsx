@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -48,12 +48,36 @@ export default function AdminAddProduct() {
     price: "",
     category: "",
     subcategory: "",
+    theme: "",
     isCustomizable: false,
     isForSale: true,
     isForRent: false,
     stockQuantity: "",
     dailyRentalPrice: ""
   });
+  
+  const [themes, setThemes] = useState<Array<{ _id: string; title: string }>>([]);
+  
+  useEffect(() => {
+    fetchThemes();
+  }, []);
+  
+  const fetchThemes = async () => {
+    try {
+      const token = localStorage.getItem('adminToken');
+      const response = await fetch('/api/admin/themes', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setThemes(data);
+      }
+    } catch (error) {
+      console.error('Erreur récupération thèmes:', error);
+    }
+  };
 
   const handleInputChange = (field: string, value: string | boolean) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -262,6 +286,9 @@ export default function AdminAddProduct() {
       formDataToSend.append('price', formData.price);
       formDataToSend.append('category', formData.category);
       formDataToSend.append('subcategory', formData.subcategory);
+      if (formData.theme) {
+        formDataToSend.append('theme', formData.theme);
+      }
       formDataToSend.append('isCustomizable', String(Object.keys(customizationOptions).length > 0 || formData.isCustomizable));
       formDataToSend.append('isForSale', String(formData.isForSale));
       formDataToSend.append('isForRent', String(formData.isForRent));

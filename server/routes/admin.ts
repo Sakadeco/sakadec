@@ -6,6 +6,7 @@ import { Product } from '../models/Product';
 import Order from '../models/Order';
 import { Realisation } from '../models/Realisation';
 import { PromoCode } from '../models/PromoCode';
+import { Theme } from '../models/Theme';
 import { adminAuth, AdminRequest, requireSuperAdmin } from '../middleware/adminAuth';
 import upload from '../middleware/upload';
 import { v2 as cloudinary } from 'cloudinary';
@@ -115,6 +116,7 @@ router.post('/products', adminAuth, upload.fields([
       price,
       category,
       subcategory,
+      theme,
       mainImageUrl,
       additionalImages,
       isCustomizable,
@@ -232,6 +234,7 @@ router.post('/products', adminAuth, upload.fields([
       price: isForSaleBool ? parseFloat(price) : 0, // Prix 0 si pas destiné à la vente
       category: category.trim(),
       subcategory: subcategory ? subcategory.trim() : undefined,
+      theme: theme && theme.trim() ? new mongoose.Types.ObjectId(theme.trim()) : undefined,
       mainImageUrl: finalMainImageUrl,
       additionalImages: additionalImageUrls.length > 0 ? additionalImageUrls : (additionalImages || []),
       isCustomizable: isCustomizable === 'true' || isCustomizable === true,
@@ -347,6 +350,7 @@ router.put('/products/:id', adminAuth, upload.fields([
       price,
       category,
       subcategory,
+      theme,
       mainImageUrl,
       additionalImages,
       existingMainImageUrl,
@@ -463,6 +467,7 @@ router.put('/products/:id', adminAuth, upload.fields([
       price: isForSaleBool ? parseFloat(price) : existingProduct.price,
       category,
       subcategory,
+      theme: theme && theme.trim() ? new mongoose.Types.ObjectId(theme.trim()) : (theme === '' ? null : existingProduct.theme),
       mainImageUrl: finalMainImageUrl,
       additionalImages: additionalImageUrls,
       isCustomizable: isCustomizable === 'true' || isCustomizable === true,
@@ -1297,6 +1302,142 @@ router.delete('/promo-codes/:id', adminAuth, async (req: AdminRequest, res: Resp
     res.json({ message: 'Code promo supprimé avec succès' });
   } catch (error) {
     console.error('Erreur suppression code promo:', error);
+    res.status(500).json({ message: 'Erreur serveur' });
+  }
+});
+
+// ========== ROUTES POUR LES THÈMES ==========
+
+// GET all themes
+router.get('/themes', adminAuth, async (req: AdminRequest, res: Response) => {
+  try {
+    const themes = await Theme.find().sort({ createdAt: -1 });
+    res.json(themes);
+  } catch (error) {
+    console.error('Erreur récupération thèmes:', error);
+    res.status(500).json({ message: 'Erreur serveur' });
+  }
+});
+
+// GET theme by ID
+router.get('/themes/:id', adminAuth, async (req: AdminRequest, res: Response) => {
+  try {
+    const theme = await Theme.findById(req.params.id);
+    if (!theme) {
+      return res.status(404).json({ message: 'Thème non trouvé' });
+    }
+    res.json(theme);
+  } catch (error) {
+    console.error('Erreur récupération thème:', error);
+    res.status(500).json({ message: 'Erreur serveur' });
+  }
+});
+
+// POST create theme
+router.post('/themes', adminAuth, upload.single('image'), async (req: AdminRequest, res: Response) => {
+  try {
+    const { title, isActive } = req.body;
+
+    let imageUrl = '';
+
+    // Traiter l'image uploadée
+    if (req.file) {
+      if (isCloudinaryConfigured) {
+        try {
+          const result = await cloudinary.uploader.upload(req.file.path, {
+            folder: 'sakadeco/themes',
+            public_id: `theme-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+          });
+          imageUrl = result.secure_url;
+        } catch (cloudinaryError) {
+          console.error('Erreur upload Cloudinary:', cloudinaryError);
+          imageUrl = `/uploads/themes/${req.file.filename}`;
+        }
+      } else {
+        imageUrl = `/uploads/themes/${req.file.filename}`;
+      }
+    }
+
+    // Si une URL d'image existante est fournie
+    if (req.body.existingImageUrl && !req.file) {
+      imageUrl = req.body.existingImageUrl;
+    }
+
+    if (!imageUrl) {
+      return res.status(400).json({ message: 'Image requise' });
+    }
+
+    const theme = new Theme({
+      title: title.trim(),
+      imageUrl,
+      isActive: isActive !== undefined ? (isActive === 'true' || isActive === true) : true,
+    });
+
+    await theme.save();
+    res.status(201).json(theme);
+  } catch (error) {
+    console.error('Erreur création thème:', error);
+    res.status(500).json({ message: 'Erreur création thème', error: error.message });
+  }
+});
+
+// PUT update theme
+router.put('/themes/:id', adminAuth, upload.single('image'), async (req: AdminRequest, res: Response) => {
+  try {
+    const { title, isActive, existingImageUrl } = req.body;
+
+    let imageUrl = existingImageUrl || '';
+
+    // Traiter la nouvelle image si uploadée
+    if (req.file) {
+      if (isCloudinaryConfigured) {
+        try {
+          const result = await cloudinary.uploader.upload(req.file.path, {
+            folder: 'sakadeco/themes',
+            public_id: `theme-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+          });
+          imageUrl = result.secure_url;
+        } catch (cloudinaryError) {
+          console.error('Erreur upload Cloudinary:', cloudinaryError);
+          imageUrl = `/uploads/themes/${req.file.filename}`;
+        }
+      } else {
+        imageUrl = `/uploads/themes/${req.file.filename}`;
+      }
+    }
+
+    const updateData: any = {
+      title: title.trim(),
+      isActive: isActive !== undefined ? (isActive === 'true' || isActive === true) : true,
+    };
+
+    if (imageUrl) {
+      updateData.imageUrl = imageUrl;
+    }
+
+    const theme = await Theme.findByIdAndUpdate(req.params.id, updateData, { new: true });
+    
+    if (!theme) {
+      return res.status(404).json({ message: 'Thème non trouvé' });
+    }
+
+    res.json(theme);
+  } catch (error) {
+    console.error('Erreur mise à jour thème:', error);
+    res.status(500).json({ message: 'Erreur mise à jour thème', error: error.message });
+  }
+});
+
+// DELETE theme
+router.delete('/themes/:id', adminAuth, async (req: AdminRequest, res: Response) => {
+  try {
+    const theme = await Theme.findByIdAndDelete(req.params.id);
+    if (!theme) {
+      return res.status(404).json({ message: 'Thème non trouvé' });
+    }
+    res.json({ message: 'Thème supprimé avec succès' });
+  } catch (error) {
+    console.error('Erreur suppression thème:', error);
     res.status(500).json({ message: 'Erreur serveur' });
   }
 });

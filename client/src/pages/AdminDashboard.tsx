@@ -16,7 +16,8 @@ import {
   Home,
   FileText,
   Image,
-  Tag
+  Tag,
+  Palette
 } from "lucide-react";
 
 interface AdminInfo {
@@ -315,6 +316,23 @@ export default function AdminDashboard() {
               </p>
               <Button variant="outline" className="w-full">
                 Gérer les codes promo
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setLocation("/admin/themes")}>
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2">
+                <Palette className="h-5 w-5 text-purple-500" />
+                <span>Gestion des Thèmes</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-gray-600 mb-4">
+                Créez et gérez les thèmes pour vos produits.
+              </p>
+              <Button variant="outline" className="w-full">
+                Voir les thèmes
               </Button>
             </CardContent>
           </Card>

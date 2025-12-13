@@ -33,6 +33,9 @@ import AdminEditRealisation from "@/pages/AdminEditRealisation";
 import AdminPromoCodes from "@/pages/AdminPromoCodes";
 import AdminAddPromoCode from "@/pages/AdminAddPromoCode";
 import AdminEditPromoCode from "@/pages/AdminEditPromoCode";
+import AdminThemes from "@/pages/AdminThemes";
+import AdminAddTheme from "@/pages/AdminAddTheme";
+import AdminEditTheme from "@/pages/AdminEditTheme";
 import ProductDetail from "@/pages/ProductDetail";
 import Orders from "@/pages/Orders";
 import PaymentSuccess from "@/pages/PaymentSuccess";
@@ -93,9 +96,12 @@ function Router() {
              <Route path="/admin/realisations" component={AdminRealisations} />
              <Route path="/admin/realisations/add" component={AdminAddRealisation} />
              <Route path="/admin/realisations/:id/edit" component={AdminEditRealisation} />
-             <Route path="/admin/promo-codes" component={AdminPromoCodes} />
-             <Route path="/admin/promo-codes/add" component={AdminAddPromoCode} />
-             <Route path="/admin/promo-codes/:id/edit" component={AdminEditPromoCode} />
+            <Route path="/admin/promo-codes" component={AdminPromoCodes} />
+            <Route path="/admin/promo-codes/add" component={AdminAddPromoCode} />
+            <Route path="/admin/promo-codes/:id/edit" component={AdminEditPromoCode} />
+            <Route path="/admin/themes" component={AdminThemes} />
+            <Route path="/admin/themes/add" component={AdminAddTheme} />
+            <Route path="/admin/themes/:id/edit" component={AdminEditTheme} />
       <Route component={NotFound} />
     </Switch>
   );

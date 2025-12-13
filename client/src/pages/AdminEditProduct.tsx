@@ -67,6 +67,7 @@ export default function AdminEditProduct() {
     price: "",
     category: "",
     subcategory: "",
+    theme: "",
     isCustomizable: false,
     isForSale: true,
     isForRent: false,
@@ -74,6 +75,29 @@ export default function AdminEditProduct() {
     dailyRentalPrice: "",
     isActive: true
   });
+  
+  const [themes, setThemes] = useState<Array<{ _id: string; title: string }>>([]);
+  
+  useEffect(() => {
+    fetchThemes();
+  }, []);
+  
+  const fetchThemes = async () => {
+    try {
+      const token = localStorage.getItem('adminToken');
+      const response = await fetch('/api/admin/themes', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setThemes(data);
+      }
+    } catch (error) {
+      console.error('Erreur récupération thèmes:', error);
+    }
+  };
 
   // Images state
   const [existingMainImageUrl, setExistingMainImageUrl] = useState<string>("");
@@ -136,6 +160,7 @@ export default function AdminEditProduct() {
         price: product.price ? product.price.toString() : "0",
         category: product.category || "shop",
         subcategory: product.subcategory || "",
+        theme: product.theme?._id || product.theme || "",
         isCustomizable: product.isCustomizable || false,
         isForSale: product.isForSale !== undefined ? product.isForSale : true,
         isForRent: product.isForRent !== undefined ? product.isForRent : (product.isRentable || false),
@@ -248,6 +273,9 @@ export default function AdminEditProduct() {
       formDataToSend.append('price', formData.price);
       formDataToSend.append('category', formData.category);
       formDataToSend.append('subcategory', formData.subcategory);
+      if (formData.theme) {
+        formDataToSend.append('theme', formData.theme);
+      }
       formDataToSend.append('isCustomizable', String(formData.isCustomizable));
       formDataToSend.append('isForSale', String(formData.isForSale));
       formDataToSend.append('isForRent', String(formData.isForRent));

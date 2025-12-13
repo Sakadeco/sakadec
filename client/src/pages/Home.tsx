@@ -338,11 +338,11 @@ export default function HomePage() {
           <div className="text-center">
             <Button asChild size="lg" className="bg-gradient-to-r from-gold to-yellow-500 hover:from-yellow-500 hover:to-gold text-white px-12 py-6 text-lg font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
               <Link to="/contact">
-                Demander un devis gratuit
+                Recevez votre devis personnalisé
               </Link>
             </Button>
             <p className="mt-4 text-sm text-gray-500 dark:text-gray-400">
-              Réponse sous 24h • Engagement sans obligation
+              Gratuit et sans engagement – réponse sous 48h.
             </p>
           </div>
         </div>

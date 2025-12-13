@@ -6,6 +6,7 @@ export interface IProduct extends Document {
   price: number;
   category: string;
   subcategory?: string;
+  theme?: mongoose.Types.ObjectId; // Référence au thème (optionnel)
   mainImageUrl: string; // Image principale
   additionalImages: string[]; // Images supplémentaires pour la galerie
   isCustomizable: boolean;
@@ -55,6 +56,11 @@ const ProductSchema = new Schema<IProduct>({
   subcategory: {
     type: String,
     trim: true
+  },
+  theme: {
+    type: Schema.Types.ObjectId,
+    ref: 'Theme',
+    required: false
   },
   mainImageUrl: {
     type: String,

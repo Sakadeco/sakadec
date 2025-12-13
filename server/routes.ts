@@ -1078,6 +1078,49 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Public routes for themes
+  app.get('/api/themes', async (req, res) => {
+    try {
+      if (db.connection.readyState === 1) {
+        const { Theme } = await import('./models/Theme');
+        const themes = await Theme.find({ isActive: true }).sort({ createdAt: -1 });
+        res.json(themes);
+      } else {
+        res.json([]);
+      }
+    } catch (error) {
+      console.error('Erreur récupération thèmes:', error);
+      res.status(500).json({ message: 'Erreur serveur' });
+    }
+  });
+
+  // Get products by theme
+  app.get('/api/themes/:themeId/products', async (req, res) => {
+    try {
+      const { themeId } = req.params;
+      if (db.connection.readyState === 1) {
+        const { Product } = await import('./models/Product');
+        const mongoose = await import('mongoose');
+        
+        if (!mongoose.Types.ObjectId.isValid(themeId)) {
+          return res.status(400).json({ message: 'ID de thème invalide' });
+        }
+        
+        const products = await Product.find({
+          theme: themeId,
+          $or: [{ isActive: true }, { isActive: { $exists: false } }]
+        }).sort({ createdAt: -1 });
+        
+        res.json(products);
+      } else {
+        res.json([]);
+      }
+    } catch (error) {
+      console.error('Erreur récupération produits par thème:', error);
+      res.status(500).json({ message: 'Erreur serveur' });
+    }
+  });
+
   // Public route for promo code validation
   app.post('/api/promo-codes/validate', async (req, res) => {
     try {
