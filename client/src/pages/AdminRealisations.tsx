@@ -146,7 +146,7 @@ export default function AdminRealisations() {
           </div>
           <Button 
             onClick={() => setLocation("/admin/realisations/add")} 
-            className="bg-gradient-to-r from-gold to-yellow-500 hover:from-yellow-500 hover:to-gold text-white w-full sm:w-auto"
+            className="!bg-gradient-to-r !from-gold !to-yellow-500 hover:!from-yellow-500 hover:!to-gold !text-white w-full sm:w-auto border-0"
           >
             <Plus className="w-4 h-4 mr-2" />
             Ajouter une réalisation
