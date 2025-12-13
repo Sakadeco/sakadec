@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Save, ArrowLeft } from "lucide-react";
-import ImageUpload from "@/components/ImageUpload";
+import ProductImageUpload from "@/components/ProductImageUpload";
 
 export default function AdminAddTheme() {
   const [, setLocation] = useLocation();
@@ -23,13 +23,13 @@ export default function AdminAddTheme() {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleImageUploaded = (urls: string[]) => {
+  const handleImagesUploaded = (urls: string[]) => {
     if (urls.length > 0) {
       setImageUrl(urls[0]);
     }
   };
 
-  const handleFileSelected = (files: File[]) => {
+  const handleFilesSelected = (files: File[]) => {
     if (files.length > 0) {
       setImageFile(files[0]);
     }
@@ -115,9 +115,11 @@ export default function AdminAddTheme() {
 
               <div>
                 <Label>Image *</Label>
-                <ImageUpload
-                  onImageUploaded={handleImageUploaded}
-                  onFileSelected={handleFileSelected}
+                <ProductImageUpload
+                  onImagesUploaded={handleImagesUploaded}
+                  onFilesSelected={handleFilesSelected}
+                  multiple={false}
+                  maxImages={1}
                 />
                 {imageUrl && (
                   <div className="mt-4">
