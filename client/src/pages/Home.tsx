@@ -11,6 +11,13 @@ import RealisationsShowcase from "@/components/RealisationsShowcase";
 import Logo from "@/components/Logo";
 import DSC6216 from "@/assets/images/DSC_6216.JPG";
 import type { Product } from "@shared/schema";
+// Import des logos des services
+import ShopLogo from "@/assets/Logos/shop.jpg";
+import CreaLogo from "@/assets/Logos/crea.jpg";
+import RentLogo from "@/assets/Logos/rent.jpg";
+import EventLogo from "@/assets/Logos/event.jpg";
+import HomeLogo from "@/assets/Logos/home.jpg";
+import CoLogo from "@/assets/Logos/sdk&co.jpg";
 
 export default function HomePage() {
   const { data: products, isLoading } = useQuery<Product[]>({
@@ -25,48 +32,48 @@ export default function HomePage() {
     {
       name: "SKD Shop",
       description: "Ballons, fleurs & accessoires",
-      icon: ShoppingBag,
-      color: "skd-shop",
+      logo: ShopLogo,
+      backgroundColor: "#F8BBD0",
       path: "/shop",
       tagline: "Offrez la touche qui fait sourire"
     },
     {
       name: "SKD Créa", 
       description: "Personnalisation & papeterie",
-      icon: Palette,
-      color: "skd-crea",
+      logo: CreaLogo,
+      backgroundColor: "#D7BDE2",
       path: "/crea",
       tagline: "Du sur-mesure pour vos plus belles attentions"
     },
     {
       name: "SKD Rent",
       description: "Location de matériel festif", 
-      icon: Handshake,
-      color: "skd-rent",
+      logo: RentLogo,
+      backgroundColor: "#B2DFDB",
       path: "/rent",
       tagline: "Louez l'élégance. Célébrez sans limites"
     },
     {
       name: "SKD Events",
       description: "Décoration d'événements",
-      icon: Star,
-      color: "skd-events", 
+      logo: EventLogo,
+      backgroundColor: "#FFF9C4", 
       path: "/events",
       tagline: "L'art de décorer vos plus beaux jours"
     },
     {
       name: "SKD Home",
       description: "Décoration intérieure & Home organizing",
-      icon: Home,
-      color: "skd-home",
+      logo: HomeLogo,
+      backgroundColor: "#FFDDC1",
       path: "/home", 
       tagline: "Des espaces qui vous ressemblent"
     },
     {
       name: "SKD & Co",
       description: "Organisation d'événements",
-      icon: Users,
-      color: "skd-co",
+      logo: CoLogo,
+      backgroundColor: "#BBDEFB",
       path: "/co",
       tagline: "On s'occupe de tout, vous profitez de l'instant"
     }
@@ -141,22 +148,25 @@ export default function HomePage() {
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {services.map((service) => {
-              const IconComponent = service.icon;
               return (
                 <Link key={service.name} href={service.path} className="block">
-                  <Card className="group hover:shadow-lg transition-all duration-300 border-2 hover:border-gold/30 cursor-pointer h-full">
+                  <Card className="group hover:shadow-lg transition-all duration-300 border-2 hover:border-gold/30 cursor-pointer h-full overflow-hidden" style={{ backgroundColor: service.backgroundColor }}>
                     <CardHeader className="text-center">
-                      <div className={`w-16 h-16 mx-auto mb-4 rounded-full bg-${service.color}/20 flex items-center justify-center group-hover:bg-${service.color}/40 transition-colors`}>
-                        <IconComponent className={`text-${service.color} text-2xl`} />
+                      <div className="w-20 h-20 mx-auto mb-4 rounded-full overflow-hidden flex items-center justify-center bg-white/80 group-hover:bg-white transition-colors shadow-md">
+                        <img 
+                          src={service.logo} 
+                          alt={`Logo ${service.name}`}
+                          className="w-full h-full object-contain p-2"
+                        />
                       </div>
-                      <CardTitle className="font-playfair text-xl">{service.name}</CardTitle>
-                      <p className="text-gray-600">{service.description}</p>
+                      <CardTitle className="font-playfair text-xl text-gray-800">{service.name}</CardTitle>
+                      <p className="text-gray-700">{service.description}</p>
                     </CardHeader>
                     <CardContent>
-                      <p className={`text-sm italic text-${service.color} text-center mb-4`}>
+                      <p className="text-sm italic text-gray-700 text-center mb-4">
                         « {service.tagline} »
                       </p>
-                      <div className={`w-full bg-${service.color} hover:bg-${service.color}/90 text-white text-center py-2 px-4 rounded-md transition-colors`}>
+                      <div className="w-full bg-white/90 hover:bg-white text-gray-800 text-center py-2 px-4 rounded-md transition-colors font-semibold">
                         Découvrir
                       </div>
                     </CardContent>
