@@ -45,6 +45,7 @@ import RentalCancel from "@/pages/RentalCancel";
 import RentalInvoice from "@/pages/RentalInvoice";
 import UnifiedSuccess from "@/pages/UnifiedSuccess";
 import Realisations from "@/pages/Realisations";
+import RealisationDetail from "@/pages/RealisationDetail";
 import ProductCustomizationDemo from "@/pages/ProductCustomizationDemo";
 import TestCustomization from "@/pages/TestCustomization";
 
@@ -71,6 +72,7 @@ function Router() {
       <Route path="/contact" component={Contact} />
       <Route path="/about" component={About} />
       <Route path="/realisations" component={Realisations} />
+      <Route path="/realisations/:id" component={RealisationDetail} />
       <Route path="/demo-customization" component={ProductCustomizationDemo} />
       <Route path="/test-customization" component={TestCustomization} />
       <Route path="/orders" component={Orders} />

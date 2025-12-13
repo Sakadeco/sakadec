@@ -110,11 +110,12 @@ export class InvoiceService {
        .fillColor('#2D3748')
        .text(invoiceData.isRental ? 'FACTURE DE LOCATION' : 'FACTURE DE VENTE', 400, 50, { align: 'right' });
 
+    // Espacement supplémentaire pour éviter le chevauchement
     doc.fontSize(12)
        .font('Helvetica')
        .fillColor('#4A5568')
-       .text(`N° ${invoiceNumber}`, 400, 80, { align: 'right' })
-       .text(`Date: ${invoiceDate}`, 400, 95, { align: 'right' });
+       .text(`N° ${invoiceNumber}`, 400, 90, { align: 'right' })
+       .text(`Date: ${invoiceDate}`, 400, 105, { align: 'right' });
 
     // Ligne de séparation
     doc.moveTo(50, 130)

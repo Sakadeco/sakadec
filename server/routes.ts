@@ -1046,6 +1046,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Route pour récupérer une réalisation par ID
+  app.get('/api/realisations/:id', async (req, res) => {
+    try {
+      const { id } = req.params;
+      if (db.connection.readyState === 1) {
+        const { Realisation } = await import('./models/Realisation');
+        const mongoose = await import('mongoose');
+        
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+          return res.status(400).json({ message: 'ID de réalisation invalide' });
+        }
+        
+        const realisation = await Realisation.findById(id);
+        
+        if (!realisation) {
+          return res.status(404).json({ message: 'Réalisation non trouvée' });
+        }
+        
+        if (!realisation.isPublished) {
+          return res.status(404).json({ message: 'Réalisation non trouvée' });
+        }
+        
+        res.json(realisation);
+      } else {
+        res.status(503).json({ message: 'Base de données non connectée' });
+      }
+    } catch (error) {
+      console.error("❌ Error fetching realisation:", error);
+      res.status(500).json({ message: 'Error fetching realisation', error: error.message });
+    }
+  });
+
   // Public route for promo code validation
   app.post('/api/promo-codes/validate', async (req, res) => {
     try {

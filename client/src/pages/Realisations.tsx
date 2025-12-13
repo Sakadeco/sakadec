@@ -36,6 +36,8 @@ interface Realisation {
 }
 
 export default function Realisations() {
+  const [, setLocation] = useLocation();
+  
   // Toutes les images disponibles (fallback si pas d'images)
   const allImages = [
     DSC6144, DSC6145, DSC6148, DSC6151, DSC6157,
@@ -182,11 +184,18 @@ export default function Realisations() {
                   )}
                   
                   <div className="flex gap-2">
-                    <Button variant="outline" className="flex-1 border-gold text-gold hover:bg-gold hover:text-white">
+                    <Button 
+                      variant="outline" 
+                      className="flex-1 border-gold text-gold hover:bg-gold hover:text-white"
+                      onClick={() => setLocation(`/realisations/${realisation._id}`)}
+                    >
                       <Camera className="mr-2 h-4 w-4" />
                       Voir plus de photos
                     </Button>
-                    <Button className="flex-1 bg-gold hover:bg-yellow-600">
+                    <Button 
+                      className="flex-1 bg-gold hover:bg-yellow-600"
+                      onClick={() => setLocation("/contact")}
+                    >
                       <Heart className="mr-2 h-4 w-4" />
                       Demander un devis
                     </Button>
