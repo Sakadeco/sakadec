@@ -128,7 +128,7 @@ export default function TestCustomization() {
                       <div className="text-sm font-bold text-white">
                         {customizations['image_zone'] ? (
                           <span className="bg-white bg-opacity-90 text-green-800 px-2 py-1 rounded block">
-                            ✓ Image ajoutée
+                            Image ajoutée
                           </span>
                         ) : (
                           <span className="bg-white bg-opacity-90 text-green-800 px-2 py-1 rounded">
@@ -143,7 +143,7 @@ export default function TestCustomization() {
                 {/* Instructions */}
                 <div className="mt-4 p-3 bg-blue-50 rounded-lg">
                   <p className="text-sm text-blue-800">
-                    💡 <strong>Zones de personnalisation :</strong>
+                    <strong>Zones de personnalisation :</strong>
                   </p>
                   <ul className="text-sm text-blue-700 mt-1 space-y-1">
                     <li>• <span className="bg-red-500 text-white px-2 py-1 rounded text-xs">Zone rouge</span> : Ajouter du texte</li>

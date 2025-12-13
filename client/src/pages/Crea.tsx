@@ -50,7 +50,6 @@ export default function Crea() {
                   <div className="font-medium text-gray-800">Gourmandises</div>
                 </Card>
                 <Card className="text-center p-4">
-                  <span className="text-2xl mb-2 block">🎁</span>
                   <div className="font-medium text-gray-800">Boîtes Cadeau</div>
                 </Card>
               </div>

@@ -129,7 +129,7 @@ export default function Co() {
           <div className="grid md:grid-cols-2 gap-8">
             <Card className="border-l-4 border-skd-co">
               <CardContent className="p-6">
-                <h4 className="font-semibold text-gray-800 mb-3">🎯 Expertise Reconnue</h4>
+                <h4 className="font-semibold text-gray-800 mb-3">Expertise Reconnue</h4>
                 <p className="text-gray-600">
                   Plus de 7 ans d'expérience dans l'organisation d'événements avec des références 
                   clients satisfaites et des partenaires de confiance.
@@ -139,7 +139,7 @@ export default function Co() {
             
             <Card className="border-l-4 border-skd-co">
               <CardContent className="p-6">
-                <h4 className="font-semibold text-gray-800 mb-3">💡 Créativité Sur-Mesure</h4>
+                <h4 className="font-semibold text-gray-800 mb-3">Créativité Sur-Mesure</h4>
                 <p className="text-gray-600">
                   Chaque événement est unique. Nous créons des concepts originaux qui reflètent 
                   votre personnalité et vos valeurs.
@@ -149,7 +149,7 @@ export default function Co() {
             
             <Card className="border-l-4 border-skd-co">
               <CardContent className="p-6">
-                <h4 className="font-semibold text-gray-800 mb-3">🤝 Accompagnement Total</h4>
+                <h4 className="font-semibold text-gray-800 mb-3">Accompagnement Total</h4>
                 <p className="text-gray-600">
                   De la conception à la réalisation, nous vous accompagnons à chaque étape 
                   pour que votre événement soit parfait.
@@ -159,7 +159,7 @@ export default function Co() {
             
             <Card className="border-l-4 border-skd-co">
               <CardContent className="p-6">
-                <h4 className="font-semibold text-gray-800 mb-3">📍 Proximité Bordelaise</h4>
+                <h4 className="font-semibold text-gray-800 mb-3">Proximité Bordelaise</h4>
                 <p className="text-gray-600">
                   Basés à Bordeaux, nous connaissons parfaitement la région et ses meilleurs 
                   prestataires pour vous offrir un service d'excellence.

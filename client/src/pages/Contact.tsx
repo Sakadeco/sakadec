@@ -222,23 +222,14 @@ export default function Contact() {
           </div>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center p-6 bg-white rounded-lg shadow-md">
-              <div className="w-16 h-16 bg-gold/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-3xl">📌</span>
-              </div>
               <h3 className="text-xl font-playfair font-semibold text-gray-800 mb-3">Résultats garantis</h3>
               <p className="text-gray-600">Votre événement, votre style, notre savoir-faire : nous mettons tout en œuvre pour offrir un rendu impeccable et à la hauteur de vos attentes.</p>
             </div>
             <div className="text-center p-6 bg-white rounded-lg shadow-md">
-              <div className="w-16 h-16 bg-gold/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-3xl">🪄</span>
-              </div>
               <h3 className="text-xl font-playfair font-semibold text-gray-800 mb-3">Créations uniques et personnalisées</h3>
               <p className="text-gray-600">Chaque projet est conçu comme une véritable œuvre sur mesure, mêlant tendances, harmonie et sophistication pour refléter votre univers.</p>
             </div>
             <div className="text-center p-6 bg-white rounded-lg shadow-md">
-              <div className="w-16 h-16 bg-gold/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-3xl">🎯</span>
-              </div>
               <h3 className="text-xl font-playfair font-semibold text-gray-800 mb-3">Une expertise 360°</h3>
               <p className="text-gray-600">Décoration, personnalisation, location, home déco : notre maîtrise de chaque détail vous assure une prestation complète, cohérente et sans stress.</p>
             </div>

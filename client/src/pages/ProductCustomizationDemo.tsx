@@ -101,7 +101,7 @@ export default function ProductCustomizationDemo() {
 
         {/* Instructions */}
         <div className="mb-8 p-6 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg border border-blue-200">
-          <h2 className="text-lg font-semibold text-gray-900 mb-3">🎯 Comment ça marche</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-3">Comment ça marche</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-700">
             <div className="flex items-start space-x-2">
               <div className="w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">

@@ -1,5 +1,6 @@
 import Navigation from "./Navigation";
 import Logo from "./Logo";
+import { Facebook, Instagram, MessageSquare } from "lucide-react";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -23,14 +24,14 @@ export default function Layout({ children }: LayoutProps) {
           </div>
               <p className="text-gray-300 mb-4">L'élégance au service de vos moments et de vos espaces</p>
               <div className="flex space-x-4">
-                <a href="#" className="text-gray-300 hover:text-gold transition-colors">
-                  <span className="text-xl">📷</span>
+                <a href="https://www.instagram.com/sakadeco_events/" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-gold transition-colors">
+                  <Instagram className="w-5 h-5" />
                 </a>
-                <a href="#" className="text-gray-300 hover:text-gold transition-colors">
-                  <span className="text-xl">📘</span>
+                <a href="https://www.facebook.com/SakadecoEvents/" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-gold transition-colors">
+                  <Facebook className="w-5 h-5" />
                 </a>
-                <a href="#" className="text-gray-300 hover:text-gold transition-colors">
-                  <span className="text-xl">📌</span>
+                <a href="https://wa.me/33688003928" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-gold transition-colors">
+                  <MessageSquare className="w-5 h-5" />
                 </a>
               </div>
             </div>
@@ -50,10 +51,10 @@ export default function Layout({ children }: LayoutProps) {
             <div>
               <h4 className="font-semibold mb-4">Contact</h4>
               <ul className="space-y-2 text-gray-300">
-                <li><span className="text-gold mr-2">📞</span> 06 88 00 39 28</li>
-                <li><span className="text-gold mr-2">📍</span> Île-de-France & Bordeaux Métropole</li>
-                <li><span className="text-gold mr-2">🕐</span> Sur rendez-vous</li>
-                <li><a href="/orders" className="hover:text-gold transition-colors">📦 Mes commandes</a></li>
+                <li>06 88 00 39 28</li>
+                <li>Île-de-France & Bordeaux Métropole</li>
+                <li>Sur rendez-vous</li>
+                <li><a href="/orders" className="hover:text-gold transition-colors">Mes commandes</a></li>
               </ul>
             </div>
             
@@ -67,7 +68,7 @@ export default function Layout({ children }: LayoutProps) {
                   className="flex-1 p-2 rounded-l-lg text-gray-800"
                 />
                 <button className="bg-gold px-4 py-2 rounded-r-lg hover:bg-gold/90 transition-colors">
-                  <span>📤</span>
+                  Envoyer
                 </button>
               </div>
             </div>

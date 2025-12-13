@@ -28,11 +28,11 @@ export default function Navigation() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const skdGroupServices = [
-    { name: "SKD Créa", path: "/crea", color: "skd-crea", icon: "🎨", description: "Personnalisation & papeterie" },
-    { name: "SKD Rent", path: "/rent", color: "skd-rent", icon: "📦", description: "Location de matériel festif" },
-    { name: "SKD Events", path: "/events", color: "skd-events", icon: "🎉", description: "Décoration d'événements" },
-    { name: "SKD Home", path: "/home", color: "skd-home", icon: "🏠", description: "Décoration intérieure" },
-    { name: "SKD & Co", path: "/co", color: "skd-co", icon: "🤝", description: "Organisation d'événements" },
+    { name: "SKD Créa", path: "/crea", color: "skd-crea", icon: "", description: "Personnalisation & papeterie" },
+    { name: "SKD Rent", path: "/rent", color: "skd-rent", icon: "", description: "Location de matériel festif" },
+    { name: "SKD Events", path: "/events", color: "skd-events", icon: "", description: "Décoration d'événements" },
+    { name: "SKD Home", path: "/home", color: "skd-home", icon: "", description: "Décoration intérieure" },
+    { name: "SKD & Co", path: "/co", color: "skd-co", icon: "", description: "Organisation d'événements" },
   ];
 
   if (isLoading) {

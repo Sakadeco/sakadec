@@ -159,7 +159,7 @@ const Invoice: React.FC = () => {
                 onClick={handleResendEmail}
                 className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
               >
-                📧 Renvoyer par email
+                Renvoyer par email
               </button>
               <button
                 onClick={handleDownloadPDF}

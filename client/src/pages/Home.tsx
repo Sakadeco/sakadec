@@ -199,7 +199,6 @@ export default function HomePage() {
               </div>
               <div className="flex items-center space-x-4">
                 <div className="flex items-center space-x-2">
-                  <span className="text-gold">📍</span>
                   <span className="text-gray-600">Bordeaux Métropole</span>
                 </div>
                 <div className="flex items-center space-x-2">

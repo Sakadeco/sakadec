@@ -536,7 +536,7 @@ const CartPage: React.FC = () => {
                                       )}
                                       {customization.imageValue && (
                                         <div className="flex justify-between items-center">
-                                          <span>{key} (image): ✓ Image fournie</span>
+                                          <span>{key} (image): Image fournie</span>
                                         </div>
                                       )}
                                       {customization.price > 0 && (
@@ -674,7 +674,7 @@ const CartPage: React.FC = () => {
               {!appliedPromoCode && (
                 <Card>
                   <CardHeader>
-                    <CardTitle className="text-lg font-bold text-orange-600">🎁 Code Promo</CardTitle>
+                    <CardTitle className="text-lg font-bold text-orange-600">Code Promo</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="flex gap-2">
@@ -712,7 +712,7 @@ const CartPage: React.FC = () => {
               {/* Customer Information */}
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-lg font-bold text-green-600">📧 Informations client</CardTitle>
+                  <CardTitle className="text-lg font-bold text-green-600">Informations client</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div>
@@ -807,7 +807,7 @@ const CartPage: React.FC = () => {
                     <RadioGroup value={deliveryMethod} onValueChange={setDeliveryMethod}>
                       {/* France métropolitaine */}
                       <div className="space-y-3">
-                        <Label className="text-sm font-semibold text-gray-700">📍 France métropolitaine</Label>
+                        <Label className="text-sm font-semibold text-gray-700">France métropolitaine</Label>
                         
                         <div className="space-y-2 pl-4">
                           <div className="flex items-start space-x-3 p-3 border rounded-lg hover:bg-gray-50">
@@ -859,7 +859,7 @@ const CartPage: React.FC = () => {
 
                       {/* Europe */}
                       <div className="space-y-3 mt-4">
-                        <Label className="text-sm font-semibold text-gray-700">🌍 Europe (hors DOM-TOM)</Label>
+                        <Label className="text-sm font-semibold text-gray-700">Europe (hors DOM-TOM)</Label>
                         
                         <div className="flex items-start space-x-3 p-3 border rounded-lg hover:bg-gray-50 pl-4">
                           <RadioGroupItem value="chrono-classic" id="chrono-classic" className="mt-1" />
@@ -879,7 +879,7 @@ const CartPage: React.FC = () => {
 
                       {/* International + Outre-Mer */}
                       <div className="space-y-3 mt-4">
-                        <Label className="text-sm font-semibold text-gray-700">✈️ International + Outre-Mer</Label>
+                        <Label className="text-sm font-semibold text-gray-700">International + Outre-Mer</Label>
                         
                         <div className="flex items-start space-x-3 p-3 border rounded-lg hover:bg-gray-50 pl-4">
                           <RadioGroupItem value="international" id="international" className="mt-1" />
@@ -896,7 +896,7 @@ const CartPage: React.FC = () => {
 
                       {/* Retrait gratuit */}
                       <div className="space-y-3 mt-4">
-                        <Label className="text-sm font-semibold text-gray-700">🤝 Retrait gratuit</Label>
+                        <Label className="text-sm font-semibold text-gray-700">Retrait gratuit</Label>
                         
                         <div className="flex items-start space-x-3 p-3 border rounded-lg hover:bg-gray-50 pl-4">
                           <RadioGroupItem value="retrait" id="retrait" className="mt-1" />

@@ -249,9 +249,9 @@ export default function ContactForm({ serviceType }: ContactFormProps) {
 
           {/* Additional Info */}
           <div className="text-center text-sm text-gray-600 space-y-1">
-            <p>📞 Vous préférez nous appeler ? <strong>06 88 00 39 28</strong></p>
-            <p>📍 Zone d'intervention : Île-de-France & Bordeaux Métropole (déplacements dans toute la France et à l'international)</p>
-            <p>🕐 Nous vous recontactons sous 24h ouvrées</p>
+            <p>Vous préférez nous appeler ? <strong>06 88 00 39 28</strong></p>
+            <p>Zone d'intervention : Île-de-France & Bordeaux Métropole (déplacements dans toute la France et à l'international)</p>
+            <p>Nous vous recontactons sous 24h ouvrées</p>
           </div>
         </form>
       </CardContent>
