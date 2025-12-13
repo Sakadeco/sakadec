@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Calendar, MapPin, Users, Star, Heart, Camera, Instagram } from "lucide-react";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import Logo from "@/components/Logo";
 import DSC6144 from "@/assets/images/DSC_6144-HDR.JPG";
 import DSC6145 from "@/assets/images/DSC_6145-HDR.JPG";
@@ -128,7 +128,7 @@ export default function Realisations() {
               <Card key={realisation._id} className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
                 <div className="relative">
                   <img
-                    src={realisation.images[0]}
+                    src={realisation.images && realisation.images.length > 0 ? realisation.images[0] : allImages[0]}
                     alt={realisation.title}
                     className="w-full h-64 object-cover"
                   />
