@@ -19,23 +19,6 @@ import DSC6204 from "@/assets/images/DSC_6204-HDR.JPG";
 import DSC6205 from "@/assets/images/DSC_6205-HDR.JPG";
 
 export default function Events() {
-  const services = [
-    {
-      icon: Heart,
-      title: "Mariages",
-      description: "Cérémonies et réceptions sur-mesure avec arches florales, centres de table et scénographies uniques"
-    },
-    {
-      icon: Cake,
-      title: "Anniversaires", 
-      description: "Fêtes d'anniversaire mémorables avec thèmes personnalisés et décorations spectaculaires"
-    },
-    {
-      icon: Baby,
-      title: "Baby Showers",
-      description: "Célébrations douces et raffinées pour accueillir bébé avec style et émotion"
-    }
-  ];
 
   const galleryImages = [
     { url: DSC6144, alt: "Réalisation SakaDeco Events" },
@@ -74,34 +57,97 @@ export default function Events() {
       {/* Services */}
       <section className="py-20">
         <div className="max-w-6xl mx-auto px-4">
-          <div className="grid lg:grid-cols-2 gap-12 items-center mb-16">
-            <div>
-              <img 
-                src="https://images.unsplash.com/photo-1464207687429-7505649dae38?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
-                alt="Décoration de mariage avec arche fleurie" 
-                className="rounded-xl shadow-lg w-full"
-              />
-            </div>
-            <div>
-              <h2 className="text-2xl font-playfair font-semibold text-gray-800 mb-6">Nos Spécialités</h2>
-              <div className="space-y-6">
-                {services.map((service, index) => {
-                  const IconComponent = service.icon;
-                  return (
-                    <div key={index} className="flex items-start space-x-4">
-                      <div className="flex-shrink-0 w-12 h-12 bg-skd-events rounded-full flex items-center justify-center">
-                        <IconComponent className="text-white" />
-                      </div>
-                      <div>
-                        <h3 className="font-semibold text-gray-800 mb-2">{service.title}</h3>
-                        <p className="text-gray-600">{service.description}</p>
-                      </div>
-                    </div>
-                  );
-                })}
+          {/* Nos Créations */}
+          <div className="mb-16">
+            <h2 className="text-3xl font-playfair font-bold text-gray-800 mb-6">Nos Créations</h2>
+            <p className="text-lg text-gray-700 mb-4 leading-relaxed">
+              Nous créons des univers visuels sur mesure, pensés à votre image, pour sublimer chaque moment important.
+            </p>
+            <p className="text-lg text-gray-700 mb-8 leading-relaxed">
+              De la conception à l'installation, nous imaginons des décors élégants, harmonieux et mémorables.
+            </p>
+          </div>
+
+          {/* Nos Prestations */}
+          <div className="mb-16">
+            <h3 className="text-2xl font-playfair font-semibold text-gray-800 mb-6">Nos prestations incluent :</h3>
+            <div className="grid md:grid-cols-2 gap-4">
+              <div className="flex items-start space-x-3">
+                <div className="flex-shrink-0 w-6 h-6 bg-skd-events rounded-full flex items-center justify-center mt-1">
+                  <div className="w-2 h-2 bg-white rounded-full"></div>
+                </div>
+                <p className="text-gray-700">Moodboard personnalisé</p>
+              </div>
+              <div className="flex items-start space-x-3">
+                <div className="flex-shrink-0 w-6 h-6 bg-skd-events rounded-full flex items-center justify-center mt-1">
+                  <div className="w-2 h-2 bg-white rounded-full"></div>
+                </div>
+                <p className="text-gray-700">Proposition d'ambiance et de thème</p>
+              </div>
+              <div className="flex items-start space-x-3">
+                <div className="flex-shrink-0 w-6 h-6 bg-skd-events rounded-full flex items-center justify-center mt-1">
+                  <div className="w-2 h-2 bg-white rounded-full"></div>
+                </div>
+                <p className="text-gray-700">Scénographie & plan de décoration</p>
+              </div>
+              <div className="flex items-start space-x-3">
+                <div className="flex-shrink-0 w-6 h-6 bg-skd-events rounded-full flex items-center justify-center mt-1">
+                  <div className="w-2 h-2 bg-white rounded-full"></div>
+                </div>
+                <p className="text-gray-700">Installation et désinstallation</p>
+              </div>
+              <div className="flex items-start space-x-3">
+                <div className="flex-shrink-0 w-6 h-6 bg-skd-events rounded-full flex items-center justify-center mt-1">
+                  <div className="w-2 h-2 bg-white rounded-full"></div>
+                </div>
+                <p className="text-gray-700">Location de décoration possible via notre catalogue</p>
               </div>
             </div>
           </div>
+
+          {/* Nos Événements */}
+          <div className="mb-16">
+            <h3 className="text-2xl font-playfair font-semibold text-gray-800 mb-6">Nos événements</h3>
+            <div className="space-y-6">
+              <div className="flex items-start space-x-4">
+                <div className="flex-shrink-0 w-12 h-12 bg-skd-events rounded-full flex items-center justify-center">
+                  <Heart className="text-white" />
+                </div>
+                <div>
+                  <h4 className="font-semibold text-gray-800 mb-2">Mariages</h4>
+                  <p className="text-gray-600">Cérémonies et réceptions sur mesure, avec arches florales, centres de table et scénographies uniques.</p>
+                </div>
+              </div>
+              <div className="flex items-start space-x-4">
+                <div className="flex-shrink-0 w-12 h-12 bg-skd-events rounded-full flex items-center justify-center">
+                  <Cake className="text-white" />
+                </div>
+                <div>
+                  <h4 className="font-semibold text-gray-800 mb-2">Anniversaires</h4>
+                  <p className="text-gray-600">Des fêtes mémorables, aux thèmes personnalisés et décorations spectaculaires.</p>
+                </div>
+              </div>
+              <div className="flex items-start space-x-4">
+                <div className="flex-shrink-0 w-12 h-12 bg-skd-events rounded-full flex items-center justify-center">
+                  <Baby className="text-white" />
+                </div>
+                <div>
+                  <h4 className="font-semibold text-gray-800 mb-2">Baby Showers</h4>
+                  <p className="text-gray-600">Des célébrations douces et raffinées pour accueillir bébé avec style et émotion.</p>
+                </div>
+              </div>
+              <div className="flex items-start space-x-4">
+                <div className="flex-shrink-0 w-12 h-12 bg-skd-events rounded-full flex items-center justify-center">
+                  <Star className="text-white" />
+                </div>
+                <div>
+                  <h4 className="font-semibold text-gray-800 mb-2">Autres événements</h4>
+                  <p className="text-gray-600">Nous accompagnons également vos événements privés et professionnels, en créant des décors adaptés à chaque occasion, dans le respect de votre univers et de vos envies.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
       </section>
 
