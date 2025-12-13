@@ -236,8 +236,18 @@ export default function Realisations() {
             <p className="text-gray-600">
               Découvrez nos dernières réalisations sur Instagram
             </p>
-            <Badge variant="outline" className="mt-4 bg-gradient-to-r from-pink-500 to-purple-500 text-white border-none">
-              @sakadeco_events
+            <Badge 
+              variant="outline" 
+              className="mt-4 bg-gradient-to-r from-pink-500 to-purple-500 text-white border-none cursor-pointer hover:from-pink-600 hover:to-purple-600 transition-colors"
+              asChild
+            >
+              <a 
+                href="https://www.instagram.com/sakadeco_events/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+              >
+                @sakadeco_events
+              </a>
             </Badge>
           </div>
           

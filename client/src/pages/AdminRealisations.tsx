@@ -133,7 +133,7 @@ export default function AdminRealisations() {
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-6 flex items-center justify-between">
+        <div className="mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex items-center space-x-4">
             <Button variant="ghost" onClick={() => setLocation("/admin/dashboard")}>
               <ArrowLeft className="w-4 h-4 mr-2" />
@@ -144,7 +144,10 @@ export default function AdminRealisations() {
               <p className="text-gray-600 mt-1">Gérez toutes vos réalisations</p>
             </div>
           </div>
-          <Button onClick={() => setLocation("/admin/realisations/add")} className="bg-gold hover:bg-gold/90">
+          <Button 
+            onClick={() => setLocation("/admin/realisations/add")} 
+            className="bg-gold hover:bg-gold/90 w-full sm:w-auto"
+          >
             <Plus className="w-4 h-4 mr-2" />
             Ajouter une réalisation
           </Button>
