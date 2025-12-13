@@ -394,7 +394,7 @@ export default function AdminEditRealisation() {
               >
                 Annuler
               </Button>
-              <Button type="submit" disabled={isSubmitting} className="bg-gold hover:bg-gold/90">
+              <Button type="submit" disabled={isSubmitting} className="bg-blue-600 hover:bg-blue-700 text-white">
                 <Save className="w-4 h-4 mr-2" />
                 {isSubmitting ? "Enregistrement..." : "Enregistrer les modifications"}
               </Button>

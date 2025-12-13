@@ -124,7 +124,7 @@ export default function AdminPromoCodes() {
           </div>
           <Button 
             onClick={() => setLocation("/admin/promo-codes/add")} 
-            className="!bg-gradient-to-r !from-gold !to-yellow-500 hover:!from-yellow-500 hover:!to-gold !text-white w-full sm:w-auto border-0"
+            className="bg-blue-600 hover:bg-blue-700 text-white w-full sm:w-auto"
           >
             <Plus className="w-4 h-4 mr-2" />
             Créer un code promo

@@ -366,7 +366,7 @@ export default function AdminEditPromoCode() {
               <Button 
                 type="submit" 
                 disabled={isSubmitting || (!formData.applyToAllProducts && selectedProducts.length === 0)} 
-                className="bg-gold hover:bg-gold/90"
+                className="bg-blue-600 hover:bg-blue-700 text-white"
               >
                 <Save className="w-4 h-4 mr-2" />
                 {isSubmitting ? "Enregistrement..." : "Enregistrer les modifications"}

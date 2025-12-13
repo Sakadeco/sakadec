@@ -315,7 +315,7 @@ export default function AdminAddRealisation() {
               >
                 Annuler
               </Button>
-              <Button type="submit" disabled={isSubmitting} className="bg-gold hover:bg-gold/90">
+              <Button type="submit" disabled={isSubmitting} className="bg-blue-600 hover:bg-blue-700 text-white">
                 <Save className="w-4 h-4 mr-2" />
                 {isSubmitting ? "Création..." : "Créer la réalisation"}
               </Button>
