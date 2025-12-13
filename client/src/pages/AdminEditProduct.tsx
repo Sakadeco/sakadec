@@ -36,6 +36,10 @@ interface Product {
   price: number;
   category: string;
   subcategory: string;
+  theme?: {
+    _id: string;
+    title: string;
+  } | string;
   mainImageUrl: string;
   additionalImages?: string[];
   isCustomizable: boolean;

@@ -65,6 +65,10 @@ export default function AdminAddProduct() {
   const fetchThemes = async () => {
     try {
       const token = localStorage.getItem('adminToken');
+      if (!token) {
+        console.warn('Token admin manquant pour charger les thèmes');
+        return;
+      }
       const response = await fetch('/api/admin/themes', {
         headers: {
           'Authorization': `Bearer ${token}`
@@ -72,10 +76,14 @@ export default function AdminAddProduct() {
       });
       if (response.ok) {
         const data = await response.json();
-        setThemes(data);
+        setThemes(Array.isArray(data) ? data : []);
+      } else {
+        console.warn('Erreur lors du chargement des thèmes:', response.status);
       }
     } catch (error) {
       console.error('Erreur récupération thèmes:', error);
+      // Ne pas bloquer l'affichage si les thèmes ne peuvent pas être chargés
+      setThemes([]);
     }
   };
 
@@ -286,7 +294,7 @@ export default function AdminAddProduct() {
       formDataToSend.append('price', formData.price);
       formDataToSend.append('category', formData.category);
       formDataToSend.append('subcategory', formData.subcategory);
-      if (formData.theme) {
+      if (formData.theme && formData.theme !== "none") {
         formDataToSend.append('theme', formData.theme);
       }
       formDataToSend.append('isCustomizable', String(Object.keys(customizationOptions).length > 0 || formData.isCustomizable));
@@ -443,17 +451,22 @@ export default function AdminAddProduct() {
                 </div>
                 <div>
                   <Label htmlFor="theme">Thème (optionnel)</Label>
-                  <Select value={formData.theme} onValueChange={(value) => handleInputChange('theme', value)}>
+                  <Select 
+                    value={formData.theme || "none"} 
+                    onValueChange={(value) => handleInputChange('theme', value === "none" ? "" : value)}
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="Sélectionner un thème" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">Aucun thème</SelectItem>
-                      {themes.map((theme) => (
-                        <SelectItem key={theme._id} value={theme._id}>
-                          {theme.title}
-                        </SelectItem>
-                      ))}
+                      <SelectItem value="none">Aucun thème</SelectItem>
+                      {Array.isArray(themes) && themes.length > 0 ? (
+                        themes.map((theme) => (
+                          <SelectItem key={theme?._id || ''} value={theme?._id || ''}>
+                            {theme?.title || ''}
+                          </SelectItem>
+                        ))
+                      ) : null}
                     </SelectContent>
                   </Select>
                 </div>
