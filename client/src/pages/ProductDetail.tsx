@@ -74,18 +74,9 @@ export default function ProductDetail() {
     setIsAddingToCart(true);
     
     try {
-      // Calculer le prix total avec personnalisations
+      // Ne plus ajouter de prix supplémentaire pour les personnalisations
       let totalPrice = product.price;
-      let customizationPrice = 0;
-
-      // Calculer le prix des personnalisations
-      Object.values(customizations).forEach((customization: any) => {
-        if (customization && typeof customization === 'object' && customization.price) {
-          customizationPrice += customization.price;
-        }
-      });
-
-      totalPrice += customizationPrice;
+      let customizationPrice = 0; // Toujours 0 maintenant
 
       // Préparer l'article pour le panier
       const cartItem = {
@@ -96,7 +87,7 @@ export default function ProductDetail() {
         image: product.mainImageUrl,
         isRental: false,
         customizations: customizations,
-        customizationPrice: customizationPrice,
+        customizationPrice: 0, // Pas de prix supplémentaire
         totalPrice: totalPrice
       };
 
@@ -113,7 +104,7 @@ export default function ProductDetail() {
         // Mettre à jour la quantité
         cartItems[existingItemIndex].quantity += quantity;
         cartItems[existingItemIndex].customizations = customizations;
-        cartItems[existingItemIndex].customizationPrice = customizationPrice;
+        cartItems[existingItemIndex].customizationPrice = 0; // Pas de prix supplémentaire
         cartItems[existingItemIndex].totalPrice = totalPrice;
       } else {
         // Ajouter le nouvel article
@@ -145,15 +136,9 @@ export default function ProductDetail() {
     setSelectedImageIndex((prev) => (prev - 1 + allImages.length) % allImages.length);
   };
 
-  // Calculer le prix total avec personnalisations
-  const customizationPrice = Object.values(customizations).reduce((total: number, customization: any) => {
-    if (customization && typeof customization === 'object' && customization.price) {
-      return total + customization.price;
-    }
-    return total;
-  }, 0);
-
-  const totalPrice = (product?.price || 0) + customizationPrice;
+  // Ne plus calculer de prix supplémentaire pour les personnalisations
+  const customizationPrice = 0;
+  const totalPrice = product?.price || 0;
 
   if (isLoading) {
     return (
@@ -283,17 +268,18 @@ export default function ProductDetail() {
                 <div className="flex items-center space-x-4">
                   <div>
                     <span className="text-3xl font-bold text-skd-shop">
-                      {totalPrice.toFixed(2)}€
+                      {totalPrice.toFixed(2)}€ HT
                     </span>
+                    <p className="text-xs text-gray-500 mt-1">TVA non incluse</p>
                     {quantity > 1 && (
-                      <span className="text-sm text-gray-500 ml-2">
-                        ({(totalPrice / quantity).toFixed(2)}€ l'unité)
+                      <span className="text-sm text-gray-500 ml-2 block mt-1">
+                        ({(totalPrice / quantity).toFixed(2)}€ HT l'unité)
                       </span>
                     )}
                   </div>
                   {product.isRentable && product.dailyRentalPrice && (
                     <span className="text-sm text-gray-500">
-                      ou {product.dailyRentalPrice.toFixed(2)}€/jour
+                      ou {product.dailyRentalPrice.toFixed(2)}€ HT/jour
                     </span>
                   )}
                 </div>
@@ -357,13 +343,14 @@ export default function ProductDetail() {
                     {/* Price Display */}
                     <div className="text-center mb-4">
                       <span className="text-2xl font-bold text-gray-900">
-                        {(totalPrice * quantity).toFixed(2)}€
+                        {(totalPrice * quantity).toFixed(2)}€ HT
                       </span>
                       {quantity > 1 && (
                         <span className="text-sm text-gray-500 ml-2">
-                          ({totalPrice.toFixed(2)}€ l'unité)
+                          ({totalPrice.toFixed(2)}€ HT l'unité)
                         </span>
                       )}
+                      <p className="text-xs text-gray-500 mt-1">TVA non incluse</p>
                     </div>
 
                     {/* Add to Cart Button */}

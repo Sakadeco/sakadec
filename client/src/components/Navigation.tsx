@@ -63,12 +63,12 @@ export default function Navigation() {
               </div>
               <div className="hidden md:flex items-center space-x-2">
                 <Mail className="h-3 w-3" />
-                <span>contact@sakadeco.com</span>
+                <span>sakadeco.contact@gmail.com</span>
               </div>
             </div>
             <div className="flex items-center space-x-2">
-              <span className="font-medium hidden sm:inline">Bordeaux Métropole</span>
-              <span className="font-medium sm:hidden">Bordeaux</span>
+              <span className="font-medium hidden sm:inline">Île-de-France & Bordeaux Métropole</span>
+              <span className="font-medium sm:hidden">Île-de-France & Bordeaux</span>
             </div>
           </div>
         </div>

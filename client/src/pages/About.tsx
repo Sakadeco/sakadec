@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, MapPin, Phone, Heart, Target } from "lucide-react";
 import Logo from "@/components/Logo";
+import DSC6216 from "@/assets/images/DSC_6216.JPG";
 
 export default function About() {
   const values = [
@@ -82,7 +83,7 @@ export default function About() {
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
               <img 
-                src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
+                src={DSC6216} 
                 alt="Portrait professionnel de Pajusly, fondatrice" 
                 className="rounded-2xl shadow-2xl w-full"
               />
@@ -264,11 +265,10 @@ export default function About() {
               </CardHeader>
               <CardContent>
                 <p className="text-gray-700 mb-4">
-                  <strong>Bordeaux Métropole</strong> - Notre base principale
+                  <strong>Île-de-France & Bordeaux Métropole</strong> - Nos zones principales
                 </p>
                 <p className="text-gray-600">
-                  Nous intervenons principalement sur Bordeaux Métropole avec possibilité de déplacements 
-                  dans toute la région Nouvelle-Aquitaine selon les projets.
+                  Je me déplace dans toute la France — et à l'international — pour accompagner vos projets d'exception.
                 </p>
               </CardContent>
             </Card>
@@ -279,8 +279,7 @@ export default function About() {
               </CardHeader>
               <CardContent>
                 <p className="text-gray-700 mb-4">
-                  Nous n'avons pas de showroom permanent. Pour toute demande, envoyez-nous la liste 
-                  des éléments par email.
+                  N'ayant pas de magasin physique pour l'instant, les rendez-vous se font sur rendez-vous uniquement.
                 </p>
                 <p className="text-gray-600">
                   Les commandes sont traitées par ordre de date d'événement pour garantir la meilleure 

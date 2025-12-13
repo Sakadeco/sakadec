@@ -323,7 +323,10 @@ export default function Themes() {
               </div>
               <h3 className="font-semibold text-gray-800 mb-2">Zone d'Intervention</h3>
               <p className="text-gray-600 text-sm">
-                Bordeaux Métropole et environs
+                Île-de-France & Bordeaux Métropole
+              </p>
+              <p className="text-gray-500 text-xs mt-1">
+                Déplacements dans toute la France et à l'international
               </p>
             </div>
           </div>

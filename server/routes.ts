@@ -1029,6 +1029,83 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
+  // Public routes for réalisations
+  app.get('/api/realisations', async (req, res) => {
+    try {
+      if (db.connection.readyState === 1) {
+        const { Realisation } = await import('./models/Realisation');
+        const realisations = await Realisation.find({ isPublished: true })
+          .sort({ createdAt: -1 });
+        res.json(realisations);
+      } else {
+        res.json([]);
+      }
+    } catch (error) {
+      console.error('Erreur récupération réalisations:', error);
+      res.status(500).json({ message: 'Erreur serveur' });
+    }
+  });
+
+  // Public route for promo code validation
+  app.post('/api/promo-codes/validate', async (req, res) => {
+    try {
+      const { code, productId } = req.body;
+
+      if (!code) {
+        return res.status(400).json({ message: 'Code promo requis' });
+      }
+
+      if (db.connection.readyState === 1) {
+        const { PromoCode } = await import('./models/PromoCode');
+        const mongoose = await import('mongoose');
+        
+        const promoCode = await PromoCode.findOne({ 
+          code: code.toUpperCase().trim(),
+          isActive: true
+        });
+
+        if (!promoCode) {
+          return res.status(404).json({ message: 'Code promo invalide' });
+        }
+
+        // Vérifier les dates de validité
+        const now = new Date();
+        if (now < promoCode.validFrom || now > promoCode.validUntil) {
+          return res.status(400).json({ message: 'Code promo expiré ou non encore valide' });
+        }
+
+        // Vérifier la limite d'utilisation
+        if (promoCode.usageLimit && promoCode.usageCount >= promoCode.usageLimit) {
+          return res.status(400).json({ message: 'Code promo atteint sa limite d\'utilisation' });
+        }
+
+        // Vérifier si le code s'applique au produit
+        if (!promoCode.applyToAllProducts && productId) {
+          const productObjectId = typeof productId === 'string' 
+            ? new mongoose.default.Types.ObjectId(productId) 
+            : productId;
+          
+          if (!promoCode.applicableProducts.some(id => id.toString() === productObjectId.toString())) {
+            return res.status(400).json({ message: 'Ce code promo ne s\'applique pas à ce produit' });
+          }
+        }
+
+        res.json({
+          valid: true,
+          code: promoCode.code,
+          discountPercentage: promoCode.discountPercentage,
+          description: promoCode.description,
+          applyToAllProducts: promoCode.applyToAllProducts
+        });
+      } else {
+        res.status(503).json({ message: 'Base de données non disponible' });
+      }
+    } catch (error) {
+      console.error('Erreur validation code promo:', error);
+      res.status(500).json({ message: 'Erreur serveur' });
+    }
+  });
+
   // Admin routes
   app.use('/api/admin', adminRoutes);
   

@@ -51,7 +51,7 @@ export default function Layout({ children }: LayoutProps) {
               <h4 className="font-semibold mb-4">Contact</h4>
               <ul className="space-y-2 text-gray-300">
                 <li><span className="text-gold mr-2">📞</span> 06 88 00 39 28</li>
-                <li><span className="text-gold mr-2">📍</span> Bordeaux Métropole</li>
+                <li><span className="text-gold mr-2">📍</span> Île-de-France & Bordeaux Métropole</li>
                 <li><span className="text-gold mr-2">🕐</span> Sur rendez-vous</li>
                 <li><a href="/orders" className="hover:text-gold transition-colors">📦 Mes commandes</a></li>
               </ul>

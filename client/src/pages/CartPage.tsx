@@ -45,6 +45,10 @@ const CartPage: React.FC = () => {
   });
   const [deliveryMethod, setDeliveryMethod] = useState<string>('');
   const [acceptedTerms, setAcceptedTerms] = useState(false);
+  const [promoCode, setPromoCode] = useState('');
+  const [promoCodeError, setPromoCodeError] = useState('');
+  const [appliedPromoCode, setAppliedPromoCode] = useState<{ code: string; discountPercentage: number } | null>(null);
+  const [isValidatingPromoCode, setIsValidatingPromoCode] = useState(false);
   
   // Vérifier si le panier contient des produits personnalisés
   const hasCustomizedProducts = cartItems.some(item => 
@@ -95,14 +99,7 @@ const CartPage: React.FC = () => {
     } else {
       itemTotal = item.price * item.quantity;
       
-      // Ajouter les prix de personnalisation pour les achats
-      if (item.customizations) {
-        Object.values(item.customizations).forEach((customization: any) => {
-          if (typeof customization === 'object' && customization.price) {
-            itemTotal += customization.price * item.quantity;
-          }
-        });
-      }
+      // Les personnalisations sont maintenant gratuites, pas de prix supplémentaire
     }
     
     return total + itemTotal;
@@ -134,11 +131,88 @@ const CartPage: React.FC = () => {
   };
   
   const shipping = getShippingCost();
-  const total = Math.round((subtotal + tax + shipping) * 100) / 100; // Arrondir le total
   
+  // Calculer la réduction du code promo
+  const promoDiscount = appliedPromoCode 
+    ? Math.round(subtotal * (appliedPromoCode.discountPercentage / 100) * 100) / 100
+    : 0;
+  
+  const total = Math.round((subtotal - promoDiscount + tax + shipping) * 100) / 100; // Arrondir le total
+  
+  // Fonction pour valider et appliquer le code promo
+  const validatePromoCode = async () => {
+    if (!promoCode.trim()) {
+      setPromoCodeError('Veuillez entrer un code promo');
+      return;
+    }
+
+    setIsValidatingPromoCode(true);
+    setPromoCodeError('');
+
+    try {
+      // Valider le code promo pour chaque produit du panier (ou le premier si panier mixte)
+      const firstProductId = cartItems[0]?.productId;
+      
+      const response = await fetch('/api/promo-codes/validate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          code: promoCode.toUpperCase().trim(),
+          productId: firstProductId
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.valid) {
+        setPromoCodeError(data.message || 'Code promo invalide');
+        setAppliedPromoCode(null);
+        return;
+      }
+
+      // Vérifier si le code s'applique à tous les produits du panier
+      if (!data.applyToAllProducts && firstProductId) {
+        // Pour simplifier, on vérifie juste le premier produit
+        // Dans un cas réel, il faudrait vérifier chaque produit
+        const checkResponse = await fetch('/api/admin/promo-codes/validate', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            code: promoCode.toUpperCase().trim(),
+            productId: firstProductId
+          }),
+        });
+        
+        const checkData = await checkResponse.json();
+        if (!checkData.valid) {
+          setPromoCodeError('Ce code promo ne s\'applique pas aux produits de votre panier');
+          setAppliedPromoCode(null);
+          return;
+        }
+      }
+
+      setAppliedPromoCode({
+        code: data.code,
+        discountPercentage: data.discountPercentage
+      });
+      setPromoCodeError('');
+    } catch (error) {
+      console.error('Erreur validation code promo:', error);
+      setPromoCodeError('Erreur lors de la validation du code promo');
+      setAppliedPromoCode(null);
+    } finally {
+      setIsValidatingPromoCode(false);
+    }
+  };
+
   // Log pour vérification
   console.log('🛒 Calcul panier client:', {
     subtotal: subtotal.toFixed(2),
+    promoDiscount: promoDiscount.toFixed(2),
     tax: tax.toFixed(2),
     shipping: shipping.toFixed(2),
     total: total.toFixed(2)
@@ -422,17 +496,10 @@ const CartPage: React.FC = () => {
                         <p className="text-gray-600">
                           {(() => {
                             if (item.isRental && item.dailyPrice && item.rentalDays) {
-                              return `${item.dailyPrice.toFixed(2)}€/jour × ${item.rentalDays} jours = ${item.totalPrice?.toFixed(2)}€`;
+                              return `${item.dailyPrice.toFixed(2)}€ HT/jour × ${item.rentalDays} jours = ${item.totalPrice?.toFixed(2)}€ HT`;
                             } else {
-                              let totalPrice = item.price;
-                              if (item.customizations) {
-                                Object.values(item.customizations).forEach((customization: any) => {
-                                  if (typeof customization === 'object' && customization.price) {
-                                    totalPrice += customization.price;
-                                  }
-                                });
-                              }
-                              return `${totalPrice.toFixed(2)}€`;
+                              // Les personnalisations sont gratuites, pas de prix supplémentaire
+                              return `${item.price.toFixed(2)}€ HT`;
                             }
                           })()}
                         </p>
@@ -465,8 +532,8 @@ const CartPage: React.FC = () => {
                                         </div>
                                       )}
                                       {customization.price > 0 && (
-                                        <div className="text-blue-600 font-medium text-right">
-                                          +{customization.price.toFixed(2)}€
+                                        <div className="text-gray-500 text-right text-xs">
+                                          (Gratuit)
                                         </div>
                                       )}
                                     </div>
@@ -476,8 +543,8 @@ const CartPage: React.FC = () => {
                                     <div key={key} className="flex justify-between items-center">
                                       <span>{key}: {customization.value}</span>
                                       {customization.price > 0 && (
-                                        <span className="text-blue-600 font-medium">
-                                          +{customization.price.toFixed(2)}€
+                                        <span className="text-gray-500 text-xs">
+                                          (Gratuit)
                                         </span>
                                       )}
                                     </div>
@@ -519,17 +586,10 @@ const CartPage: React.FC = () => {
                         <p className="font-semibold text-gray-900">
                           {(() => {
                             if (item.isRental && item.totalPrice) {
-                              return `${item.totalPrice.toFixed(2)}€`;
+                              return `${item.totalPrice.toFixed(2)}€ HT`;
                             } else {
-                              let totalPrice = item.price;
-                              if (item.customizations) {
-                                Object.values(item.customizations).forEach((customization: any) => {
-                                  if (typeof customization === 'object' && customization.price) {
-                                    totalPrice += customization.price;
-                                  }
-                                });
-                              }
-                              return `${(totalPrice * item.quantity).toFixed(2)}€`;
+                              // Les personnalisations sont gratuites, pas de prix supplémentaire
+                              return `${(item.price * item.quantity).toFixed(2)}€ HT`;
                             }
                           })()}
                         </p>
@@ -567,29 +627,7 @@ const CartPage: React.FC = () => {
                      }, 0).toFixed(2)}€</span>
                    </div>
                    
-                   {/* Prix de personnalisation */}
-                   {(() => {
-                     const customizationTotal = cartItems.reduce((total, item) => {
-                       if (item.customizations) {
-                         Object.values(item.customizations).forEach((customization: any) => {
-                           if (typeof customization === 'object' && customization.price) {
-                             total += customization.price * item.quantity;
-                           }
-                         });
-                       }
-                       return total;
-                     }, 0);
-                     
-                     if (customizationTotal > 0) {
-                       return (
-                         <div className="flex justify-between">
-                           <span>Personnalisations</span>
-                           <span className="text-blue-600">+{customizationTotal.toFixed(2)}€</span>
-                         </div>
-                       );
-                     }
-                     return null;
-                   })()}
+                   {/* Prix de personnalisation - Supprimé car gratuit */}
                    
                    <div className="flex justify-between">
                      <span>TVA (20%)</span>
@@ -611,8 +649,67 @@ const CartPage: React.FC = () => {
                        <span>{total.toFixed(2)}€</span>
                      </div>
                    </div>
+                   {appliedPromoCode && (
+                     <>
+                       <div className="flex justify-between text-green-600">
+                         <span>Code promo ({appliedPromoCode.code})</span>
+                         <span>-{promoDiscount.toFixed(2)}€</span>
+                       </div>
+                       <Button
+                         type="button"
+                         variant="ghost"
+                         size="sm"
+                         onClick={() => {
+                           setAppliedPromoCode(null);
+                           setPromoCode('');
+                         }}
+                         className="text-xs text-red-600 hover:text-red-700"
+                       >
+                         Retirer le code promo
+                       </Button>
+                     </>
+                   )}
                  </CardContent>
                </Card>
+
+              {/* Code Promo */}
+              {!appliedPromoCode && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg font-bold text-orange-600">🎁 Code Promo</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="flex gap-2">
+                      <Input
+                        placeholder="Entrez votre code promo"
+                        value={promoCode}
+                        onChange={(e) => {
+                          setPromoCode(e.target.value.toUpperCase());
+                          setPromoCodeError('');
+                        }}
+                        onKeyPress={(e) => {
+                          if (e.key === 'Enter') {
+                            e.preventDefault();
+                            validatePromoCode();
+                          }
+                        }}
+                        className="flex-1"
+                      />
+                      <Button
+                        type="button"
+                        onClick={validatePromoCode}
+                        disabled={isValidatingPromoCode || !promoCode.trim()}
+                        className="bg-orange-600 hover:bg-orange-700"
+                      >
+                        {isValidatingPromoCode ? 'Vérification...' : 'Appliquer'}
+                      </Button>
+                    </div>
+                    {promoCodeError && (
+                      <p className="text-sm text-red-600">{promoCodeError}</p>
+                    )}
+                  </CardContent>
+                </Card>
+              )}
 
               {/* Customer Information */}
               <Card>

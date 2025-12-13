@@ -29,12 +29,11 @@ interface QuoteData {
 }
 
 const budgetOptions = [
-  { value: "0-500", label: "Moins de 500€" },
-  { value: "500-1000", label: "500€ - 1000€" },
-  { value: "1000-2500", label: "1000€ - 2500€" },
-  { value: "2500-5000", label: "2500€ - 5000€" },
-  { value: "5000+", label: "Plus de 5000€" },
-  { value: "flexible", label: "Budget flexible" },
+  { value: "moins-500", label: "Moins de 500€ (hors décoration salle de réception)" },
+  { value: "500-1500", label: "500€ et 1500€ (hors décoration salle de réception)" },
+  { value: "1500-3000", label: "1500€ et 3000€ (hors mariage)" },
+  { value: "3000-5000", label: "3000€ et 5000€" },
+  { value: "plus-5000", label: "Plus de 5000€" },
 ];
 
 export default function ContactForm({ serviceType }: ContactFormProps) {
@@ -219,7 +218,7 @@ export default function ContactForm({ serviceType }: ContactFormProps) {
               </SelectContent>
             </Select>
             <p className="text-xs text-gray-600 italic">
-              (Notre minimum de commande est de 600 € pour la décoration. Nos prestations décoration mariage commencent à partir de 2 500 €.)
+              (Budget Minimum 1500€ pour décor salle de réception, 3000€ décor mariage)
             </p>
           </div>
 
@@ -251,7 +250,7 @@ export default function ContactForm({ serviceType }: ContactFormProps) {
           {/* Additional Info */}
           <div className="text-center text-sm text-gray-600 space-y-1">
             <p>📞 Vous préférez nous appeler ? <strong>06 88 00 39 28</strong></p>
-            <p>📍 Zone d'intervention : Bordeaux Métropole</p>
+            <p>📍 Zone d'intervention : Île-de-France & Bordeaux Métropole (déplacements dans toute la France et à l'international)</p>
             <p>🕐 Nous vous recontactons sous 24h ouvrées</p>
           </div>
         </form>

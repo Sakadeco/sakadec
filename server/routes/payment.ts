@@ -63,17 +63,10 @@ router.post('/create-checkout-session', async (req: Request, res: Response) => {
         description = `${product.name} (Location - ${item.rentalDays} jour(s))`;
       }
 
-      // Calculer le prix de base du produit
+      // Calculer le prix de base du produit (personnalisations gratuites)
       let itemTotal = price * item.quantity;
       
-      // Ajouter les prix de personnalisation
-      if (item.customizations) {
-        Object.values(item.customizations).forEach((customization: any) => {
-          if (typeof customization === 'object' && customization.price) {
-            itemTotal += customization.price * item.quantity;
-          }
-        });
-      }
+      // Les personnalisations sont gratuites, pas de prix supplémentaire
       
       subtotal += itemTotal;
 
@@ -89,14 +82,14 @@ router.post('/create-checkout-session', async (req: Request, res: Response) => {
         }
       }
 
-      // Calculer le prix unitaire total (produit + personnalisations)
+      // Calculer le prix unitaire total (produit seulement, personnalisations gratuites)
       let unitPrice = price;
       let customizationDescription = '';
       
       if (item.customizations) {
         Object.entries(item.customizations).forEach(([key, customization]: [string, any]) => {
-          if (typeof customization === 'object' && customization.price) {
-            unitPrice += customization.price;
+          if (typeof customization === 'object') {
+            // Les personnalisations sont gratuites, pas de prix supplémentaire
             if (customizationDescription) customizationDescription += ', ';
             customizationDescription += `${key}: ${customization.type || 'personnalisation'}`;
           }
@@ -166,20 +159,13 @@ router.post('/create-checkout-session', async (req: Request, res: Response) => {
       user: req.body.userId || null,
       customerEmail: req.body.customerEmail,
       items: items.map((item: any) => {
-        // Calculer le prix total de l'article (produit + personnalisations)
+        // Les personnalisations sont gratuites, pas de prix supplémentaire
         let itemPrice = item.price;
-        if (item.customizations) {
-          Object.values(item.customizations).forEach((customization: any) => {
-            if (typeof customization === 'object' && customization.price) {
-              itemPrice += customization.price;
-            }
-          });
-        }
         
         return {
           product: item.productId,
           quantity: item.quantity,
-          price: itemPrice, // Prix total incluant les personnalisations
+          price: itemPrice, // Prix du produit uniquement (personnalisations gratuites)
           isRental: isRental,
           rentalStartDate: item.rentalStartDate,
           rentalEndDate: item.rentalEndDate,

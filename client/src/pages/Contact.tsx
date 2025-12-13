@@ -57,7 +57,7 @@ export default function Contact() {
                     </div>
                     <div>
                       <h3 className="font-semibold text-gray-800 mb-1">Email</h3>
-                      <p className="text-gray-600">contact@sakadeco-group.fr</p>
+                      <p className="text-gray-600">sakadeco.contact@gmail.com</p>
                     </div>
                   </div>
 
@@ -67,8 +67,8 @@ export default function Contact() {
                     </div>
                     <div>
                       <h3 className="font-semibold text-gray-800 mb-1">Zone d'intervention</h3>
-                      <p className="text-gray-600">Bordeaux Métropole</p>
-                      <p className="text-sm text-gray-500">Déplacements possibles dans toute la région</p>
+                      <p className="text-gray-600">Île-de-France & Bordeaux Métropole</p>
+                      <p className="text-sm text-gray-500">Je me déplace dans toute la France — et à l'international — pour accompagner vos projets d'exception.</p>
                     </div>
                   </div>
 
@@ -78,9 +78,8 @@ export default function Contact() {
                     </div>
                     <div>
                       <h3 className="font-semibold text-gray-800 mb-1">Horaires</h3>
-                      <p className="text-gray-600">Lundi - Vendredi : 9h - 18h</p>
-                      <p className="text-gray-600">Samedi : 9h - 17h</p>
-                      <p className="text-gray-600">Dimanche : Sur rendez-vous</p>
+                      <p className="text-gray-600">Sur rendez-vous uniquement</p>
+                      <p className="text-sm text-gray-500">N'ayant pas de magasin physique pour l'instant</p>
                     </div>
                   </div>
                 </div>
@@ -90,14 +89,35 @@ export default function Contact() {
               <div>
                 <h3 className="text-xl font-playfair font-semibold text-gray-800 mb-4">Suivez-nous</h3>
                 <div className="flex space-x-4">
-                  <Button variant="outline" size="icon" className="border-gold hover:bg-gold hover:text-white">
-                    <Facebook className="w-5 h-5" />
+                  <Button 
+                    variant="outline" 
+                    size="icon" 
+                    className="border-gold hover:bg-gold hover:text-white"
+                    asChild
+                  >
+                    <a href="https://www.facebook.com/SakadecoEvents/" target="_blank" rel="noopener noreferrer">
+                      <Facebook className="w-5 h-5" />
+                    </a>
                   </Button>
-                  <Button variant="outline" size="icon" className="border-gold hover:bg-gold hover:text-white">
-                    <Instagram className="w-5 h-5" />
+                  <Button 
+                    variant="outline" 
+                    size="icon" 
+                    className="border-gold hover:bg-gold hover:text-white"
+                    asChild
+                  >
+                    <a href="https://www.instagram.com/sakadeco_events/" target="_blank" rel="noopener noreferrer">
+                      <Instagram className="w-5 h-5" />
+                    </a>
                   </Button>
-                  <Button variant="outline" size="icon" className="border-gold hover:bg-gold hover:text-white">
-                    <MessageSquare className="w-5 h-5" />
+                  <Button 
+                    variant="outline" 
+                    size="icon" 
+                    className="border-gold hover:bg-gold hover:text-white"
+                    asChild
+                  >
+                    <a href="https://wa.me/33688003928" target="_blank" rel="noopener noreferrer">
+                      <MessageSquare className="w-5 h-5" />
+                    </a>
                   </Button>
                 </div>
               </div>
@@ -160,12 +180,15 @@ export default function Contact() {
                       className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gold focus:border-transparent"
                     >
                       <option value="">Sélectionnez votre budget</option>
-                      <option value="moins-500">Moins de 500€</option>
-                      <option value="500-1000">500€ - 1000€</option>
-                      <option value="1000-2500">1000€ - 2500€</option>
-                      <option value="2500-5000">2500€ - 5000€</option>
+                      <option value="moins-500">Moins de 500€ (hors décoration salle de réception)</option>
+                      <option value="500-1500">500€ et 1500€ (hors décoration salle de réception)</option>
+                      <option value="1500-3000">1500€ et 3000€ (hors mariage)</option>
+                      <option value="3000-5000">3000€ et 5000€</option>
                       <option value="plus-5000">Plus de 5000€</option>
                     </select>
+                    <p className="text-xs text-gray-600 italic">
+                      (Budget Minimum 1500€ pour décor salle de réception, 3000€ décor mariage)
+                    </p>
                   </div>
 
                   <div className="space-y-2">
@@ -188,33 +211,36 @@ export default function Contact() {
         </div>
       </section>
 
-      {/* About Pajusly */}
+      {/* Pourquoi choisir SakaDeco Group */}
       <section className="py-20 bg-gray-50">
         <div className="max-w-6xl mx-auto px-4">
-          <div className="text-center">
-            <h2 className="text-3xl font-playfair font-bold text-gray-800 mb-6">Pourquoi choisir SakaDeco Group ?</h2>
-            <div className="grid md:grid-cols-3 gap-8 mt-12">
-              <div className="text-center">
-                <div className="w-16 h-16 bg-gold/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <span className="text-2xl">🎨</span>
-                </div>
-                <h3 className="text-xl font-playfair font-semibold text-gray-800 mb-2">Créativité sur mesure</h3>
-                <p className="text-gray-600">Chaque projet est unique et mérite une attention particulière</p>
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-playfair font-bold text-gray-800 mb-4">Pourquoi choisir SakaDeco Group ?</h2>
+            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+              Votre satisfaction est notre priorité, du premier échange à la dernière installation.
+            </p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="text-center p-6 bg-white rounded-lg shadow-md">
+              <div className="w-16 h-16 bg-gold/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-3xl">📌</span>
               </div>
-              <div className="text-center">
-                <div className="w-16 h-16 bg-gold/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <span className="text-2xl">⭐</span>
-                </div>
-                <h3 className="text-xl font-playfair font-semibold text-gray-800 mb-2">Qualité premium</h3>
-                <p className="text-gray-600">Matériaux et prestations de haute qualité pour vos événements</p>
+              <h3 className="text-xl font-playfair font-semibold text-gray-800 mb-3">Résultats garantis</h3>
+              <p className="text-gray-600">Votre événement, votre style, notre savoir-faire : nous mettons tout en œuvre pour offrir un rendu impeccable et à la hauteur de vos attentes.</p>
+            </div>
+            <div className="text-center p-6 bg-white rounded-lg shadow-md">
+              <div className="w-16 h-16 bg-gold/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-3xl">🪄</span>
               </div>
-              <div className="text-center">
-                <div className="w-16 h-16 bg-gold/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <span className="text-2xl">🤝</span>
-                </div>
-                <h3 className="text-xl font-playfair font-semibold text-gray-800 mb-2">Accompagnement complet</h3>
-                <p className="text-gray-600">De la conception à la réalisation, nous vous accompagnons</p>
+              <h3 className="text-xl font-playfair font-semibold text-gray-800 mb-3">Créations uniques et personnalisées</h3>
+              <p className="text-gray-600">Chaque projet est conçu comme une véritable œuvre sur mesure, mêlant tendances, harmonie et sophistication pour refléter votre univers.</p>
+            </div>
+            <div className="text-center p-6 bg-white rounded-lg shadow-md">
+              <div className="w-16 h-16 bg-gold/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-3xl">🎯</span>
               </div>
+              <h3 className="text-xl font-playfair font-semibold text-gray-800 mb-3">Une expertise 360°</h3>
+              <p className="text-gray-600">Décoration, personnalisation, location, home déco : notre maîtrise de chaque détail vous assure une prestation complète, cohérente et sans stress.</p>
             </div>
           </div>
         </div>

@@ -226,7 +226,7 @@ class EmailService {
           <div class="company-info">
             <p style="margin: 5px 0; color: #6b7280;">123 Rue de la Décoration</p>
             <p style="margin: 5px 0; color: #6b7280;">75001 Paris, France</p>
-            <p style="margin: 5px 0; color: #6b7280;">contact@sakadeco.com</p>
+            <p style="margin: 5px 0; color: #6b7280;">sakadeco.contact@gmail.com</p>
           </div>
 
           <div class="invoice-details">
@@ -299,7 +299,7 @@ class EmailService {
           <div class="footer">
             <p style="margin-bottom: 10px; color: #6b7280;">Merci pour votre confiance !</p>
             <p style="margin: 5px 0; font-size: 14px; color: #6b7280;">
-              Pour toute question, contactez-nous à contact@sakadeco.com
+              Pour toute question, contactez-nous à sakadeco.contact@gmail.com
             </p>
             <p style="margin: 5px 0; font-size: 12px; color: #9ca3af;">
               Facture générée le ${format(new Date(invoice.createdAt), 'dd/MM/yyyy à HH:mm', { locale: fr })}

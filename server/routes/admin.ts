@@ -1,8 +1,11 @@
 import { Router, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
+import mongoose from 'mongoose';
 import { Admin } from '../models/Admin';
 import { Product } from '../models/Product';
 import Order from '../models/Order';
+import { Realisation } from '../models/Realisation';
+import { PromoCode } from '../models/PromoCode';
 import { adminAuth, AdminRequest, requireSuperAdmin } from '../middleware/adminAuth';
 import upload from '../middleware/upload';
 import { v2 as cloudinary } from 'cloudinary';
@@ -963,6 +966,337 @@ router.put('/rentals/:rentalId/status', adminAuth, async (req: AdminRequest, res
     });
   } catch (error) {
     console.error('Erreur mise à jour statut location:', error);
+    res.status(500).json({ message: 'Erreur serveur' });
+  }
+});
+
+// ==================== RÉALISATIONS ====================
+
+// Get all réalisations
+router.get('/realisations', adminAuth, async (req: AdminRequest, res: Response) => {
+  try {
+    const realisations = await Realisation.find().sort({ createdAt: -1 });
+    res.json(realisations);
+  } catch (error) {
+    console.error('Erreur récupération réalisations:', error);
+    res.status(500).json({ message: 'Erreur serveur' });
+  }
+});
+
+// Get single réalisation
+router.get('/realisations/:id', adminAuth, async (req: AdminRequest, res: Response) => {
+  try {
+    const realisation = await Realisation.findById(req.params.id);
+    if (!realisation) {
+      return res.status(404).json({ message: 'Réalisation non trouvée' });
+    }
+    res.json(realisation);
+  } catch (error) {
+    console.error('Erreur récupération réalisation:', error);
+    res.status(500).json({ message: 'Erreur serveur' });
+  }
+});
+
+// Create réalisation
+router.post('/realisations', adminAuth, upload.fields([
+  { name: 'images', maxCount: 20 }
+]), async (req: AdminRequest, res: Response) => {
+  try {
+    const {
+      title,
+      category,
+      date,
+      location,
+      guests,
+      description,
+      highlights,
+      rating,
+      isPublished,
+      existingImages
+    } = req.body;
+
+    let imageUrls: string[] = [];
+
+    // Traiter les images uploadées
+    if (req.files && req.files.images) {
+      const files = Array.isArray(req.files.images) ? req.files.images : [req.files.images];
+      
+      for (const file of files) {
+        if (isCloudinaryConfigured) {
+          try {
+            const result = await cloudinary.uploader.upload(file.path, {
+              folder: 'sakadeco/realisations',
+              public_id: `realisation-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+            });
+            imageUrls.push(result.secure_url);
+          } catch (cloudinaryError) {
+            console.error('Erreur upload Cloudinary:', cloudinaryError);
+            imageUrls.push(`/uploads/realisations/${file.filename}`);
+          }
+        } else {
+          imageUrls.push(`/uploads/realisations/${file.filename}`);
+        }
+      }
+    }
+
+    // Ajouter les images existantes si fournies
+    if (existingImages) {
+      const parsedImages = typeof existingImages === 'string' ? JSON.parse(existingImages) : existingImages;
+      if (Array.isArray(parsedImages)) {
+        imageUrls = [...imageUrls, ...parsedImages];
+      }
+    }
+
+    const highlightsArray = typeof highlights === 'string' ? JSON.parse(highlights) : highlights;
+
+    const realisation = new Realisation({
+      title: title.trim(),
+      category: category.trim(),
+      date: new Date(date),
+      location: location.trim(),
+      guests: guests ? parseInt(guests) : undefined,
+      description: description.trim(),
+      images: imageUrls,
+      highlights: highlightsArray || [],
+      rating: rating ? parseInt(rating) : 5,
+      isPublished: isPublished === 'true' || isPublished === true
+    });
+
+    await realisation.save();
+    res.status(201).json(realisation);
+  } catch (error) {
+    console.error('Erreur création réalisation:', error);
+    res.status(500).json({ message: 'Erreur création réalisation', error: error.message });
+  }
+});
+
+// Update réalisation
+router.put('/realisations/:id', adminAuth, upload.fields([
+  { name: 'images', maxCount: 20 }
+]), async (req: AdminRequest, res: Response) => {
+  try {
+    const { id } = req.params;
+    const {
+      title,
+      category,
+      date,
+      location,
+      guests,
+      description,
+      highlights,
+      rating,
+      isPublished,
+      existingImages
+    } = req.body;
+
+    const realisation = await Realisation.findById(id);
+    if (!realisation) {
+      return res.status(404).json({ message: 'Réalisation non trouvée' });
+    }
+
+    let imageUrls = existingImages 
+      ? (typeof existingImages === 'string' ? JSON.parse(existingImages) : existingImages)
+      : realisation.images;
+
+    // Traiter les nouvelles images uploadées
+    if (req.files && req.files.images) {
+      const files = Array.isArray(req.files.images) ? req.files.images : [req.files.images];
+      
+      for (const file of files) {
+        if (isCloudinaryConfigured) {
+          try {
+            const result = await cloudinary.uploader.upload(file.path, {
+              folder: 'sakadeco/realisations',
+              public_id: `realisation-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+            });
+            imageUrls.push(result.secure_url);
+          } catch (cloudinaryError) {
+            console.error('Erreur upload Cloudinary:', cloudinaryError);
+            imageUrls.push(`/uploads/realisations/${file.filename}`);
+          }
+        } else {
+          imageUrls.push(`/uploads/realisations/${file.filename}`);
+        }
+      }
+    }
+
+    const highlightsArray = typeof highlights === 'string' ? JSON.parse(highlights) : highlights;
+
+    realisation.title = title.trim();
+    realisation.category = category.trim();
+    realisation.date = new Date(date);
+    realisation.location = location.trim();
+    realisation.guests = guests ? parseInt(guests) : undefined;
+    realisation.description = description.trim();
+    realisation.images = imageUrls;
+    realisation.highlights = highlightsArray || [];
+    realisation.rating = rating ? parseInt(rating) : 5;
+    realisation.isPublished = isPublished === 'true' || isPublished === true;
+
+    await realisation.save();
+    res.json(realisation);
+  } catch (error) {
+    console.error('Erreur mise à jour réalisation:', error);
+    res.status(500).json({ message: 'Erreur mise à jour réalisation', error: error.message });
+  }
+});
+
+// Delete réalisation
+router.delete('/realisations/:id', adminAuth, async (req: AdminRequest, res: Response) => {
+  try {
+    const realisation = await Realisation.findByIdAndDelete(req.params.id);
+    if (!realisation) {
+      return res.status(404).json({ message: 'Réalisation non trouvée' });
+    }
+    res.json({ message: 'Réalisation supprimée avec succès' });
+  } catch (error) {
+    console.error('Erreur suppression réalisation:', error);
+    res.status(500).json({ message: 'Erreur serveur' });
+  }
+});
+
+// ==================== CODES PROMO ====================
+
+// Get all promo codes
+router.get('/promo-codes', adminAuth, async (req: AdminRequest, res: Response) => {
+  try {
+    const promoCodes = await PromoCode.find()
+      .populate('applicableProducts', 'name')
+      .sort({ createdAt: -1 });
+    res.json(promoCodes);
+  } catch (error) {
+    console.error('Erreur récupération codes promo:', error);
+    res.status(500).json({ message: 'Erreur serveur' });
+  }
+});
+
+// Get single promo code
+router.get('/promo-codes/:id', adminAuth, async (req: AdminRequest, res: Response) => {
+  try {
+    const promoCode = await PromoCode.findById(req.params.id)
+      .populate('applicableProducts', 'name');
+    if (!promoCode) {
+      return res.status(404).json({ message: 'Code promo non trouvé' });
+    }
+    res.json(promoCode);
+  } catch (error) {
+    console.error('Erreur récupération code promo:', error);
+    res.status(500).json({ message: 'Erreur serveur' });
+  }
+});
+
+// Create promo code
+router.post('/promo-codes', adminAuth, async (req: AdminRequest, res: Response) => {
+  try {
+    const {
+      code,
+      discountPercentage,
+      applyToAllProducts,
+      applicableProducts,
+      validFrom,
+      validUntil,
+      isActive,
+      usageLimit,
+      description
+    } = req.body;
+
+    // Vérifier si le code existe déjà
+    const existingCode = await PromoCode.findOne({ code: code.toUpperCase() });
+    if (existingCode) {
+      return res.status(400).json({ message: 'Ce code promo existe déjà' });
+    }
+
+    const promoCode = new PromoCode({
+      code: code.toUpperCase().trim(),
+      discountPercentage: parseFloat(discountPercentage),
+      applyToAllProducts: applyToAllProducts === 'true' || applyToAllProducts === true,
+      applicableProducts: applyToAllProducts ? [] : (applicableProducts || []),
+      validFrom: new Date(validFrom || Date.now()),
+      validUntil: new Date(validUntil),
+      isActive: isActive !== undefined ? (isActive === 'true' || isActive === true) : true,
+      usageLimit: usageLimit ? parseInt(usageLimit) : undefined,
+      description: description?.trim()
+    });
+
+    await promoCode.save();
+    
+    const populated = await PromoCode.findById(promoCode._id)
+      .populate('applicableProducts', 'name');
+    
+    res.status(201).json(populated);
+  } catch (error) {
+    console.error('Erreur création code promo:', error);
+    res.status(500).json({ message: 'Erreur création code promo', error: error.message });
+  }
+});
+
+// Update promo code
+router.put('/promo-codes/:id', adminAuth, async (req: AdminRequest, res: Response) => {
+  try {
+    const { id } = req.params;
+    const {
+      code,
+      discountPercentage,
+      applyToAllProducts,
+      applicableProducts,
+      validFrom,
+      validUntil,
+      isActive,
+      usageLimit,
+      description
+    } = req.body;
+
+    const promoCode = await PromoCode.findById(id);
+    if (!promoCode) {
+      return res.status(404).json({ message: 'Code promo non trouvé' });
+    }
+
+    // Vérifier si le code existe déjà (sauf pour celui qu'on modifie)
+    if (code && code.toUpperCase() !== promoCode.code) {
+      const existingCode = await PromoCode.findOne({ code: code.toUpperCase() });
+      if (existingCode) {
+        return res.status(400).json({ message: 'Ce code promo existe déjà' });
+      }
+    }
+
+    promoCode.code = code ? code.toUpperCase().trim() : promoCode.code;
+    promoCode.discountPercentage = discountPercentage ? parseFloat(discountPercentage) : promoCode.discountPercentage;
+    promoCode.applyToAllProducts = applyToAllProducts !== undefined 
+      ? (applyToAllProducts === 'true' || applyToAllProducts === true)
+      : promoCode.applyToAllProducts;
+    promoCode.applicableProducts = promoCode.applyToAllProducts 
+      ? [] 
+      : (applicableProducts || promoCode.applicableProducts);
+    promoCode.validFrom = validFrom ? new Date(validFrom) : promoCode.validFrom;
+    promoCode.validUntil = validUntil ? new Date(validUntil) : promoCode.validUntil;
+    promoCode.isActive = isActive !== undefined 
+      ? (isActive === 'true' || isActive === true)
+      : promoCode.isActive;
+    promoCode.usageLimit = usageLimit ? parseInt(usageLimit) : promoCode.usageLimit;
+    promoCode.description = description !== undefined ? description?.trim() : promoCode.description;
+
+    await promoCode.save();
+    
+    const populated = await PromoCode.findById(promoCode._id)
+      .populate('applicableProducts', 'name');
+    
+    res.json(populated);
+  } catch (error) {
+    console.error('Erreur mise à jour code promo:', error);
+    res.status(500).json({ message: 'Erreur mise à jour code promo', error: error.message });
+  }
+});
+
+// Delete promo code
+router.delete('/promo-codes/:id', adminAuth, async (req: AdminRequest, res: Response) => {
+  try {
+    const promoCode = await PromoCode.findByIdAndDelete(req.params.id);
+    if (!promoCode) {
+      return res.status(404).json({ message: 'Code promo non trouvé' });
+    }
+    res.json({ message: 'Code promo supprimé avec succès' });
+  } catch (error) {
+    console.error('Erreur suppression code promo:', error);
     res.status(500).json({ message: 'Erreur serveur' });
   }
 });

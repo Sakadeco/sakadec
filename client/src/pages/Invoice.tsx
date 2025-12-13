@@ -189,7 +189,7 @@ const Invoice: React.FC = () => {
                 <p className="text-gray-600">Décoration et aménagement</p>
                 <p className="text-gray-600">123 Rue de la Décoration</p>
                 <p className="text-gray-600">75001 Paris, France</p>
-                <p className="text-gray-600">contact@sakadeco.com</p>
+                <p className="text-gray-600">sakadeco.contact@gmail.com</p>
               </div>
               <div className="text-right">
                 <h2 className="text-2xl font-bold text-gray-800 mb-4">FACTURE</h2>
@@ -328,7 +328,7 @@ const Invoice: React.FC = () => {
             <div className="text-center text-gray-600">
               <p className="mb-2">Merci pour votre confiance !</p>
               <p className="text-sm">
-                Pour toute question, contactez-nous à contact@sakadeco.com
+                Pour toute question, contactez-nous à sakadeco.contact@gmail.com
               </p>
               <p className="text-sm mt-2">
                 Facture générée le {format(new Date(invoice.createdAt), 'dd/MM/yyyy à HH:mm', { locale: fr })}

@@ -59,29 +59,10 @@ export default function ProductCustomization({
         ...currentCustomization,
         type: 'both',
         [type === 'text' ? 'textValue' : 'imageValue']: value,
-        price: 0
+        price: 0 // Pas de prix supplémentaire pour les personnalisations
       };
       
-      // Calculer le prix total
-      let totalPrice = 0;
-      
-      // Prix pour le texte (prix de base + caractères supplémentaires)
-      if (newCustomization.textValue && newCustomization.textValue.length > 0) {
-        // Prix de base pour le texte
-        totalPrice += option.basePrice || 3;
-        
-        // Prix pour les caractères supplémentaires au-delà de la limite
-        const extraChars = Math.max(0, newCustomization.textValue.length - (option.maxLength || 0));
-        totalPrice += extraChars * (option.pricePerCharacter || 0.1);
-      }
-      
-      // Prix pour l'image (seulement si une image est uploadée)
-      if (newCustomization.imageValue) {
-        totalPrice += option.basePrice || 5;
-      }
-      
-      newCustomization.price = totalPrice;
-      setCustomizationPrice(totalPrice);
+      setCustomizationPrice(0);
       
       const newCustomizations = {
         ...customizations,
@@ -90,28 +71,15 @@ export default function ProductCustomization({
       setCustomizations(newCustomizations);
       onCustomizationChange(newCustomizations);
     } else {
-      // Pour les autres types, comportement normal
-      let price = 0;
-
-      if (type === 'text' && value.length > 0) {
-        // Prix de base pour le texte
-        price += option.basePrice || 3;
-        
-        // Prix pour les caractères supplémentaires au-delà de la limite
-        const extraChars = Math.max(0, value.length - (option.maxLength || 0));
-        price += extraChars * (option.pricePerCharacter || 0.1);
-      } else if (type === 'image' && value) {
-        price = option.basePrice || 5;
-      }
-
-      setCustomizationPrice(price);
+      // Pour les autres types, pas de prix supplémentaire
+      setCustomizationPrice(0);
 
       const newCustomizations = {
         ...customizations,
         [key]: {
           type,
           value,
-          price
+          price: 0
         }
       };
       setCustomizations(newCustomizations);
@@ -130,17 +98,10 @@ export default function ProductCustomization({
         price: 0
       };
       
-      // Recalculer le prix sans l'image
-      if (newCustomization.textValue && newCustomization.textValue.length > 0) {
-        // Prix de base pour le texte
-        newCustomization.price = option.basePrice || 3;
-        
-        // Prix pour les caractères supplémentaires au-delà de la limite
-        const extraChars = Math.max(0, newCustomization.textValue.length - (option.maxLength || 0));
-        newCustomization.price += extraChars * (option.pricePerCharacter || 0.1);
-      }
+      // Recalculer le prix sans l'image (mais toujours 0)
+      newCustomization.price = 0;
       
-      setCustomizationPrice(newCustomization.price);
+      setCustomizationPrice(0);
       setCustomImage('');
       
       const newCustomizations = {
@@ -259,13 +220,13 @@ export default function ProductCustomization({
                />
                <div className="flex justify-between text-sm text-gray-500">
                  <span>{customText.length}/{option.maxLength || 50} caractères</span>
-                 <span className="text-blue-600 font-medium">
-                   {customText.length > 0 ? `+${customizationPrice.toFixed(2)}€` : '0.00€'}
+                 <span className="text-gray-600 font-medium">
+                   Gratuit
                  </span>
                </div>
                {option.maxLength && customText.length > option.maxLength && (
-                 <p className="text-sm text-red-600">
-                   Limite de caractères dépassée. Prix supplémentaire appliqué.
+                 <p className="text-sm text-orange-600">
+                   Limite de caractères dépassée.
                  </p>
                )}
              </div>
@@ -291,8 +252,8 @@ export default function ProductCustomization({
                />
                <div className="flex justify-between text-sm text-gray-500">
                  <span>Prix de gravure</span>
-                 <span className="text-blue-600 font-medium">
-                   {customImage ? `+${customizationPrice.toFixed(2)}€` : '0.00€'}
+                 <span className="text-gray-600 font-medium">
+                   Gratuit
                  </span>
                </div>
                {customImage && (
@@ -380,13 +341,6 @@ export default function ProductCustomization({
                    </div>
                  )}
                </div>
-
-               <div className="text-sm text-blue-600 font-medium border-t pt-2">
-                 <div className="flex justify-between">
-                   <span>Prix total de gravure:</span>
-                   <span>+{customizationPrice.toFixed(2)}€</span>
-                 </div>
-               </div>
              </div>
            );
          }
@@ -431,15 +385,13 @@ export default function ProductCustomization({
                 />
                 <div className="flex justify-between text-sm text-gray-500">
                   <span>{customText.length}/{option.maxLength || 50} caractères</span>
-                  {customizationPrice > 0 && (
-                    <span className="text-blue-600 font-medium">
-                      +{customizationPrice.toFixed(2)}€
-                    </span>
-                  )}
+                  <span className="text-gray-600 font-medium">
+                    Gratuit
+                  </span>
                 </div>
                 {option.maxLength && customText.length > option.maxLength && (
-                  <p className="text-sm text-red-600">
-                    Limite de caractères dépassée. Prix supplémentaire appliqué.
+                  <p className="text-sm text-orange-600">
+                    Limite de caractères dépassée.
                   </p>
                 )}
               </div>
@@ -462,11 +414,6 @@ export default function ProductCustomization({
                 />
                 <div className="flex justify-between text-sm text-gray-500">
                   <span>Taille max: {option.maxFileSize || 5}MB</span>
-                  {customizationPrice > 0 && (
-                    <span className="text-blue-600 font-medium">
-                      +{customizationPrice.toFixed(2)}€
-                    </span>
-                  )}
                 </div>
                 {customImage && (
                   <div className="mt-2">
@@ -524,14 +471,7 @@ export default function ProductCustomization({
             ));
           })()}
 
-          {/* Résumé des prix de personnalisation */}
-          {customizationPrice > 0 && (
-            <div className="mt-4 p-3 bg-blue-50 rounded-lg">
-              <p className="text-sm text-blue-800">
-                <strong>Prix de personnalisation:</strong> +{customizationPrice.toFixed(2)}€
-              </p>
-            </div>
-          )}
+          {/* Résumé des prix de personnalisation - Supprimé car gratuit */}
         </CardContent>
       </Card>
     </div>

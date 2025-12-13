@@ -65,7 +65,7 @@ export function GalleryShowcase({ category, limit = 6, showHeader = true }: Gall
           <p className="text-sm text-gray-500 dark:text-gray-400 flex items-center justify-center gap-2">
             <span>Suivez-nous</span>
             <Badge variant="outline" className="bg-gradient-to-r from-pink-500 to-purple-500 text-white border-none">
-              @sakadeco_group
+              @sakadeco_events
             </Badge>
           </p>
         </div>
@@ -130,7 +130,7 @@ export function GalleryShowcase({ category, limit = 6, showHeader = true }: Gall
       {showHeader && (
         <div className="text-center">
           <a
-            href="https://instagram.com/sakadeco_group"
+            href="https://www.instagram.com/sakadeco_events/"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-full hover:from-pink-600 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 font-semibold"

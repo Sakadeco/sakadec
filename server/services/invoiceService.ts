@@ -98,7 +98,7 @@ export class InvoiceService {
        .font('Helvetica')
        .fillColor('#4A5568')
        .text('Décoration et aménagement intérieur', 50, 80)
-       .text('Email: contact@sakadeco.fr', 50, 95)
+       .text('Email: sakadeco.contact@gmail.com', 50, 95)
        .text('Tél: +33 1 23 45 67 89', 50, 110);
 
     // Numéro de facture et date
@@ -271,7 +271,7 @@ export class InvoiceService {
        .fillColor('#4A5568')
        .text('Merci pour votre confiance !', 50, pageHeight - 100)
        .text('SAKADECO - Décoration et aménagement intérieur', 50, pageHeight - 80)
-       .text('Email: contact@sakadeco.fr | Tél: +33 1 23 45 67 89', 50, pageHeight - 60)
+       .text('Email: sakadeco.contact@gmail.com | Tél: +33 1 23 45 67 89', 50, pageHeight - 60)
        .text('SIRET: 123 456 789 00012 | TVA: FR12 123456789', 50, pageHeight - 40);
   }
 

@@ -322,7 +322,8 @@ export default function HomePage() {
               </div>
               <h4 className="font-semibold text-gray-800 dark:text-gray-100 mb-2">Zone d'intervention</h4>
               <p className="text-gray-600 dark:text-gray-400 mb-4">Nous intervenons dans</p>
-              <p className="text-purple-500 font-bold">Bordeaux Métropole</p>
+              <p className="text-purple-500 font-bold">Île-de-France & Bordeaux Métropole</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">Déplacements dans toute la France et à l'international</p>
             </Card>
 
             <Card className="text-center p-6 border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white dark:bg-gray-800">

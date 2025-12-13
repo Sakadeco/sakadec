@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import Layout from "@/components/Layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -5,76 +6,73 @@ import { Button } from "@/components/ui/button";
 import { Calendar, MapPin, Users, Star, Heart, Camera, Instagram } from "lucide-react";
 import { Link } from "wouter";
 import Logo from "@/components/Logo";
+import DSC6144 from "@/assets/images/DSC_6144-HDR.JPG";
+import DSC6145 from "@/assets/images/DSC_6145-HDR.JPG";
+import DSC6148 from "@/assets/images/DSC_6148-HDR.JPG";
+import DSC6151 from "@/assets/images/DSC_6151-HDR.JPG";
+import DSC6157 from "@/assets/images/DSC_6157-HDR.JPG";
+import DSC6160 from "@/assets/images/DSC_6160-HDR.JPG";
+import DSC6163 from "@/assets/images/DSC_6163-HDR.JPG";
+import DSC6175 from "@/assets/images/DSC_6175-HDR.JPG";
+import DSC6178 from "@/assets/images/DSC_6178-HDR.JPG";
+import DSC6190 from "@/assets/images/DSC_6190-HDR.JPG";
+import DSC6195 from "@/assets/images/DSC_6195-HDR.JPG";
+import DSC6196 from "@/assets/images/DSC_6196-HDR.JPG";
+import DSC6199 from "@/assets/images/DSC_6199-HDR.JPG";
+import DSC6204 from "@/assets/images/DSC_6204-HDR.JPG";
+import DSC6205 from "@/assets/images/DSC_6205-HDR.JPG";
+
+interface Realisation {
+  _id: string;
+  title: string;
+  category: string;
+  date: string;
+  location: string;
+  guests?: number;
+  description: string;
+  images: string[];
+  highlights: string[];
+  rating: number;
+}
 
 export default function Realisations() {
-  const realisations = [
-    {
-      id: 1,
-      title: "Mariage Élégant - Château de Bordeaux",
-      category: "Mariage",
-      date: "15 Juin 2024",
-      location: "Bordeaux, France",
-      guests: 120,
-      description: "Un mariage romantique dans un château historique avec une décoration florale sophistiquée. Arches de roses blanches et rouges, centres de table personnalisés et éclairage d'ambiance.",
-      images: [
-        "https://images.unsplash.com/photo-1464207687429-7505649dae38?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-        "https://images.unsplash.com/photo-1478146896981-b80fe463b330?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-        "https://images.unsplash.com/photo-1519741497674-611481863552?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
-      ],
-      highlights: ["Arches florales", "Centres de table personnalisés", "Éclairage d'ambiance", "Coordination complète"],
-      rating: 5
-    },
-    {
-      id: 2,
-      title: "Anniversaire 50 ans - Villa Moderne",
-      category: "Anniversaire",
-      date: "22 Mai 2024",
-      location: "Arcachon, France",
-      guests: 80,
-      description: "Célébration d'un demi-siècle avec une décoration moderne et élégante. Thème doré et blanc, installations lumineuses, et mobilier de location personnalisé.",
-      images: [
-        "https://images.unsplash.com/photo-1530103862676-de8c9debad1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-        "https://images.unsplash.com/photo-1513151233558-d860c5398176?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-        "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
-      ],
-      highlights: ["Thème doré et blanc", "Installations lumineuses", "Mobilier personnalisé", "Coordination événementielle"],
-      rating: 5
-    },
-    {
-      id: 3,
-      title: "Baby Shower - Espace Privé",
-      category: "Baby Shower",
-      date: "8 Avril 2024",
-      location: "Bordeaux Centre, France",
-      guests: 45,
-      description: "Un baby shower tendre et raffiné avec une décoration pastel et des installations douces. Ballons personnalisés, centre de table floraux et animations pour les invités.",
-      images: [
-        "https://images.unsplash.com/photo-1513151233558-d860c5398176?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-        "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-        "https://images.unsplash.com/photo-1519741497674-611481863552?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
-      ],
-      highlights: ["Décoration pastel", "Ballons personnalisés", "Centres de table floraux", "Animations douces"],
-      rating: 5
-    },
-    {
-      id: 4,
-      title: "Événement Corporate - Centre de Congrès",
-      category: "Événement Corporate",
-      date: "12 Mars 2024",
-      location: "Bordeaux Métropole, France",
-      guests: 200,
-      description: "Événement d'entreprise avec une décoration moderne et professionnelle. Stands personnalisés, éclairage LED, et mobilier de location haut de gamme.",
-      images: [
-        "https://images.unsplash.com/photo-1513151233558-d860c5398176?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-        "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-        "https://images.unsplash.com/photo-1519741497674-611481863552?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
-      ],
-      highlights: ["Stands personnalisés", "Éclairage LED", "Mobilier haut de gamme", "Coordination professionnelle"],
-      rating: 5
-    }
+  // Toutes les images disponibles (fallback si pas d'images)
+  const allImages = [
+    DSC6144, DSC6145, DSC6148, DSC6151, DSC6157,
+    DSC6160, DSC6163, DSC6175, DSC6178, DSC6190,
+    DSC6195, DSC6196, DSC6199, DSC6204, DSC6205
   ];
 
+  const [realisations, setRealisations] = useState<Realisation[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [selectedCategory, setSelectedCategory] = useState("Tous");
+
+  useEffect(() => {
+    fetchRealisations();
+  }, []);
+
+  const fetchRealisations = async () => {
+    try {
+      setIsLoading(true);
+      const response = await fetch("/api/realisations");
+      if (response.ok) {
+        const data = await response.json();
+        setRealisations(data);
+      }
+    } catch (error) {
+      console.error("Erreur récupération réalisations:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const categories = ["Tous", "Mariage", "Anniversaire", "Baby Shower", "Événement Corporate"];
+  
+  const filteredRealisations = selectedCategory === "Tous"
+    ? realisations
+    : realisations.filter(r => r.category === selectedCategory);
+  
+  const displayRealisations = filteredRealisations;
 
   return (
     <Layout>
@@ -93,7 +91,16 @@ export default function Realisations() {
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             {categories.map((category) => (
-              <Badge key={category} variant="secondary" className="bg-white/20 text-white border-white/30 hover:bg-white/30">
+              <Badge 
+                key={category} 
+                variant="secondary" 
+                className={`cursor-pointer transition-colors ${
+                  selectedCategory === category 
+                    ? "bg-white text-gold" 
+                    : "bg-white/20 text-white border-white/30 hover:bg-white/30"
+                }`}
+                onClick={() => setSelectedCategory(category)}
+              >
                 {category}
               </Badge>
             ))}
@@ -104,9 +111,19 @@ export default function Realisations() {
       {/* Réalisations Grid */}
       <section className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            {realisations.map((realisation) => (
-              <Card key={realisation.id} className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
+          {isLoading ? (
+            <div className="text-center py-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gold mx-auto"></div>
+              <p className="mt-4 text-gray-600">Chargement des réalisations...</p>
+            </div>
+          ) : displayRealisations.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-gray-600">Aucune réalisation disponible pour le moment.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+              {displayRealisations.map((realisation) => (
+              <Card key={realisation._id} className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
                 <div className="relative">
                   <img
                     src={realisation.images[0]}
@@ -133,32 +150,36 @@ export default function Realisations() {
                   <div className="flex items-center gap-6 mb-4 text-sm text-gray-600">
                     <div className="flex items-center gap-2">
                       <Calendar className="h-4 w-4" />
-                      <span>{realisation.date}</span>
+                      <span>{new Date(realisation.date).toLocaleDateString('fr-FR')}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <MapPin className="h-4 w-4" />
                       <span>{realisation.location}</span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Users className="h-4 w-4" />
-                      <span>{realisation.guests} invités</span>
-                    </div>
+                    {realisation.guests && (
+                      <div className="flex items-center gap-2">
+                        <Users className="h-4 w-4" />
+                        <span>{realisation.guests} invités</span>
+                      </div>
+                    )}
                   </div>
                   
                   <p className="text-gray-600 mb-6 leading-relaxed">
                     {realisation.description}
                   </p>
                   
-                  <div className="mb-6">
-                    <h4 className="font-semibold text-gray-800 mb-3">Points forts :</h4>
-                    <div className="flex flex-wrap gap-2">
-                      {realisation.highlights.map((highlight, index) => (
-                        <Badge key={index} variant="outline" className="text-sm">
-                          {highlight}
-                        </Badge>
-                      ))}
+                  {realisation.highlights && realisation.highlights.length > 0 && (
+                    <div className="mb-6">
+                      <h4 className="font-semibold text-gray-800 mb-3">Points forts :</h4>
+                      <div className="flex flex-wrap gap-2">
+                        {realisation.highlights.map((highlight, index) => (
+                          <Badge key={index} variant="outline" className="text-sm">
+                            {highlight}
+                          </Badge>
+                        ))}
+                      </div>
                     </div>
-                  </div>
+                  )}
                   
                   <div className="flex gap-2">
                     <Button variant="outline" className="flex-1 border-gold text-gold hover:bg-gold hover:text-white">
@@ -172,8 +193,9 @@ export default function Realisations() {
                   </div>
                 </CardContent>
               </Card>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
@@ -215,18 +237,22 @@ export default function Realisations() {
               Découvrez nos dernières réalisations sur Instagram
             </p>
             <Badge variant="outline" className="mt-4 bg-gradient-to-r from-pink-500 to-purple-500 text-white border-none">
-              @sakadeco_group
+              @sakadeco_events
             </Badge>
           </div>
           
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {realisations.flatMap(r => r.images.slice(1)).slice(0, 8).map((image, index) => (
-              <div key={index} className="aspect-square overflow-hidden rounded-lg shadow-md hover:shadow-lg transition-shadow">
+            {(realisations.length > 0 
+              ? realisations.flatMap(r => r.images).slice(0, 8)
+              : allImages.slice(0, 8)
+            ).map((image, index) => (
+              <div key={index} className="relative aspect-square overflow-hidden rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer group">
                 <img
                   src={image}
-                  alt={`Réalisation ${index + 1}`}
-                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                  alt={`Réalisation SakaDeco ${index + 1}`}
+                  className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
                 />
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300"></div>
               </div>
             ))}
           </div>

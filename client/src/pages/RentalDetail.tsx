@@ -271,9 +271,10 @@ const RentalDetail: React.FC = () => {
                 <Badge className="bg-blue-500">Personnalisable</Badge>
               )}
             </div>
-            <div className="text-2xl font-bold text-orange-600 mb-4">
-              {product.dailyRentalPrice.toFixed(2)}€/jour
+            <div className="text-2xl font-bold text-orange-600 mb-2">
+              {product.dailyRentalPrice.toFixed(2)}€ HT/jour
             </div>
+            <p className="text-xs text-gray-500 mb-4">TVA non incluse</p>
           </div>
 
           {/* Sélection des dates */}
@@ -492,8 +493,9 @@ const RentalDetail: React.FC = () => {
                 <div className="border-t pt-2">
                   <div className="flex justify-between font-bold text-lg">
                     <span>Total :</span>
-                    <span className="text-orange-600">{calculateTotalPrice().toFixed(2)}€</span>
+                    <span className="text-orange-600">{calculateTotalPrice().toFixed(2)}€ HT</span>
                   </div>
+                  <p className="text-xs text-gray-500 mt-1 text-right">TVA non incluse</p>
                 </div>
               </CardContent>
             </Card>

@@ -142,9 +142,12 @@ const Rent: React.FC = () => {
                 {product.description}
               </p>
               <div className="flex justify-between items-center mb-3">
-                <span className="text-xl font-bold text-orange-600">
-                  {product.dailyRentalPrice?.toFixed(2) || '0.00'}€/jour
-                </span>
+                <div>
+                  <span className="text-xl font-bold text-orange-600">
+                    {product.dailyRentalPrice?.toFixed(2) || '0.00'}€ HT/jour
+                  </span>
+                  <p className="text-xs text-gray-500">TVA non incluse</p>
+                </div>
                 <Badge variant="default" className="bg-orange-500">
                   Disponible
                 </Badge>

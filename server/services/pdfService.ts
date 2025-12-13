@@ -254,7 +254,7 @@ class PDFService {
           123 Rue de la Décoration<br>
           75001 Paris, France<br>
           Tél: +33 1 23 45 67 89<br>
-          Email: contact@sakadeco.com
+          Email: sakadeco.contact@gmail.com
         </div>
 
         <div class="client-info">

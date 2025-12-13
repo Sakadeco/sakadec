@@ -14,7 +14,9 @@ import {
   Star,
   TrendingUp,
   Home,
-  FileText
+  FileText,
+  Image,
+  Tag
 } from "lucide-react";
 
 interface AdminInfo {
@@ -279,6 +281,40 @@ export default function AdminDashboard() {
               </p>
               <Button variant="outline" className="w-full">
                 Gérer les avis
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setLocation("/admin/realisations")}>
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2">
+                <Image className="h-5 w-5 text-pink-500" />
+                <span>Réalisations</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-gray-600 mb-4">
+                Gérez vos réalisations et projets passés.
+              </p>
+              <Button variant="outline" className="w-full">
+                Gérer les réalisations
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setLocation("/admin/promo-codes")}>
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2">
+                <Tag className="h-5 w-5 text-orange-500" />
+                <span>Codes Promo</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-gray-600 mb-4">
+                Créez et gérez vos codes promotionnels.
+              </p>
+              <Button variant="outline" className="w-full">
+                Gérer les codes promo
               </Button>
             </CardContent>
           </Card>
