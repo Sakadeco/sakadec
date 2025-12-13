@@ -442,6 +442,22 @@ export default function AdminAddProduct() {
                   />
                 </div>
                 <div>
+                  <Label htmlFor="theme">Thème (optionnel)</Label>
+                  <Select value={formData.theme} onValueChange={(value) => handleInputChange('theme', value)}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Sélectionner un thème" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="">Aucun thème</SelectItem>
+                      {themes.map((theme) => (
+                        <SelectItem key={theme._id} value={theme._id}>
+                          {theme.title}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
                   <Label htmlFor="stockQuantity">Quantité en stock</Label>
                   <Input
                     id="stockQuantity"

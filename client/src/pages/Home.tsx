@@ -6,8 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ShoppingBag, Palette, Handshake, Star, Home, Users, Phone, MapPin, ArrowRight } from "lucide-react";
 import { ReviewsSection } from "@/components/ReviewsSection";
-import { GalleryShowcase } from "@/components/GalleryShowcase";
 import { Features } from "@/components/Features";
+import RealisationsShowcase from "@/components/RealisationsShowcase";
 import Logo from "@/components/Logo";
 import DSC6216 from "@/assets/images/DSC_6216.JPG";
 import type { Product } from "@shared/schema";
@@ -218,23 +218,23 @@ export default function HomePage() {
       {/* Features Section */}
       <Features />
 
-      {/* Gallery Showcase */}
+      {/* Nos Réalisations */}
       <section className="py-20 bg-gray-50 dark:bg-gray-900">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-playfair font-bold text-gray-800 dark:text-gray-100 mb-4">
-              Nos Dernières Créations
+              Nos Réalisations
             </h2>
             <p className="text-xl text-gray-600 dark:text-gray-400">
-              Découvrez notre portfolio de réalisations exceptionnelles
+              Découvrez nos dernières créations et événements
             </p>
           </div>
-          <GalleryShowcase limit={8} showFilters={true} />
+          <RealisationsShowcase />
           <div className="text-center mt-12">
             <Button asChild size="lg" variant="outline" className="border-gold text-gold hover:bg-gold hover:text-white">
-              <Link to="/shop">
+              <Link to="/realisations">
                 <ArrowRight className="mr-2 h-5 w-5" />
-                Voir toutes nos créations
+                Voir plus
               </Link>
             </Button>
           </div>
