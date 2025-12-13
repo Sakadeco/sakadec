@@ -105,8 +105,8 @@ const CartPage: React.FC = () => {
     return total + itemTotal;
   }, 0);
   
-  // Calculer la TVA (20% sur le sous-total HT)
-  const tax = Math.round(subtotal * 0.20 * 100) / 100; // Arrondir à 2 décimales
+  // TVA non incluse - pas de calcul de TVA
+  const tax = 0;
   
   // Calculer les frais de livraison selon le mode choisi
   const getShippingCost = (): number => {
@@ -172,24 +172,28 @@ const CartPage: React.FC = () => {
         return;
       }
 
-      // Vérifier si le code s'applique à tous les produits du panier
-      if (!data.applyToAllProducts && firstProductId) {
-        // Pour simplifier, on vérifie juste le premier produit
-        // Dans un cas réel, il faudrait vérifier chaque produit
-        const checkResponse = await fetch('/api/admin/promo-codes/validate', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            code: promoCode.toUpperCase().trim(),
-            productId: firstProductId
-          }),
-        });
+      // Si le code ne s'applique pas à tous les produits, vérifier chaque produit du panier
+      if (!data.applyToAllProducts) {
+        // Vérifier que tous les produits du panier sont éligibles
+        const allProductsEligible = await Promise.all(
+          cartItems.map(async (item) => {
+            const checkResponse = await fetch('/api/promo-codes/validate', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                code: promoCode.toUpperCase().trim(),
+                productId: item.productId
+              }),
+            });
+            const checkData = await checkResponse.json();
+            return checkResponse.ok && checkData.valid;
+          })
+        );
         
-        const checkData = await checkResponse.json();
-        if (!checkData.valid) {
-          setPromoCodeError('Ce code promo ne s\'applique pas aux produits de votre panier');
+        if (!allProductsEligible.every(eligible => eligible)) {
+          setPromoCodeError('Ce code promo ne s\'applique pas à tous les produits de votre panier');
           setAppliedPromoCode(null);
           return;
         }
@@ -242,7 +246,9 @@ const CartPage: React.FC = () => {
             billingAddress: address, 
             isRental: false,
             isMixedCart: true,
-            cartType: 'sale'
+            cartType: 'sale',
+            promoCode: appliedPromoCode?.code || null,
+            promoDiscount: promoDiscount || 0
           }),
         });
 
@@ -375,7 +381,9 @@ const CartPage: React.FC = () => {
           customerEmail, 
           shippingAddress, 
           billingAddress: shippingAddress, 
-          isRental: hasRentals 
+          isRental: hasRentals,
+          promoCode: appliedPromoCode?.code || null,
+          promoDiscount: promoDiscount || 0
         }),
       });
 
@@ -617,22 +625,17 @@ const CartPage: React.FC = () => {
                  </CardHeader>
                  <CardContent className="space-y-4">
                    <div className="flex justify-between">
-                     <span>Sous-total produits</span>
-                     <span>{cartItems.reduce((total, item) => {
-                       if (item.isRental && item.totalPrice) {
-                         return total + item.totalPrice;
-                       } else {
-                         return total + (item.price * item.quantity);
-                       }
-                     }, 0).toFixed(2)}€</span>
+                     <span>Sous-total produits HT</span>
+                     <span>{subtotal.toFixed(2)}€ HT</span>
                    </div>
                    
-                   {/* Prix de personnalisation - Supprimé car gratuit */}
+                   {appliedPromoCode && (
+                     <div className="flex justify-between text-green-600">
+                       <span>Code promo ({appliedPromoCode.code})</span>
+                       <span>-{promoDiscount.toFixed(2)}€</span>
+                     </div>
+                   )}
                    
-                   <div className="flex justify-between">
-                     <span>TVA (20%)</span>
-                     <span>{tax.toFixed(2)}€</span>
-                   </div>
                    <div className="flex justify-between">
                      <span>Livraison</span>
                      <span>
@@ -645,16 +648,11 @@ const CartPage: React.FC = () => {
                    </div>
                    <div className="border-t pt-4">
                      <div className="flex justify-between font-bold text-lg">
-                       <span>Total</span>
-                       <span>{total.toFixed(2)}€</span>
+                       <span>Total HT</span>
+                       <span>{total.toFixed(2)}€ HT</span>
                      </div>
-                   </div>
-                   {appliedPromoCode && (
-                     <>
-                       <div className="flex justify-between text-green-600">
-                         <span>Code promo ({appliedPromoCode.code})</span>
-                         <span>-{promoDiscount.toFixed(2)}€</span>
-                       </div>
+                     <p className="text-xs text-gray-500 text-center mt-1">TVA non incluse</p>
+                     {appliedPromoCode && (
                        <Button
                          type="button"
                          variant="ghost"
@@ -663,12 +661,12 @@ const CartPage: React.FC = () => {
                            setAppliedPromoCode(null);
                            setPromoCode('');
                          }}
-                         className="text-xs text-red-600 hover:text-red-700"
+                         className="text-xs text-red-600 hover:text-red-700 mt-2 w-full"
                        >
                          Retirer le code promo
                        </Button>
-                     </>
-                   )}
+                     )}
+                   </div>
                  </CardContent>
                </Card>
 

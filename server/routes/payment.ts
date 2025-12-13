@@ -39,7 +39,7 @@ router.post('/create-checkout-session', async (req: Request, res: Response) => {
       });
     }
 
-    const { items, shippingAddress, billingAddress, isRental, isMixedCart, cartType } = req.body;
+    const { items, shippingAddress, billingAddress, isRental, isMixedCart, cartType, promoCode, promoDiscount } = req.body;
 
     if (!items || items.length === 0) {
       return res.status(400).json({ message: 'Aucun article dans le panier' });
@@ -48,11 +48,38 @@ router.post('/create-checkout-session', async (req: Request, res: Response) => {
     // Calculer le total
     let subtotal = 0;
     const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = [];
+    
+    // Récupérer le montant de réduction du code promo
+    const discountAmount = promoDiscount ? parseFloat(promoDiscount) : 0;
 
+    // Première passe : calculer le subtotal sans réduction
     for (const item of items) {
       const product = await Product.findById(item.productId);
       if (!product) {
         return res.status(404).json({ message: `Produit ${item.productId} non trouvé` });
+      }
+
+      let price = product.price;
+
+      if (isRental && product.isRentable && product.dailyRentalPrice) {
+        price = product.dailyRentalPrice * item.rentalDays;
+      }
+
+      // Calculer le prix de base du produit (personnalisations gratuites)
+      let itemTotal = price * item.quantity;
+      subtotal += itemTotal;
+    }
+    
+    // Calculer le ratio de réduction si code promo présent
+    const discountRatio = (promoCode && discountAmount > 0 && subtotal > 0) 
+      ? discountAmount / subtotal 
+      : 0;
+
+    // Deuxième passe : créer les line items avec réduction appliquée
+    for (const item of items) {
+      const product = await Product.findById(item.productId);
+      if (!product) {
+        continue; // Déjà vérifié dans la première passe
       }
 
       let price = product.price;
@@ -62,13 +89,6 @@ router.post('/create-checkout-session', async (req: Request, res: Response) => {
         price = product.dailyRentalPrice * item.rentalDays;
         description = `${product.name} (Location - ${item.rentalDays} jour(s))`;
       }
-
-      // Calculer le prix de base du produit (personnalisations gratuites)
-      let itemTotal = price * item.quantity;
-      
-      // Les personnalisations sont gratuites, pas de prix supplémentaire
-      
-      subtotal += itemTotal;
 
       // Préparer l'image pour Stripe - Stripe nécessite des URLs HTTPS valides
       let imageUrl = null;
@@ -102,6 +122,13 @@ router.post('/create-checkout-session', async (req: Request, res: Response) => {
         finalDescription += ` (${customizationDescription})`;
       }
       
+      // Calculer le prix unitaire avec réduction si code promo appliqué
+      let finalUnitPrice = unitPrice;
+      if (discountRatio > 0) {
+        // Appliquer la réduction proportionnellement à chaque article
+        finalUnitPrice = unitPrice * (1 - discountRatio);
+      }
+      
       lineItems.push({
         price_data: {
           currency: 'eur',
@@ -109,19 +136,31 @@ router.post('/create-checkout-session', async (req: Request, res: Response) => {
             name: finalDescription,
             images: imageUrl ? [imageUrl] : [],
           },
-          unit_amount: Math.round(unitPrice * 100), // Stripe utilise les centimes
+          unit_amount: Math.round(finalUnitPrice * 100), // Stripe utilise les centimes
         },
         quantity: item.quantity,
       });
     }
 
-    // Calculer la TVA (20% sur le sous-total HT)
-    const tax = Math.round(subtotal * 0.20 * 100) / 100; // Arrondir à 2 décimales
+    // TVA non incluse - pas de calcul de TVA
+    const tax = 0;
     const shipping = 0; // Frais de livraison gratuits pour l'instant
-    const total = Math.round((subtotal + tax + shipping) * 100) / 100; // Arrondir le total
+    
+    // La réduction du code promo est déjà appliquée dans les prix unitaires des line items
+    // Calculer le total à partir des line items (qui incluent déjà la réduction)
+    const totalFromLineItems = lineItems.reduce((sum, item) => {
+      const itemTotal = (item.price_data?.unit_amount || 0) * (item.quantity || 0);
+      return sum + itemTotal;
+    }, 0) / 100; // Convertir de centimes en euros
+    
+    const total = Math.round((totalFromLineItems + tax + shipping) * 100) / 100;
+    const subtotalAfterDiscount = totalFromLineItems;
     
     console.log('💰 Calcul des prix:', {
       subtotal: subtotal.toFixed(2),
+      promoCode: promoCode || 'Aucun',
+      discountAmount: discountAmount.toFixed(2),
+      subtotalAfterDiscount: subtotalAfterDiscount.toFixed(2),
       tax: tax.toFixed(2),
       shipping: shipping.toFixed(2),
       total: total.toFixed(2)
@@ -139,6 +178,8 @@ router.post('/create-checkout-session', async (req: Request, res: Response) => {
         itemsCount: items.length.toString(),
         isMixedCart: isMixedCart ? 'true' : 'false',
         cartType: cartType || 'sale',
+        promoCode: promoCode || '',
+        promoDiscount: discountAmount.toFixed(2),
       },
       shipping_address_collection: {
         allowed_countries: ['FR', 'BE', 'CH', 'CA'],
@@ -179,6 +220,9 @@ router.post('/create-checkout-session', async (req: Request, res: Response) => {
       paymentMethod: 'stripe',
       stripeSessionId: session.id,
       subtotal,
+      promoCode: promoCode || null,
+      promoDiscount: discountAmount,
+      subtotalAfterDiscount,
       tax,
       shipping,
       total,

@@ -71,7 +71,8 @@ router.post('/create-checkout-session', async (req: Request, res: Response) => {
       });
     }
 
-    const tax = subtotal * 0.20; // TVA 20%
+    // TVA non incluse - pas de calcul de TVA
+    const tax = 0;
     const deposit = subtotal * 0.30; // Dépôt de 30%
     const total = subtotal + tax + deposit;
 
