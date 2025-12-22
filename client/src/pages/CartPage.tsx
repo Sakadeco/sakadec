@@ -50,6 +50,7 @@ const CartPage: React.FC = () => {
   const [promoCodeError, setPromoCodeError] = useState('');
   const [appliedPromoCode, setAppliedPromoCode] = useState<{ code: string; discountPercentage: number } | null>(null);
   const [isValidatingPromoCode, setIsValidatingPromoCode] = useState(false);
+  const [isCGVModalOpen, setIsCGVModalOpen] = useState(false);
   
   // Vérifier si le panier contient des produits personnalisés
   const hasCustomizedProducts = cartItems.some(item => 

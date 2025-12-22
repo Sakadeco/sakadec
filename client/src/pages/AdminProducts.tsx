@@ -285,9 +285,11 @@ export default function AdminProducts() {
                     {getCategoryLabel(product.category)}
                   </Badge>
                   <span className="text-lg font-bold text-gold">
-                    {product.isRentable && product.dailyRentalPrice
+                    {product.isRentable && product.dailyRentalPrice && product.dailyRentalPrice > 0
                       ? formatPrice(product.dailyRentalPrice)
-                      : formatPrice(product.price)}
+                      : product.price > 0
+                        ? formatPrice(product.price)
+                        : '0,00 €'}
                   </span>
                 </div>
               </CardHeader>

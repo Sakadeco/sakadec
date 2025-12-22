@@ -473,7 +473,7 @@ export default function AdminAddProduct() {
                   </Select>
                 </div>
                 <div>
-                  <Label htmlFor="subcategory">Sous-catégorie</Label>
+                  <Label htmlFor="subcategory">Sous-catégorie (optionnel)</Label>
                   <Input
                     id="subcategory"
                     value={formData.subcategory}

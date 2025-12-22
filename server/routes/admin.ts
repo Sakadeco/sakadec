@@ -299,7 +299,15 @@ router.get('/products', adminAuth, async (req: AdminRequest, res: Response) => {
     const serializedProducts = products.map(product => {
       const productObj = product.toObject();
       if (productObj.customizationOptions && productObj.customizationOptions instanceof Map) {
-        productObj.customizationOptions = Object.fromEntries(productObj.customizationOptions);
+        const customizationOptionsObj: any = {};
+        productObj.customizationOptions.forEach((value: any, key: string) => {
+          customizationOptionsObj[key] = value instanceof Map ? Object.fromEntries(value) : value;
+          // Convertir aussi valuePrices si c'est une Map
+          if (customizationOptionsObj[key] && customizationOptionsObj[key].valuePrices instanceof Map) {
+            customizationOptionsObj[key].valuePrices = Object.fromEntries(customizationOptionsObj[key].valuePrices);
+          }
+        });
+        productObj.customizationOptions = customizationOptionsObj;
       }
       return productObj;
     });
@@ -328,7 +336,15 @@ router.get('/products/:id', adminAuth, async (req: AdminRequest, res: Response) 
     // Convertir les Map en objets pour le frontend
     const productObj = product.toObject();
     if (productObj.customizationOptions && productObj.customizationOptions instanceof Map) {
-      productObj.customizationOptions = Object.fromEntries(productObj.customizationOptions);
+      const customizationOptionsObj: any = {};
+      productObj.customizationOptions.forEach((value: any, key: string) => {
+        customizationOptionsObj[key] = value instanceof Map ? Object.fromEntries(value) : value;
+        // Convertir aussi valuePrices si c'est une Map
+        if (customizationOptionsObj[key] && customizationOptionsObj[key].valuePrices instanceof Map) {
+          customizationOptionsObj[key].valuePrices = Object.fromEntries(customizationOptionsObj[key].valuePrices);
+        }
+      });
+      productObj.customizationOptions = customizationOptionsObj;
     }
 
     res.json({ product: productObj });
@@ -487,7 +503,19 @@ router.put('/products/:id', adminAuth, upload.fields([
     // Convertir les Map en objets pour le frontend
     const productObj = product.toObject();
     if (productObj.customizationOptions && productObj.customizationOptions instanceof Map) {
-      productObj.customizationOptions = Object.fromEntries(productObj.customizationOptions);
+      const customizationOptionsObj: any = {};
+      productObj.customizationOptions.forEach((value: any, key: string) => {
+        if (value instanceof Map) {
+          customizationOptionsObj[key] = Object.fromEntries(value);
+          // Convertir aussi valuePrices si c'est une Map
+          if (customizationOptionsObj[key].valuePrices instanceof Map) {
+            customizationOptionsObj[key].valuePrices = Object.fromEntries(customizationOptionsObj[key].valuePrices);
+          }
+        } else {
+          customizationOptionsObj[key] = value;
+        }
+      });
+      productObj.customizationOptions = customizationOptionsObj;
     }
 
     console.log('✅ Produit modifié avec succès, image principale:', finalMainImageUrl);

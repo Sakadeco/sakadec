@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import Layout from "@/components/Layout";
@@ -67,10 +67,23 @@ export default function ProductDetail() {
   });
 
   const [priceAdjustment, setPriceAdjustment] = useState(0);
+  const [currentBasePrice, setCurrentBasePrice] = useState(product?.price || 0);
+
+  // Mettre à jour currentBasePrice quand le produit change
+  useEffect(() => {
+    if (product) {
+      setCurrentBasePrice(product.price);
+    }
+  }, [product?.price]);
 
   const handleCustomizationChange = (newCustomizations: CustomizationSelection, adjustment: number = 0) => {
     setCustomizations(newCustomizations);
     setPriceAdjustment(adjustment);
+    // Mettre à jour le prix de base si un ajustement est appliqué
+    if (product) {
+      const newBasePrice = product.price + adjustment;
+      setCurrentBasePrice(newBasePrice);
+    }
   };
 
   const handleAddToCart = async () => {
@@ -92,22 +105,20 @@ export default function ProductDetail() {
     setIsAddingToCart(true);
     
     try {
-      // Calculer le prix total : prix de base + ajustement des valeurs sélectionnées
-      const basePrice = product.price;
-      const adjustedPrice = basePrice + priceAdjustment;
-      let totalPrice = adjustedPrice;
+      // Utiliser le prix de base actuel (qui peut avoir été modifié par une valeur sélectionnée)
+      const finalPrice = currentBasePrice;
 
       // Préparer l'article pour le panier
       const cartItem = {
         productId: product._id,
         name: product.name,
-        price: adjustedPrice, // Prix avec ajustement
+        price: finalPrice, // Prix avec valeur sélectionnée (si applicable)
         quantity: quantity,
         image: product.mainImageUrl,
         isRental: false,
         customizations: customizations,
         customizationPrice: priceAdjustment, // Ajustement du prix
-        totalPrice: totalPrice
+        totalPrice: finalPrice
       };
 
       // Vérifier si le produit est déjà dans le panier
@@ -119,8 +130,9 @@ export default function ProductDetail() {
         // Mettre à jour la quantité
         cartItems[existingItemIndex].quantity += quantity;
         cartItems[existingItemIndex].customizations = customizations;
-        cartItems[existingItemIndex].customizationPrice = 0; // Pas de prix supplémentaire
-        cartItems[existingItemIndex].totalPrice = totalPrice;
+        cartItems[existingItemIndex].customizationPrice = priceAdjustment;
+        cartItems[existingItemIndex].price = finalPrice;
+        cartItems[existingItemIndex].totalPrice = finalPrice;
       } else {
         // Ajouter le nouvel article
         cartItems.push(cartItem);
@@ -151,7 +163,8 @@ export default function ProductDetail() {
     setSelectedImageIndex((prev) => (prev - 1 + allImages.length) % allImages.length);
   };
 
-  const totalPrice = product?.price || 0;
+  // Utiliser le prix de base actuel (qui peut avoir été modifié par une valeur sélectionnée)
+  const totalPrice = currentBasePrice;
 
   if (isLoading) {
     return (
@@ -321,11 +334,6 @@ export default function ProductDetail() {
                     </span>
                   )}
                 </div>
-                {priceAdjustment !== 0 && (
-                  <p className={`text-sm mt-2 ${priceAdjustment > 0 ? 'text-blue-600' : 'text-green-600'}`}>
-                    {priceAdjustment > 0 ? '+' : ''}{priceAdjustment.toFixed(2)}€ {priceAdjustment > 0 ? 'supplémentaire' : 'de réduction'} pour cette option
-                  </p>
-                )}
               </div>
 
               {/* Stock Info */}

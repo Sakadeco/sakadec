@@ -46,36 +46,39 @@ export default function ProductCustomization({
   const [customizationType, setCustomizationType] = useState<'text' | 'image'>('text');
   const [customizationPrice, setCustomizationPrice] = useState(0);
 
-  // Calculer le prix ajusté en fonction des valeurs sélectionnées
-  const calculatePriceAdjustment = (customizations: Record<string, any>): number => {
-    let adjustment = 0;
-    
-    Object.entries(customizationOptions).forEach(([key, option]) => {
+  // Calculer le nouveau prix de base si une valeur a un prix défini
+  // Si une valeur a un prix, ce prix remplace le prix de base du produit
+  const calculateNewBasePrice = (customizations: Record<string, any>): number => {
+    // Chercher la première option avec valuePrices et une valeur sélectionnée
+    for (const [key, option] of Object.entries(customizationOptions)) {
       if (option.valuePrices && customizations[key]) {
         const selectedValue = customizations[key];
-        // Si c'est un tableau (checkbox), calculer pour chaque valeur
+        // Si c'est une valeur unique (dropdown) et qu'elle a un prix défini
+        if (typeof selectedValue === 'string' && option.valuePrices[selectedValue] !== undefined) {
+          // Utiliser le prix de la valeur comme nouveau prix de base
+          return option.valuePrices[selectedValue];
+        }
+        // Si c'est un tableau (checkbox), utiliser le prix de la première valeur avec prix
         if (Array.isArray(selectedValue)) {
-          selectedValue.forEach((val: string) => {
+          for (const val of selectedValue) {
             if (option.valuePrices[val] !== undefined) {
-              adjustment += option.valuePrices[val];
+              return option.valuePrices[val];
             }
-          });
-        } else if (typeof selectedValue === 'string' && option.valuePrices[selectedValue] !== undefined) {
-          // Si c'est une valeur unique (dropdown)
-          adjustment += option.valuePrices[selectedValue];
+          }
         }
       }
-    });
-    
-    return adjustment;
+    }
+    // Si aucune valeur avec prix n'est sélectionnée, retourner le prix de base
+    return basePrice;
   };
 
   const handleCustomizationChange = (key: string, value: any) => {
     const newCustomizations = { ...customizations, [key]: value };
     setCustomizations(newCustomizations);
     
-    // Calculer le prix ajusté
-    const priceAdjustment = calculatePriceAdjustment(newCustomizations);
+    // Calculer le nouveau prix de base
+    const newBasePrice = calculateNewBasePrice(newCustomizations);
+    const priceAdjustment = newBasePrice - basePrice;
     setCustomizationPrice(priceAdjustment);
     
     onCustomizationChange(newCustomizations, priceAdjustment);
