@@ -168,12 +168,12 @@ export class InvoiceService {
   private static addItemsTable(doc: PDFDocument, invoiceData: InvoiceData) {
     const yStart = invoiceData.shippingAddress.country ? 320 : 310;
     
-    // En-tête du tableau
+    // En-tête du tableau (couleur dorée pour correspondre au thème)
     doc.fontSize(10)
        .font('Helvetica-Bold')
        .fillColor('#FFFFFF')
        .rect(50, yStart, 500, 30)
-       .fill('#4A5568');
+       .fill('#D4AF37'); // Couleur dorée
 
     doc.text('Désignation', 60, yStart + 8);
     doc.text('Qté', 220, yStart + 8);
@@ -192,12 +192,12 @@ export class InvoiceService {
       if (currentY > pageHeight - 100) {
         doc.addPage();
         currentY = 50;
-        // Réimprimer l'en-tête du tableau
+        // Réimprimer l'en-tête du tableau (couleur dorée)
         doc.fontSize(10)
            .font('Helvetica-Bold')
            .fillColor('#FFFFFF')
            .rect(50, currentY, 500, 30)
-           .fill('#4A5568');
+           .fill('#D4AF37'); // Couleur dorée
         doc.text('Désignation', 60, currentY + 8);
         doc.text('Qté', 220, currentY + 8);
         doc.text('Prix unitaire HT', 260, currentY + 8);

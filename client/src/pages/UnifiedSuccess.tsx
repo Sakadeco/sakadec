@@ -191,6 +191,16 @@ const UnifiedSuccess: React.FC = () => {
       // Déterminer si c'est un panier mixte
       setIsMixedCart(!!orderResult && !!rentalResult);
 
+      // Vider le panier après confirmation de la commande
+      if (orderResult || rentalResult) {
+        localStorage.removeItem('cart');
+        localStorage.removeItem('rentalCart');
+        localStorage.removeItem('mixedCartData');
+        // Notifier que le panier a été mis à jour
+        window.dispatchEvent(new Event('cartUpdated'));
+        console.log('🛒 Panier vidé après achat réussi');
+      }
+
     } catch (error) {
       console.error('Erreur lors de la récupération des données:', error);
       setError('Erreur lors de la récupération des données');
