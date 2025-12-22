@@ -196,10 +196,6 @@ const RentalSuccess: React.FC = () => {
                 <span>TVA (20%):</span>
                 <span>{rentalData.tax.toFixed(2)}€</span>
               </div>
-              <div className="flex justify-between">
-                <span>Dépôt (30%):</span>
-                <span>{rentalData.deposit.toFixed(2)}€</span>
-              </div>
               <div className="border-t pt-2">
                 <div className="flex justify-between font-bold text-lg">
                   <span>Total payé:</span>
@@ -246,12 +242,6 @@ const RentalSuccess: React.FC = () => {
                 <Calendar className="w-4 h-4 mt-0.5 text-green-600" />
                 <div>
                   <strong>Retour :</strong> Dimanche 15h30-17h30 (ou selon accord)
-                </div>
-              </div>
-              <div className="flex items-start gap-2">
-                <CheckCircle className="w-4 h-4 mt-0.5 text-orange-600" />
-                <div>
-                  <strong>Dépôt :</strong> Le dépôt de 30% sera remboursé après retour en bon état
                 </div>
               </div>
             </div>

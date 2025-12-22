@@ -388,7 +388,11 @@ router.get('/orders/detail/:orderId', async (req: Request, res: Response) => {
       order: {
         _id: order._id,
         orderNumber: order.orderNumber || order._id.toString(),
-        user: order.user,
+        user: order.user || {
+          email: order.customerEmail || '',
+          firstName: order.shippingAddress?.firstName || '',
+          lastName: order.shippingAddress?.lastName || ''
+        },
         items: order.items,
         subtotal: order.subtotal,
         tax: order.tax,

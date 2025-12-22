@@ -269,7 +269,7 @@ export class InvoiceService {
     const subtotalTTC = subtotalHT + tvaAmount;
     
     const pageHeight = doc.page.height;
-    let yStart = doc.y + 20; // Espacement après le tableau
+    let yStart = doc.y + 40; // Plus d'espacement après le tableau (40px au lieu de 20px)
     
     // Vérifier si on a assez d'espace pour les totaux (au moins 150px)
     if (yStart > pageHeight - 150) {
@@ -294,25 +294,14 @@ export class InvoiceService {
          .text(`${invoiceData.shipping.toFixed(2)}€`, 480, yStart + 40);
     }
 
-    // Acompte pour les locations (remplace "dépôt")
-    if (invoiceData.isRental && invoiceData.deposit) {
-      doc.text('Acompte (30%):', 400, yStart + 60)
-         .text(`${invoiceData.deposit.toFixed(2)}€`, 480, yStart + 60);
-    }
-
-    // Total TTC
+    // Total TTC (acompte supprimé)
     const totalTTC = subtotalTTC + (invoiceData.shipping || 0);
-    const totalY = invoiceData.isRental && invoiceData.deposit ? yStart + 100 : yStart + 60;
+    const totalY = invoiceData.shipping > 0 ? yStart + 80 : yStart + 60;
     doc.fontSize(14)
        .font('Helvetica-Bold')
        .fillColor('#2D3748')
        .text('TOTAL TTC:', 400, totalY)
        .text(`${totalTTC.toFixed(2)}€`, 480, totalY);
-
-    // Ligne de séparation
-    doc.moveTo(400, totalY + 10)
-       .lineTo(550, totalY + 10)
-       .stroke('#2D3748');
   }
 
   private static addFooter(doc: PDFDocument) {
@@ -326,7 +315,7 @@ export class InvoiceService {
     
     const yPos = doc.y;
     
-    // Mentions légales
+    // Mentions légales uniquement (suppression des infos en double)
     doc.fontSize(9)
        .font('Helvetica-Bold')
        .fillColor('#2D3748')
@@ -343,15 +332,6 @@ export class InvoiceService {
        .text('Siège social : Rue pasteur 33200 Bordeaux', 50, yPos + 62, { width: 500 })
        .text('Contact : Email : sakadeco.contact@gmail.com', 50, yPos + 72, { width: 500 })
        .text('Toute location, prestation de service, vaut acceptation des conditions générales.', 50, yPos + 82, { width: 500 });
-    
-    const footerY = pageHeight - 50;
-    doc.fontSize(9)
-       .font('Helvetica')
-       .fillColor('#4A5568')
-       .text('Merci pour votre confiance !', 50, footerY, { width: 500 })
-       .text('Sakadeco - L\'élégance au service de vos moments', 50, footerY + 12, { width: 500 })
-       .text('Email: sakadeco.contact@gmail.com | Tél: +33 6 88 00 39 28', 50, footerY + 24, { width: 500 })
-       .text('SIRET: 829 611 888 00035 | TVA: FR73 829611888', 50, footerY + 36, { width: 500 });
   }
 
   static async generateInvoiceForOrder(order: any): Promise<Buffer> {
@@ -437,7 +417,7 @@ export class InvoiceService {
       shipping: 0,
       total: rental.subtotal * 1.20, // TTC
       isRental: true,
-      deposit: rental.deposit
+      deposit: 0 // Acompte supprimé
     };
 
     return this.generateInvoicePDF(invoiceData);

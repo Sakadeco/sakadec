@@ -252,8 +252,6 @@ const RentalInvoice: React.FC = () => {
                       <span>{rental.tax.toFixed(2)}€</span>
                     </div>
                     <div className="flex justify-between">
-                      <span>Dépôt (30%):</span>
-                      <span>{rental.deposit.toFixed(2)}€</span>
                     </div>
                     <div className="border-t pt-2">
                       <div className="flex justify-between font-bold text-lg">

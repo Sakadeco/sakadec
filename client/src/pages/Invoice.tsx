@@ -220,7 +220,9 @@ const Invoice: React.FC = () => {
                   {invoice.billingAddress.postalCode} {invoice.billingAddress.city}
                 </p>
                 <p className="text-gray-600">{invoice.billingAddress.country}</p>
-                <p className="text-gray-600 mt-2">{invoice.user.email}</p>
+                {invoice.user?.email && (
+                  <p className="text-gray-600 mt-2">{invoice.user.email}</p>
+                )}
               </div>
               <div>
                 <h3 className="text-lg font-semibold text-gray-800 mb-4">Adresse de livraison</h3>

@@ -363,7 +363,6 @@ const AdminRentals: React.FC = () => {
                           <div className="text-sm text-gray-600">
                             <p>Sous-total: {rental.subtotal.toFixed(2)}€</p>
                             <p>TVA: {rental.tax.toFixed(2)}€</p>
-                            <p>Dépôt: {rental.deposit.toFixed(2)}€</p>
                             <p className="font-semibold text-gray-900">
                               Total: {rental.total.toFixed(2)}€
                             </p>
@@ -513,8 +512,6 @@ const AdminRentals: React.FC = () => {
                       <span>{selectedRental.tax.toFixed(2)}€</span>
                     </div>
                     <div className="flex justify-between">
-                      <span>Dépôt:</span>
-                      <span>{selectedRental.deposit.toFixed(2)}€</span>
                     </div>
                     <div className="flex justify-between font-semibold text-lg border-t pt-2">
                       <span>Total:</span>

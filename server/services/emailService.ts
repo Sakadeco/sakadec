@@ -729,7 +729,6 @@ class EmailService {
                 <p><strong>Numéro de location:</strong> ${rental.orderNumber}</p>
                 <p><strong>Date:</strong> ${format(new Date(rental.createdAt), 'dd MMMM yyyy', { locale: fr })}</p>
                 <p><strong>Total:</strong> ${rental.total.toFixed(2)}€</p>
-                <p><strong>Dépôt:</strong> ${rental.deposit.toFixed(2)}€</p>
               </div>
               
               <p>Votre location sera préparée et livrée selon les dates convenues.</p>
@@ -803,7 +802,6 @@ class EmailService {
                 <p><strong>Date:</strong> ${format(new Date(rental.createdAt), 'dd MMMM yyyy à HH:mm', { locale: fr })}</p>
                 <p><strong>Client:</strong> ${rental.user.firstName || ''} ${rental.user.lastName || ''} (${rental.user.email})</p>
                 <p><strong>Total:</strong> ${rental.total.toFixed(2)}€</p>
-                <p><strong>Dépôt:</strong> ${rental.deposit.toFixed(2)}€</p>
                 
                 <h4>Produits loués:</h4>
                 <div class="items-list">
@@ -1154,7 +1152,6 @@ class EmailService {
                 <p><strong>Numéro de location:</strong> ${rental._id}</p>
                 <p><strong>Date:</strong> ${format(new Date(rental.createdAt), 'dd MMMM yyyy à HH:mm', { locale: fr })}</p>
                 <p><strong>Total:</strong> ${rental.total.toFixed(2)}€</p>
-                <p><strong>Dépôt de garantie:</strong> ${rental.deposit.toFixed(2)}€</p>
                 <p><strong>Articles:</strong> ${rental.items.length} produit(s)</p>
               </div>
               

@@ -74,8 +74,7 @@ router.post('/create-checkout-session', async (req: Request, res: Response) => {
 
     // TVA à 20%
     const tax = subtotal * 0.20;
-    const deposit = subtotal * 0.30; // Acompte de 30%
-    const total = subtotal + tax + deposit;
+    const total = subtotal + tax;
 
     // Créer la session Stripe
     const session = await stripe.checkout.sessions.create({
@@ -114,7 +113,7 @@ router.post('/create-checkout-session', async (req: Request, res: Response) => {
       shippingAddress,
       subtotal,
       tax,
-      deposit,
+      deposit: 0, // Acompte supprimé
       total,
       stripeSessionId: session.id
     });

@@ -358,8 +358,6 @@ const UnifiedSuccess: React.FC = () => {
                       <span className="ml-2 font-medium">{rentalData.tax.toFixed(2)}€</span>
                     </div>
                     <div>
-                      <span className="text-gray-600">Dépôt:</span>
-                      <span className="ml-2 font-medium">{rentalData.deposit.toFixed(2)}€</span>
                     </div>
                     <div className="font-bold text-orange-900">
                       <span>Total location:</span>
