@@ -1,4 +1,4 @@
-import skdLogo from '../assets/logo_sdk-removebg.png';
+import skdLogo from '../assets/Logos/sdk_group.png';
 
 interface LogoProps {
   className?: string;

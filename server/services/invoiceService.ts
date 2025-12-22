@@ -88,11 +88,34 @@ export class InvoiceService {
   }
 
   private static addHeader(doc: PDFDocument, invoiceData: InvoiceData) {
-    // Logo et nom de l'entreprise
-    doc.fontSize(24)
-       .font('Helvetica-Bold')
-       .fillColor('#2D3748')
-       .text('Sakadeco', 50, 50);
+    // Logo de l'entreprise (à la place du texte "Sakadeco")
+    try {
+      // Chemin vers le logo (depuis le dossier client/assets/Logos)
+      const logoPath = path.join(process.cwd(), 'client', 'src', 'assets', 'Logos', 'sdk_group.png');
+      
+      if (fs.existsSync(logoPath)) {
+        // Afficher le logo à la même position que le texte "Sakadeco" (50, 50)
+        // Taille réduite pour correspondre à l'espace du texte
+        doc.image(logoPath, 50, 50, { 
+          width: 100,
+          height: 35,
+          fit: [100, 35]
+        });
+      } else {
+        // Fallback si le logo n'est pas trouvé
+        doc.fontSize(24)
+           .font('Helvetica-Bold')
+           .fillColor('#2D3748')
+           .text('Sakadeco', 50, 50);
+      }
+    } catch (error) {
+      console.error('Erreur chargement logo:', error);
+      // Fallback si erreur
+      doc.fontSize(24)
+         .font('Helvetica-Bold')
+         .fillColor('#2D3748')
+         .text('Sakadeco', 50, 50);
+    }
 
     doc.fontSize(12)
        .font('Helvetica')
