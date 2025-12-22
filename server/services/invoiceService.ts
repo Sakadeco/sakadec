@@ -169,18 +169,19 @@ export class InvoiceService {
     const yStart = invoiceData.shippingAddress.country ? 320 : 310;
     
     // En-tête du tableau (couleur dorée pour correspondre au thème)
+    doc.rect(50, yStart, 500, 30)
+       .fill('#D4AF37'); // Couleur dorée
+    
+    // Textes en blanc et en gras
     doc.fontSize(10)
        .font('Helvetica-Bold')
        .fillColor('#FFFFFF')
-       .rect(50, yStart, 500, 30)
-       .fill('#D4AF37'); // Couleur dorée
-
-    doc.text('Désignation', 60, yStart + 8);
-    doc.text('Qté', 220, yStart + 8);
-    doc.text('Prix unitaire HT', 260, yStart + 8);
-    doc.text('Prix HT', 360, yStart + 8);
-    doc.text('TVA 20%', 420, yStart + 8);
-    doc.text('Prix TTC', 480, yStart + 8);
+       .text('Désignation', 60, yStart + 8)
+       .text('Qté', 220, yStart + 8)
+       .text('Prix unitaire HT', 260, yStart + 8)
+       .text('Prix HT', 360, yStart + 8)
+       .text('TVA 20%', 420, yStart + 8)
+       .text('Prix TTC', 480, yStart + 8);
 
     let currentY = yStart + 30;
     let pageBreakNeeded = false;
@@ -193,17 +194,19 @@ export class InvoiceService {
         doc.addPage();
         currentY = 50;
         // Réimprimer l'en-tête du tableau (couleur dorée)
+        doc.rect(50, currentY, 500, 30)
+           .fill('#D4AF37'); // Couleur dorée
+        
+        // Textes en blanc et en gras
         doc.fontSize(10)
            .font('Helvetica-Bold')
            .fillColor('#FFFFFF')
-           .rect(50, currentY, 500, 30)
-           .fill('#D4AF37'); // Couleur dorée
-        doc.text('Désignation', 60, currentY + 8);
-        doc.text('Qté', 220, currentY + 8);
-        doc.text('Prix unitaire HT', 260, currentY + 8);
-        doc.text('Prix HT', 360, currentY + 8);
-        doc.text('TVA 20%', 420, currentY + 8);
-        doc.text('Prix TTC', 480, currentY + 8);
+           .text('Désignation', 60, currentY + 8)
+           .text('Qté', 220, currentY + 8)
+           .text('Prix unitaire HT', 260, currentY + 8)
+           .text('Prix HT', 360, currentY + 8)
+           .text('TVA 20%', 420, currentY + 8)
+           .text('Prix TTC', 480, currentY + 8);
         currentY += 30;
       }
 
