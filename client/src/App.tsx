@@ -51,6 +51,11 @@ import Realisations from "@/pages/Realisations";
 import RealisationDetail from "@/pages/RealisationDetail";
 import ProductCustomizationDemo from "@/pages/ProductCustomizationDemo";
 import TestCustomization from "@/pages/TestCustomization";
+import MentionsLegales from "@/pages/MentionsLegales";
+import CGV from "@/pages/CGV";
+import CGL from "@/pages/CGL";
+import CGPS from "@/pages/CGPS";
+import Confidentialite from "@/pages/Confidentialite";
 
 function Router() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -83,6 +88,11 @@ function Router() {
       <Route path="/payment/success" component={UnifiedSuccess} />
       <Route path="/payment/cancel" component={PaymentCancel} />
       <Route path="/themes" component={Themes} />
+      <Route path="/legal/mentions" component={MentionsLegales} />
+      <Route path="/legal/cgv" component={CGV} />
+      <Route path="/legal/cgl" component={CGL} />
+      <Route path="/legal/cgps" component={CGPS} />
+      <Route path="/legal/confidentialite" component={Confidentialite} />
              <Route path="/admin/login" component={AdminLogin} />
              <Route path="/admin/dashboard" component={AdminDashboard} />
              <Route path="/admin/products" component={AdminProducts} />
