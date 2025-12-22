@@ -1,5 +1,4 @@
 import Layout from "@/components/Layout";
-import ProductCustomizer from "@/components/ProductCustomizer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Palette } from "lucide-react";
 
@@ -32,44 +31,6 @@ export default function Crea() {
               <p>
                 Fini les recherches interminables : votre thème est décliné sur l'ensemble des produits que vous choisissez, pour une décoration harmonieuse et unique.
               </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Product Customizer */}
-      <section className="py-20">
-        <div className="max-w-6xl mx-auto px-4">
-          <div className="grid lg:grid-cols-2 gap-12 items-start">
-            <div>
-              <h2 className="text-2xl font-playfair font-semibold text-gray-800 mb-6">Configurateur de Produit</h2>
-              <ProductCustomizer />
-            </div>
-            
-            <div className="space-y-6">
-              <img 
-                src="https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
-                alt="Cadeaux personnalisés et papeterie élégante" 
-                className="rounded-xl shadow-lg w-full"
-              />
-              
-              <div className="grid grid-cols-2 gap-4">
-                <Card className="text-center p-4">
-                  <span className="text-2xl mb-2 block">☕</span>
-                  <div className="font-medium text-gray-800">Mugs & Objets</div>
-                </Card>
-                <Card className="text-center p-4">
-                  <span className="text-2xl mb-2 block">✉️</span>
-                  <div className="font-medium text-gray-800">Papeterie</div>
-                </Card>
-                <Card className="text-center p-4">
-                  <span className="text-2xl mb-2 block">🎂</span>
-                  <div className="font-medium text-gray-800">Gourmandises</div>
-                </Card>
-                <Card className="text-center p-4">
-                  <div className="font-medium text-gray-800">Boîtes Cadeau</div>
-                </Card>
-              </div>
             </div>
           </div>
         </div>

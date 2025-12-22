@@ -7,6 +7,7 @@ import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { Calendar } from '../components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '../components/ui/popover';
+import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '../components/ui/alert-dialog';
 import { CalendarIcon, Plus, Minus, Calendar as CalendarIcon2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -43,6 +44,7 @@ const RentalDetail: React.FC = () => {
   const [bookedDates, setBookedDates] = useState<RentalDate[]>([]);
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const [showSaleWarning, setShowSaleWarning] = useState(false);
 
   // Récupérer l'ID du produit depuis l'URL
   const productId = window.location.pathname.split('/rental/')[1];
@@ -110,6 +112,18 @@ const RentalDetail: React.FC = () => {
       return;
     }
 
+    // Récupérer le panier existant pour vérifier
+    const existingCart = JSON.parse(localStorage.getItem('cart') || '[]');
+
+    // Vérifier s'il y a des produits de vente dans le panier
+    const hasSaleItems = existingCart.some((item: any) => item.isRental === false);
+    
+    if (hasSaleItems) {
+      // Afficher le popup d'avertissement
+      setShowSaleWarning(true);
+      return;
+    }
+
     const cartItem = {
       productId: product._id,
       name: product.name,
@@ -127,7 +141,6 @@ const RentalDetail: React.FC = () => {
     };
 
     // Ajouter au panier principal (localStorage)
-    const existingCart = JSON.parse(localStorage.getItem('cart') || '[]');
     const updatedCart = [...existingCart, cartItem];
     localStorage.setItem('cart', JSON.stringify(updatedCart));
 
@@ -195,7 +208,33 @@ const RentalDetail: React.FC = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <>
+      {/* Popup d'avertissement pour produits de vente dans le panier */}
+      <AlertDialog open={showSaleWarning} onOpenChange={setShowSaleWarning}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Panier incompatible</AlertDialogTitle>
+            <AlertDialogDescription>
+              Vous ne pouvez pas ajouter un produit de location à votre panier car vous avez déjà des produits de vente.
+              <br /><br />
+              Veuillez d'abord terminer votre commande de vente avant d'ajouter des produits de location.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction onClick={() => {
+              setShowSaleWarning(false);
+              setLocation('/cart');
+            }}>
+              Voir mon panier
+            </AlertDialogAction>
+            <AlertDialogAction onClick={() => setShowSaleWarning(false)}>
+              Fermer
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <div className="container mx-auto px-4 py-8">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Images du produit avec galerie */}
         <div className="space-y-4">
@@ -512,6 +551,7 @@ const RentalDetail: React.FC = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

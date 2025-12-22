@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Trash2, Plus, Minus, ShoppingCart, ArrowLeft, Check } from 'lucide-react';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import Layout from '@/components/Layout';
 import { loadStripe } from '@stripe/stripe-js';
 
@@ -222,102 +223,6 @@ const CartPage: React.FC = () => {
     total: total.toFixed(2)
   });
 
-  // Fonction pour traiter les paniers mixtes
-  const processMixedCart = async (saleItems: any[], rentalItems: any[], email: string, address: any) => {
-    try {
-      console.log('🛒 Traitement panier mixte:', {
-        ventes: saleItems.length,
-        locations: rentalItems.length
-      });
-
-      let saleData = null;
-      let rentalData = null;
-
-      // Créer session de vente
-      if (saleItems.length > 0) {
-        console.log('💳 Création session de vente...');
-        const saleResponse = await fetch('/api/payment/create-checkout-session', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ 
-            items: saleItems, 
-            customerEmail: email, 
-            shippingAddress: address, 
-            billingAddress: address, 
-            isRental: false,
-            isMixedCart: true,
-            cartType: 'sale',
-            promoCode: appliedPromoCode?.code || null,
-            promoDiscount: promoDiscount || 0
-          }),
-        });
-
-        if (!saleResponse.ok) {
-          const errorData = await saleResponse.json();
-          throw new Error(`Erreur session vente: ${errorData.message}`);
-        }
-
-        saleData = await saleResponse.json();
-        console.log('✅ Session vente créée:', saleData.sessionId);
-      }
-
-      // Créer session de location
-      if (rentalItems.length > 0) {
-        console.log('🏠 Création session de location...');
-        const rentalResponse = await fetch('/api/rental/create-checkout-session', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ 
-            items: rentalItems, 
-            customerEmail: email, 
-            shippingAddress: address, 
-            billingAddress: address, 
-            isRental: true,
-            isMixedCart: true,
-            cartType: 'rental'
-          }),
-        });
-
-        if (!rentalResponse.ok) {
-          const errorData = await rentalResponse.json();
-          throw new Error(`Erreur session location: ${errorData.message}`);
-        }
-
-        rentalData = await rentalResponse.json();
-        console.log('✅ Session location créée:', rentalData.sessionId);
-      }
-
-      // Rediriger vers les sessions Stripe
-      if (saleData && rentalData) {
-        // Panier mixte : stocker les informations et rediriger vers la vente d'abord
-        console.log('🔄 Panier mixte détecté, stockage des informations...');
-        localStorage.setItem('mixedCartData', JSON.stringify({
-          saleSessionId: saleData.sessionId,
-          rentalSessionId: rentalData.sessionId,
-          saleItems: saleItems,
-          rentalItems: rentalItems,
-          customerEmail: email,
-          shippingAddress: address,
-          isMixedCart: true
-        }));
-        console.log('🔄 Redirection vers la session de vente...');
-        window.location.href = saleData.url;
-      } else if (saleData) {
-        // Seulement la vente
-        console.log('🔄 Redirection vers la session de vente...');
-        window.location.href = saleData.url;
-      } else if (rentalData) {
-        // Seulement la location
-        console.log('🔄 Redirection vers la session de location...');
-        window.location.href = rentalData.url;
-      }
-      
-    } catch (error) {
-      console.error('Erreur panier mixte:', error);
-      alert(`Erreur lors du traitement des commandes: ${error.message}`);
-    }
-  };
-
   const handleCheckout = async () => {
     if (!customerEmail) {
       alert('Veuillez entrer votre email');
@@ -339,25 +244,23 @@ const CartPage: React.FC = () => {
       return;
     }
 
+    // Vérifier que le panier n'est pas mixte (vente + location)
+    const saleItems = cartItems.filter(item => !item.isRental);
+    const rentalItems = cartItems.filter(item => item.isRental);
+
+    if (saleItems.length > 0 && rentalItems.length > 0) {
+      alert('Vous ne pouvez pas effectuer un achat et une location en même temps. Veuillez terminer d\'abord votre commande de vente ou de location avant de passer une nouvelle commande.');
+      return;
+    }
+
     setIsLoading(true);
 
     try {
-      // Séparer les produits de vente et de location
-      const saleItems = cartItems.filter(item => !item.isRental);
-      const rentalItems = cartItems.filter(item => item.isRental);
-
       console.log('Analyse du panier:', {
         totalItems: cartItems.length,
         saleItems: saleItems.length,
         rentalItems: rentalItems.length
       });
-
-      // Gérer les paniers mixtes - créer des sessions séparées
-      if (saleItems.length > 0 && rentalItems.length > 0) {
-        console.log('Panier mixte détecté - traitement séparé des commandes');
-        await processMixedCart(saleItems, rentalItems, customerEmail, shippingAddress);
-        return;
-      }
 
       // Déterminer l'endpoint et les données pour panier simple
       const hasRentals = rentalItems.length > 0;
@@ -454,21 +357,6 @@ const CartPage: React.FC = () => {
             </Button>
           </div>
 
-          {/* Alerte pour panier mixte */}
-          {cartItems.some(item => item.isRental) && cartItems.some(item => !item.isRental) && (
-            <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-              <div className="flex items-center space-x-2">
-                <div className="text-blue-600">ℹ️</div>
-                <div>
-                  <h3 className="font-semibold text-blue-900">Panier mixte détecté</h3>
-                  <p className="text-blue-700 text-sm">
-                    Votre panier contient des produits de vente et de location. 
-                    Vous recevrez deux factures séparées lors du paiement.
-                  </p>
-                </div>
-              </div>
-            </div>
-          )}
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Cart Items */}
@@ -927,7 +815,276 @@ const CartPage: React.FC = () => {
                       className="mt-1"
                     />
                     <Label htmlFor="terms" className="text-sm cursor-pointer">
-                      J'accepte les <a href="/cgv" target="_blank" className="text-blue-600 hover:underline font-semibold">Conditions Générales</a> pour valider la commande. *
+                      J'accepte les{' '}
+                      <Dialog open={isCGVModalOpen} onOpenChange={setIsCGVModalOpen}>
+                        <DialogTrigger asChild>
+                          <button
+                            type="button"
+                            className="text-blue-600 hover:underline font-semibold"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              setIsCGVModalOpen(true);
+                            }}
+                          >
+                            Conditions Générales
+                          </button>
+                        </DialogTrigger>
+                        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+                          <DialogHeader>
+                            <DialogTitle className="text-2xl font-playfair font-bold text-gray-800">
+                              Conditions Générales de Vente
+                            </DialogTitle>
+                          </DialogHeader>
+                          <div className="mt-4 space-y-6">
+                            <p className="text-gray-600">
+                              SKD GROUP_ SKD Shop/ SKD Créa
+                            </p>
+
+                            <Card>
+                              <CardHeader>
+                                <CardTitle>Préambule</CardTitle>
+                              </CardHeader>
+                              <CardContent>
+                                <p className="text-gray-700 mb-4">
+                                  Les présentes Conditions Générales de Vente (ci-après « CGV ») régissent l'ensemble des ventes réalisées via notre boutique, spécialisé dans la vente d'articles décoratifs et de produits personnalisés.
+                                </p>
+                                <p className="text-gray-700 mb-2">
+                                  <strong>Vendeur :</strong> Youlou Pajusly – Entreprise Individuelle, exerçant sous le nom commercial « SKD SHOP » et « SKD CREA ».
+                                </p>
+                                <p className="text-gray-700 mb-2">
+                                  <strong>Statut :</strong> Entreprise individuelle
+                                </p>
+                                <p className="text-gray-700 mb-2">
+                                  <strong>SIRET :</strong> 829 611 888 00035
+                                </p>
+                                <p className="text-gray-700 mb-2">
+                                  <strong>Contact :</strong> sakadeco.contact@gmail.com
+                                </p>
+                                <p className="text-gray-700">
+                                  Les CGV s'appliquent à toute commande passée par une personne physique ou morale (ci-après « le Client ») sur le site internet de : Youlou Pajusly – Entreprise Individuelle, exerçant sous le nom commercial « SKD SHOP » et « SKD CREA ».
+                                </p>
+                              </CardContent>
+                            </Card>
+
+                            <Card>
+                              <CardHeader>
+                                <CardTitle>Article 1 – Objet</CardTitle>
+                              </CardHeader>
+                              <CardContent>
+                                <p className="text-gray-700">
+                                  Les présentes CGV définissent les droits et obligations des parties dans le cadre de la vente en ligne de produits proposés par : Youlou Pajusly – Entreprise Individuelle, exerçant sous le nom commercial « SKD SHOP » et « SKD CREA ».
+                                </p>
+                              </CardContent>
+                            </Card>
+
+                            <Card>
+                              <CardHeader>
+                                <CardTitle>Article 2 – Acceptation des CGV</CardTitle>
+                              </CardHeader>
+                              <CardContent>
+                                <p className="text-gray-700 mb-4">
+                                  Toute commande implique l'acceptation sans réserve des présentes CGV. Le Client reconnaît avoir pris connaissance des CGV avant de passer commande.
+                                </p>
+                                <p className="text-gray-700">
+                                  En cas de modification des CGV, seules les CGV en vigueur au moment de la commande s'appliquent.
+                                </p>
+                              </CardContent>
+                            </Card>
+
+                            <Card>
+                              <CardHeader>
+                                <CardTitle>Article 3 – Produits</CardTitle>
+                              </CardHeader>
+                              <CardContent>
+                                <p className="text-gray-700 mb-4">
+                                  Youlou Pajusly – Entreprise Individuelle, exerçant sous le nom commercial « SKD SHOP » et « SKD CREA » propose des articles de décoration et produits personnalisables. Les caractéristiques essentielles sont présentées sur chaque fiche produit.
+                                </p>
+                                <p className="text-gray-700 mb-4">
+                                  Les visuels sont fournis à titre indicatif. Des variations de couleurs ou de rendu peuvent exister, notamment du fait de la personnalisation ou des écrans.
+                                </p>
+                                <div className="mb-4">
+                                  <h3 className="font-semibold text-gray-800 mb-2">Personnalisation</h3>
+                                  <p className="text-gray-700 mb-2">
+                                    Le Client est responsable des informations fournies (orthographe, dates, prénoms, couleurs, thèmes). Aucune modification ne pourra être apportée après validation de la commande.
+                                  </p>
+                                  <p className="text-gray-700 mb-2">
+                                    Les produits issus de thèmes existants ne font pas l'objet d'un envoi de visuel avant fabrication. Les créations sur mesure peuvent faire l'objet d'un aperçu pour validation.
+                                  </p>
+                                  <p className="text-gray-700">
+                                    SKD SHOP se réserve le droit d'adapter couleurs, typographies ou éléments graphiques afin de garantir un rendu harmonieux et lisible.
+                                  </p>
+                                </div>
+                              </CardContent>
+                            </Card>
+
+                            <Card>
+                              <CardHeader>
+                                <CardTitle>Article 4 – Prix</CardTitle>
+                              </CardHeader>
+                              <CardContent>
+                                <p className="text-gray-700 mb-2">
+                                  Les prix sont indiqués en euros, hors taxe, hors frais de livraison.
+                                </p>
+                                <p className="text-gray-700">
+                                  Youlou Pajusly – Entreprise Individuelle, exerçant sous le nom commercial « SKD SHOP » et « SKD CREA » se réserve le droit de modifier ses tarifs à tout moment, sans effet rétroactif sur les commandes déjà validées.
+                                </p>
+                              </CardContent>
+                            </Card>
+
+                            <Card>
+                              <CardHeader>
+                                <CardTitle>Article 5 – Commande</CardTitle>
+                              </CardHeader>
+                              <CardContent>
+                                <p className="text-gray-700 mb-2">La commande est validée après :</p>
+                                <ul className="list-disc list-inside text-gray-700 ml-4 mb-2">
+                                  <li>Sélection des produits,</li>
+                                  <li>Saisie des informations de personnalisation,</li>
+                                  <li>Acceptation des CGV,</li>
+                                  <li>Paiement intégral.</li>
+                                </ul>
+                                <p className="text-gray-700">
+                                  Un email de confirmation est envoyé au Client après validation.
+                                </p>
+                              </CardContent>
+                            </Card>
+
+                            <Card>
+                              <CardHeader>
+                                <CardTitle>Article 6 – Paiement</CardTitle>
+                              </CardHeader>
+                              <CardContent>
+                                <p className="text-gray-700 mb-2">
+                                  Le paiement est exigible immédiatement à la commande.
+                                </p>
+                                <p className="text-gray-700 mb-2">
+                                  Moyens de paiement acceptés : carte bancaire via une plateforme de paiement sécurisée.
+                                </p>
+                                <p className="text-gray-700">
+                                  Toute transaction est irrévocable.
+                                </p>
+                              </CardContent>
+                            </Card>
+
+                            <Card>
+                              <CardHeader>
+                                <CardTitle>Article 7 – Délais de fabrication et livraison</CardTitle>
+                              </CardHeader>
+                              <CardContent>
+                                <p className="text-gray-700 mb-2">
+                                  Les commandes sont traitées par date d'événement.
+                                </p>
+                                <p className="text-gray-700 mb-2">
+                                  Les délais de fabrication et d'expédition varient entre 6 et 25 jours ouvrés, selon la nature des produits et la période.
+                                </p>
+                                <p className="text-gray-700 mb-2">Délais de livraison indicatifs :</p>
+                                <ul className="list-disc list-inside text-gray-700 ml-4 mb-2">
+                                  <li>Colissimo : 2 jours ouvrés (France métropolitaine)</li>
+                                  <li>Mondial Relay : 3 à 4 jours ouvrés (France métropolitaine)</li>
+                                  <li>Chronopost : livraison le lendemain avant 18h (France métropolitaine)</li>
+                                  <li>Europe : délais variables selon destination</li>
+                                </ul>
+                                <p className="text-gray-700">
+                                  Les délais sont donnés à titre indicatif.
+                                </p>
+                              </CardContent>
+                            </Card>
+
+                            <Card>
+                              <CardHeader>
+                                <CardTitle>Article 8 – Livraison</CardTitle>
+                              </CardHeader>
+                              <CardContent>
+                                <p className="text-gray-700 mb-2">
+                                  Les produits sont livrés à l'adresse indiquée lors de la commande.
+                                </p>
+                                <p className="text-gray-700 mb-2">
+                                  SKD SHOP ne saurait être tenue responsable des retards imputables aux transporteurs ou à un cas de force majeure.
+                                </p>
+                                <p className="text-gray-700">
+                                  Les produits sont conditionnés avec soin. Des emballages recyclés peuvent être utilisés dans une démarche écoresponsable.
+                                </p>
+                              </CardContent>
+                            </Card>
+
+                            <Card>
+                              <CardHeader>
+                                <CardTitle>Article 9 – Droit de rétractation</CardTitle>
+                              </CardHeader>
+                              <CardContent>
+                                <p className="text-gray-700">
+                                  Conformément à l'article L221-28 du Code de la consommation, les produits personnalisés ne bénéficient d'aucun droit de rétractation.
+                                </p>
+                                <p className="text-gray-700">
+                                  Aucune annulation ni remboursement ne pourra être accepté une fois la commande validée.
+                                </p>
+                              </CardContent>
+                            </Card>
+
+                            <Card>
+                              <CardHeader>
+                                <CardTitle>Article 10 – Garanties</CardTitle>
+                              </CardHeader>
+                              <CardContent>
+                                <p className="text-gray-700">
+                                  Les produits bénéficient des garanties légales de conformité et contre les vices cachés, conformément à la législation en vigueur.
+                                </p>
+                              </CardContent>
+                            </Card>
+
+                            <Card>
+                              <CardHeader>
+                                <CardTitle>Article 11 – Réserve de propriété</CardTitle>
+                              </CardHeader>
+                              <CardContent>
+                                <p className="text-gray-700">
+                                  Les produits demeurent la propriété de Youlou Pajusly – Entreprise Individuelle, exerçant sous le nom commercial « SKD SHOP » et « SKD CREA » jusqu'au paiement intégral de la commande.
+                                </p>
+                              </CardContent>
+                            </Card>
+
+                            <Card>
+                              <CardHeader>
+                                <CardTitle>Article 12 – Propriété intellectuelle</CardTitle>
+                              </CardHeader>
+                              <CardContent>
+                                <p className="text-gray-700 mb-2">
+                                  Tous les contenus du site (textes, images, visuels, logos, créations) sont la propriété exclusive de Youlou Pajusly – Entreprise Individuelle, exerçant sous le nom commercial « SKD SHOP » et « SKD CREA ».
+                                </p>
+                                <p className="text-gray-700">
+                                  Toute reproduction, même partielle, est strictement interdite sans autorisation écrite préalable.
+                                </p>
+                              </CardContent>
+                            </Card>
+
+                            <Card>
+                              <CardHeader>
+                                <CardTitle>Article 13 – Force majeure</CardTitle>
+                              </CardHeader>
+                              <CardContent>
+                                <p className="text-gray-700">
+                                  Youlou Pajusly – Entreprise Individuelle, exerçant sous le nom commercial « SKD SHOP » et « SKD CREA » ne pourra être tenue responsable en cas d'événement de force majeure empêchant l'exécution de ses obligations.
+                                </p>
+                              </CardContent>
+                            </Card>
+
+                            <Card>
+                              <CardHeader>
+                                <CardTitle>Article 14 – Droit applicable et litiges</CardTitle>
+                              </CardHeader>
+                              <CardContent>
+                                <p className="text-gray-700 mb-2">
+                                  Les présentes CGV sont soumises au droit français.
+                                </p>
+                                <p className="text-gray-700">
+                                  En cas de litige, une solution amiable sera recherchée en priorité. À défaut, le litige sera porté devant le Tribunal de commerce compétent.
+                                </p>
+                              </CardContent>
+                            </Card>
+                          </div>
+                        </DialogContent>
+                      </Dialog>
+                      {' '}pour valider la commande. *
                     </Label>
                   </div>
                 </CardContent>

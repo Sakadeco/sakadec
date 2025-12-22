@@ -59,14 +59,17 @@ router.post('/create-checkout-session', async (req: Request, res: Response) => {
         return res.status(404).json({ message: `Produit ${item.productId} non trouvé` });
       }
 
-      let price = product.price;
+      // Utiliser le prix du panier (qui inclut déjà les ajustements de valuePrices) si disponible
+      // Sinon utiliser le prix du produit
+      let price = item.price !== undefined ? item.price : product.price;
 
       if (isRental && product.isRentable && product.dailyRentalPrice) {
         // Le prix ne dépend pas du nombre de jours, seulement de la quantité
-        price = product.dailyRentalPrice;
+        // Pour les locations, utiliser le prix du panier si disponible
+        price = item.price !== undefined ? item.price : product.dailyRentalPrice;
       }
 
-      // Calculer le prix de base du produit (personnalisations gratuites)
+      // Calculer le prix de base du produit (avec ajustements de valuePrices si présents)
       let itemTotal = price * item.quantity;
       subtotal += itemTotal;
     }
@@ -75,6 +78,13 @@ router.post('/create-checkout-session', async (req: Request, res: Response) => {
     const discountRatio = (promoCode && discountAmount > 0 && subtotal > 0) 
       ? discountAmount / subtotal 
       : 0;
+    
+    console.log('🎟️ Code promo appliqué:', {
+      promoCode: promoCode || 'Aucun',
+      discountAmount: discountAmount.toFixed(2),
+      subtotal: subtotal.toFixed(2),
+      discountRatio: discountRatio.toFixed(4)
+    });
 
     // Deuxième passe : créer les line items avec réduction appliquée
     for (const item of items) {
@@ -83,12 +93,21 @@ router.post('/create-checkout-session', async (req: Request, res: Response) => {
         continue; // Déjà vérifié dans la première passe
       }
 
-      let price = product.price;
+      // Utiliser le prix du panier (qui inclut déjà les ajustements de valuePrices) si disponible
+      // Sinon utiliser le prix du produit
+      let price = item.price !== undefined ? item.price : product.price;
       let description = product.name;
 
       if (isRental && product.isRentable && product.dailyRentalPrice) {
-        price = product.dailyRentalPrice * item.rentalDays;
-        description = `${product.name} (Location - ${item.rentalDays} jour(s))`;
+        // Le prix ne dépend pas du nombre de jours, seulement de la quantité
+        // Pour les locations, utiliser le prix du panier si disponible
+        price = item.price !== undefined ? item.price : product.dailyRentalPrice;
+        description = `${product.name} (Location - ${item.rentalDays || 1} jour(s))`;
+      }
+
+      // Log pour vérifier l'utilisation du prix ajusté
+      if (item.price !== undefined && item.price !== product.price) {
+        console.log(`💰 Prix ajusté pour ${product.name}: ${product.price.toFixed(2)}€ → ${item.price.toFixed(2)}€ (ajustement: ${(item.price - product.price).toFixed(2)}€)`);
       }
 
       // Préparer l'image pour Stripe - Stripe nécessite des URLs HTTPS valides
@@ -128,6 +147,7 @@ router.post('/create-checkout-session', async (req: Request, res: Response) => {
       if (discountRatio > 0) {
         // Appliquer la réduction proportionnellement à chaque article
         finalUnitPrice = unitPrice * (1 - discountRatio);
+        console.log(`  📦 ${product.name}: ${unitPrice.toFixed(2)}€ → ${finalUnitPrice.toFixed(2)}€ (réduction: ${(discountRatio * 100).toFixed(2)}%)`);
       }
       
       lineItems.push({
@@ -143,19 +163,19 @@ router.post('/create-checkout-session', async (req: Request, res: Response) => {
       });
     }
 
-    // TVA à 20%
-    const tax = subtotal * 0.20;
-    const shipping = 0; // Frais de livraison gratuits pour l'instant
-    
     // La réduction du code promo est déjà appliquée dans les prix unitaires des line items
-    // Calculer le total à partir des line items (qui incluent déjà la réduction)
-    const totalFromLineItems = lineItems.reduce((sum, item) => {
+    // Calculer le subtotal après réduction à partir des line items
+    const subtotalAfterDiscount = lineItems.reduce((sum, item) => {
       const itemTotal = (item.price_data?.unit_amount || 0) * (item.quantity || 0);
       return sum + itemTotal;
     }, 0) / 100; // Convertir de centimes en euros
     
-    const total = Math.round((subtotal + tax + shipping) * 100) / 100;
-    const subtotalAfterDiscount = totalFromLineItems;
+    // TVA à 20% calculée sur le subtotal APRÈS réduction
+    const tax = subtotalAfterDiscount * 0.20;
+    const shipping = 0; // Frais de livraison gratuits pour l'instant
+    
+    // Calculer le total avec le subtotal après réduction
+    const total = Math.round((subtotalAfterDiscount + tax + shipping) * 100) / 100;
     
     console.log('💰 Calcul des prix:', {
       subtotal: subtotal.toFixed(2),
@@ -167,10 +187,26 @@ router.post('/create-checkout-session', async (req: Request, res: Response) => {
       total: total.toFixed(2)
     });
 
+    // Ajouter la TVA comme un line item séparé dans Stripe
+    const finalLineItems = [...lineItems];
+    if (tax > 0) {
+      finalLineItems.push({
+        price_data: {
+          currency: 'eur',
+          product_data: {
+            name: 'TVA (20%)',
+            description: 'Taxe sur la valeur ajoutée',
+          },
+          unit_amount: Math.round(tax * 100), // Stripe utilise les centimes
+        },
+        quantity: 1,
+      });
+    }
+
     // Créer la session Stripe
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
-      line_items: lineItems,
+      line_items: finalLineItems,
       mode: 'payment',
       success_url: `${req.headers.origin}/payment/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${req.headers.origin}/payment/cancel`,

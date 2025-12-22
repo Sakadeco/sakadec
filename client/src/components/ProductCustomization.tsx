@@ -13,6 +13,7 @@ interface CustomizationOption {
   label: string;
   required: boolean;
   options?: string[];
+  valuePrices?: Record<string, number>; // Prix pour chaque valeur (optionnel)
   placeholder?: string;
   maxLength?: number;
   maxFileSize?: number;
@@ -26,8 +27,9 @@ interface ProductCustomizationProps {
   productName: string;
   productImage: string;
   customizationOptions: Record<string, CustomizationOption>;
-  onCustomizationChange: (customizations: Record<string, any>) => void;
+  onCustomizationChange: (customizations: Record<string, any>, priceAdjustment?: number) => void;
   initialCustomizations?: Record<string, any>;
+  basePrice?: number; // Prix de base du produit
 }
 
 export default function ProductCustomization({
@@ -35,7 +37,8 @@ export default function ProductCustomization({
   productImage,
   customizationOptions,
   onCustomizationChange,
-  initialCustomizations = {}
+  initialCustomizations = {},
+  basePrice = 0
 }: ProductCustomizationProps) {
   const [customizations, setCustomizations] = useState<Record<string, any>>(initialCustomizations);
   const [customText, setCustomText] = useState('');
@@ -43,10 +46,39 @@ export default function ProductCustomization({
   const [customizationType, setCustomizationType] = useState<'text' | 'image'>('text');
   const [customizationPrice, setCustomizationPrice] = useState(0);
 
+  // Calculer le prix ajusté en fonction des valeurs sélectionnées
+  const calculatePriceAdjustment = (customizations: Record<string, any>): number => {
+    let adjustment = 0;
+    
+    Object.entries(customizationOptions).forEach(([key, option]) => {
+      if (option.valuePrices && customizations[key]) {
+        const selectedValue = customizations[key];
+        // Si c'est un tableau (checkbox), calculer pour chaque valeur
+        if (Array.isArray(selectedValue)) {
+          selectedValue.forEach((val: string) => {
+            if (option.valuePrices[val] !== undefined) {
+              adjustment += option.valuePrices[val];
+            }
+          });
+        } else if (typeof selectedValue === 'string' && option.valuePrices[selectedValue] !== undefined) {
+          // Si c'est une valeur unique (dropdown)
+          adjustment += option.valuePrices[selectedValue];
+        }
+      }
+    });
+    
+    return adjustment;
+  };
+
   const handleCustomizationChange = (key: string, value: any) => {
     const newCustomizations = { ...customizations, [key]: value };
     setCustomizations(newCustomizations);
-    onCustomizationChange(newCustomizations);
+    
+    // Calculer le prix ajusté
+    const priceAdjustment = calculatePriceAdjustment(newCustomizations);
+    setCustomizationPrice(priceAdjustment);
+    
+    onCustomizationChange(newCustomizations, priceAdjustment);
   };
 
   const handleTextImageUploadChange = (key: string, type: 'text' | 'image', value: string) => {

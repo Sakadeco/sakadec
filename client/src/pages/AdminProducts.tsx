@@ -285,7 +285,9 @@ export default function AdminProducts() {
                     {getCategoryLabel(product.category)}
                   </Badge>
                   <span className="text-lg font-bold text-gold">
-                    {formatPrice(product.price)}
+                    {product.isRentable && product.dailyRentalPrice
+                      ? formatPrice(product.dailyRentalPrice)
+                      : formatPrice(product.price)}
                   </span>
                 </div>
               </CardHeader>
@@ -295,9 +297,11 @@ export default function AdminProducts() {
                 </p>
                 <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
                   <span>Stock: {product.stockQuantity}</span>
-                  <span>
-                    {product.dailyRentalPrice && `Location: ${formatPrice(product.dailyRentalPrice * 1.20)} TTC`}
-                  </span>
+                  {product.isRentable && product.dailyRentalPrice && (
+                    <span>
+                      Location: {formatPrice(product.dailyRentalPrice * 1.20)} TTC ({formatPrice(product.dailyRentalPrice)} HT)
+                    </span>
+                  )}
                 </div>
                 <div className="flex space-x-2">
                   <Button

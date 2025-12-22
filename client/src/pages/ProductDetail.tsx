@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { 
   ArrowLeft, 
   ShoppingCart, 
@@ -48,6 +49,7 @@ export default function ProductDetail() {
   const [customizations, setCustomizations] = useState<CustomizationSelection>({});
   const [isAddingToCart, setIsAddingToCart] = useState(false);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const [showRentalWarning, setShowRentalWarning] = useState(false);
 
   // Extract product ID from URL
   const productId = location.split('/')[2]; // /product/{id}
@@ -64,36 +66,49 @@ export default function ProductDetail() {
     enabled: !!productId,
   });
 
-  const handleCustomizationChange = (newCustomizations: CustomizationSelection) => {
+  const [priceAdjustment, setPriceAdjustment] = useState(0);
+
+  const handleCustomizationChange = (newCustomizations: CustomizationSelection, adjustment: number = 0) => {
     setCustomizations(newCustomizations);
+    setPriceAdjustment(adjustment);
   };
 
   const handleAddToCart = async () => {
     if (!product) return;
 
+    // Récupérer le panier existant pour vérifier
+    const existingCart = localStorage.getItem('cart');
+    const cartItems = existingCart ? JSON.parse(existingCart) : [];
+
+    // Vérifier s'il y a des produits de location dans le panier
+    const hasRentalItems = cartItems.some((item: any) => item.isRental === true);
+    
+    if (hasRentalItems) {
+      // Afficher le popup d'avertissement
+      setShowRentalWarning(true);
+      return;
+    }
+
     setIsAddingToCart(true);
     
     try {
-      // Ne plus ajouter de prix supplémentaire pour les personnalisations
-      let totalPrice = product.price;
-      let customizationPrice = 0; // Toujours 0 maintenant
+      // Calculer le prix total : prix de base + ajustement des valeurs sélectionnées
+      const basePrice = product.price;
+      const adjustedPrice = basePrice + priceAdjustment;
+      let totalPrice = adjustedPrice;
 
       // Préparer l'article pour le panier
       const cartItem = {
         productId: product._id,
         name: product.name,
-        price: product.price,
+        price: adjustedPrice, // Prix avec ajustement
         quantity: quantity,
         image: product.mainImageUrl,
         isRental: false,
         customizations: customizations,
-        customizationPrice: 0, // Pas de prix supplémentaire
+        customizationPrice: priceAdjustment, // Ajustement du prix
         totalPrice: totalPrice
       };
-
-      // Récupérer le panier existant
-      const existingCart = localStorage.getItem('cart');
-      const cartItems = existingCart ? JSON.parse(existingCart) : [];
 
       // Vérifier si le produit est déjà dans le panier
       const existingItemIndex = cartItems.findIndex((item: any) => 
@@ -136,8 +151,6 @@ export default function ProductDetail() {
     setSelectedImageIndex((prev) => (prev - 1 + allImages.length) % allImages.length);
   };
 
-  // Ne plus calculer de prix supplémentaire pour les personnalisations
-  const customizationPrice = 0;
   const totalPrice = product?.price || 0;
 
   if (isLoading) {
@@ -165,6 +178,31 @@ export default function ProductDetail() {
 
   return (
     <Layout>
+      {/* Popup d'avertissement pour produits de location dans le panier */}
+      <AlertDialog open={showRentalWarning} onOpenChange={setShowRentalWarning}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Panier incompatible</AlertDialogTitle>
+            <AlertDialogDescription>
+              Vous ne pouvez pas ajouter un produit de vente à votre panier car vous avez déjà des produits de location.
+              <br /><br />
+              Veuillez d'abord terminer votre commande de location avant d'ajouter des produits de vente.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction onClick={() => {
+              setShowRentalWarning(false);
+              setLocation('/cart');
+            }}>
+              Voir mon panier
+            </AlertDialogAction>
+            <AlertDialogAction onClick={() => setShowRentalWarning(false)}>
+              Fermer
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       {/* Header */}
       <section className="py-8 bg-gradient-to-br from-skd-shop/10 to-white">
         <div className="max-w-6xl mx-auto px-4">
@@ -283,9 +321,9 @@ export default function ProductDetail() {
                     </span>
                   )}
                 </div>
-                {customizationPrice > 0 && (
-                  <p className="text-sm text-blue-600 mt-2">
-                    +{customizationPrice.toFixed(2)}€ de personnalisation
+                {priceAdjustment !== 0 && (
+                  <p className={`text-sm mt-2 ${priceAdjustment > 0 ? 'text-blue-600' : 'text-green-600'}`}>
+                    {priceAdjustment > 0 ? '+' : ''}{priceAdjustment.toFixed(2)}€ {priceAdjustment > 0 ? 'supplémentaire' : 'de réduction'} pour cette option
                   </p>
                 )}
               </div>
@@ -309,6 +347,7 @@ export default function ProductDetail() {
                   customizationOptions={product.customizationOptions}
                   onCustomizationChange={handleCustomizationChange}
                   initialCustomizations={customizations}
+                  basePrice={product.price}
                 />
               )}
 

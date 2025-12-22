@@ -123,6 +123,10 @@ const ProductSchema = new Schema<IProduct>({
         default: false
       },
       options: [String], // Pour les dropdowns et checkboxes
+      valuePrices: {
+        type: Map,
+        of: Number // Prix pour chaque valeur (optionnel)
+      },
       placeholder: String, // Pour les champs texte
       maxLength: Number,
       maxFileSize: {

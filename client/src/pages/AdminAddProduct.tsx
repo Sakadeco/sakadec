@@ -13,9 +13,14 @@ import { Plus, Trash2, Save, ArrowLeft, X } from "lucide-react";
 import ImageUpload from "@/components/ImageUpload";
 import ProductImageUpload from "@/components/ProductImageUpload";
 
+interface CustomizationValue {
+  value: string;
+  price?: number; // Prix optionnel pour cette valeur
+}
+
 interface CustomizationOption {
   label: string;
-  values: string[];
+  values: CustomizationValue[];
   type?: 'dropdown' | 'checkbox' | 'text' | 'textarea' | 'text_image_upload';
   required?: boolean;
   maxLength?: number;
@@ -104,7 +109,7 @@ export default function AdminAddProduct() {
       ...prev,
       [optionKey]: {
         label: '',
-        values: ['', '', ''], // 3 valeurs par défaut
+        values: [{ value: '', price: undefined }, { value: '', price: undefined }, { value: '', price: undefined }], // 3 valeurs par défaut
         type: 'dropdown'
       }
     }));
@@ -218,7 +223,7 @@ export default function AdminAddProduct() {
       ...prev,
       [optionKey]: {
         ...prev[optionKey],
-        values: [...prev[optionKey].values, '']
+        values: [...prev[optionKey].values, { value: '', price: undefined }]
       }
     }));
   };
@@ -238,7 +243,23 @@ export default function AdminAddProduct() {
       ...prev,
       [optionKey]: {
         ...prev[optionKey],
-        values: prev[optionKey].values.map((v, index) => index === valueIndex ? value : v)
+        values: prev[optionKey].values.map((v, index) => 
+          index === valueIndex ? { ...v, value } : v
+        )
+      }
+    }));
+  };
+
+  const updateOptionValuePrice = (optionKey: string, valueIndex: number, price: string) => {
+    setCustomizationOptions(prev => ({
+      ...prev,
+      [optionKey]: {
+        ...prev[optionKey],
+        values: prev[optionKey].values.map((v, index) => 
+          index === valueIndex 
+            ? { ...v, price: price === '' ? undefined : parseFloat(price) || undefined }
+            : v
+        )
       }
     }));
   };
@@ -602,13 +623,24 @@ export default function AdminAddProduct() {
                       <div>
                         <Label>Valeurs disponibles</Label>
                         <div className="space-y-2">
-                          {option.values.map((value, index) => (
+                          {option.values.map((valueObj, index) => (
                             <div key={index} className="flex items-center gap-2">
                               <Input
-                                value={value}
+                                value={valueObj.value}
                                 onChange={(e) => updateOptionValue(key, index, e.target.value)}
                                 placeholder={`Valeur ${index + 1}`}
+                                className="flex-1"
                               />
+                              <div className="flex items-center gap-1 w-32">
+                                <Input
+                                  type="number"
+                                  step="0.01"
+                                  value={valueObj.price !== undefined ? valueObj.price : ''}
+                                  onChange={(e) => updateOptionValuePrice(key, index, e.target.value)}
+                                  placeholder="Prix (€)"
+                                  className="w-full"
+                                />
+                              </div>
                               <Button
                                 type="button"
                                 variant="ghost"
@@ -631,6 +663,9 @@ export default function AdminAddProduct() {
                             <Plus className="w-4 h-4 mr-2" />
                             Ajouter une valeur
                           </Button>
+                          <p className="text-xs text-gray-500 mt-2">
+                            💡 Le champ prix est optionnel. Si non rempli, le prix par défaut sera celui du produit.
+                          </p>
                         </div>
                       </div>
 
@@ -766,8 +801,11 @@ export default function AdminAddProduct() {
                           <span className="font-medium">{option.label}</span>
                           {option.required && <Badge variant="destructive">Obligatoire</Badge>}
                           <span className="text-gray-600">
-                            ({option.values.filter(v => v.trim()).length} valeurs)
+                            ({option.values.filter(v => v.value && v.value.trim()).length} valeurs)
                           </span>
+                          {option.values.some(v => v.price !== undefined && v.price !== null) && (
+                            <Badge variant="secondary" className="text-xs">Avec prix</Badge>
+                          )}
                         </div>
                       ))}
                       {Object.entries(engravingOptions).map(([key, option]) => (
