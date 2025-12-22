@@ -94,9 +94,8 @@ export class InvoiceService {
       const logoPath = path.join(process.cwd(), 'client', 'src', 'assets', 'Logos', 'sdk_group.png');
       
       if (fs.existsSync(logoPath)) {
-        // Afficher le logo à la même position que le texte "Sakadeco" (50, 50)
-        // Taille réduite pour correspondre à l'espace du texte
-        doc.image(logoPath, 50, 50, { 
+        // Afficher le logo décalé vers le haut (47 au lieu de 50)
+        doc.image(logoPath, 50, 47, { 
           width: 100,
           height: 35,
           fit: [100, 35]
@@ -106,7 +105,7 @@ export class InvoiceService {
         doc.fontSize(24)
            .font('Helvetica-Bold')
            .fillColor('#2D3748')
-           .text('Sakadeco', 50, 50);
+           .text('Sakadeco', 50, 47);
       }
     } catch (error) {
       console.error('Erreur chargement logo:', error);
@@ -114,14 +113,14 @@ export class InvoiceService {
       doc.fontSize(24)
          .font('Helvetica-Bold')
          .fillColor('#2D3748')
-         .text('Sakadeco', 50, 50);
+         .text('Sakadeco', 50, 47);
     }
 
     doc.fontSize(12)
        .font('Helvetica')
        .fillColor('#4A5568')
-       .text('L\'élégance au service de vos moments', 50, 80)
-       .text('Email: sakadeco.contact@gmail.com | Tél: +33 6 88 00 39 28', 50, 95);
+       .text('L\'élégance au service de vos moments', 50, 88)
+       .text('Email: sakadeco.contact@gmail.com | Tél: +33 6 88 00 39 28', 50, 103);
 
     // Numéro de facture et date
     const invoiceNumber = invoiceData.invoiceNumber;
