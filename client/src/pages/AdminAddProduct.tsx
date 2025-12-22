@@ -149,13 +149,23 @@ export default function AdminAddProduct() {
     Object.entries(customizationOptions).forEach(([key, option]) => {
       if (option.label.trim()) {
         const optionKey = option.label.toLowerCase().replace(/\s+/g, '_');
-        const validValues = option.values.filter(value => value.trim() !== '');
+        // Filtrer les valeurs valides (qui ont un value non vide)
+        const validValues = option.values.filter(v => v.value && v.value.trim() !== '');
         if (validValues.length > 0) {
+          // Créer un objet avec les valeurs et leurs prix
+          const optionsWithPrices: any = {};
+          validValues.forEach(v => {
+            if (v.price !== undefined && v.price !== null) {
+              optionsWithPrices[v.value] = v.price;
+            }
+          });
+          
           transformed[optionKey] = {
             type: option.type || 'dropdown',
             label: option.label,
             required: option.required || false,
-            options: validValues
+            options: validValues.map(v => v.value),
+            valuePrices: Object.keys(optionsWithPrices).length > 0 ? optionsWithPrices : undefined
           };
         }
       }
