@@ -59,8 +59,37 @@ export default function Layout({ children }: LayoutProps) {
             </div>
           </div>
           
-          <div className="border-t border-gray-700 mt-8 pt-8 text-center">
-            <p className="text-gray-300">&copy; 2024 SakaDeco Group. Tous droits réservés.</p>
+          <div className="border-t border-gray-700 mt-8 pt-8">
+            <div className="grid md:grid-cols-2 gap-4 mb-4">
+              <div>
+                <h4 className="font-semibold mb-2">Informations légales</h4>
+                <ul className="space-y-1 text-sm text-gray-300">
+                  <li><a href="/legal/mentions" className="hover:text-gold transition-colors">Mentions légales</a></li>
+                  <li><a href="/legal/cgv" className="hover:text-gold transition-colors">Conditions Générales de Vente</a></li>
+                  <li><a href="/legal/cgl" className="hover:text-gold transition-colors">Conditions Générales de Location</a></li>
+                  <li><a href="/legal/cgps" className="hover:text-gold transition-colors">Conditions Générales de Prestations</a></li>
+                  <li><a href="/legal/confidentialite" className="hover:text-gold transition-colors">Politique de confidentialité</a></li>
+                </ul>
+              </div>
+              <div>
+                <h4 className="font-semibold mb-2">Ressources</h4>
+                <ul className="space-y-1 text-sm text-gray-300">
+                  <li>
+                    <a 
+                      href="https://www.canva.com/design/DAG73Mhxi4A/OOhLKfNuA-r9WHHT6a50EQ/view?utm_content=DAG73Mhxi4A&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=hdf441ab7c0" 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      className="hover:text-gold transition-colors"
+                    >
+                      Catalogue_SKD_Group
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div className="text-center">
+              <p className="text-gray-300">&copy; 2024 SakaDeco Group. Tous droits réservés.</p>
+            </div>
           </div>
         </div>
       </footer>

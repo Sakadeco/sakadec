@@ -272,9 +272,9 @@ const RentalDetail: React.FC = () => {
               )}
             </div>
             <div className="text-2xl font-bold text-orange-600 mb-2">
-              {product.dailyRentalPrice.toFixed(2)}€ HT/jour
+              {(product.dailyRentalPrice * 1.20).toFixed(2)}€ TTC
             </div>
-            <p className="text-xs text-gray-500 mb-4">TVA non incluse</p>
+            <p className="text-xs text-gray-500 mb-4">{product.dailyRentalPrice.toFixed(2)}€ HT</p>
           </div>
 
           {/* Sélection des dates */}

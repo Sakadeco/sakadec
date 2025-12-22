@@ -9,17 +9,20 @@ export default function SKDHome() {
     {
       icon: PaintbrushVertical,
       title: "Relooking Intérieur",
-      description: "Conseils déco, aménagements fonctionnels et esthétiques pour sublimer vos espaces"
+      description: "Conseils déco, aménagements fonctionnels et esthétiques pour sublimer vos espaces",
+      price: "Tarif horaire : 60€ /heure hors frais de déplacement. Minimum 2 heures (à domicile ou en Visio) avec compte rendu en fin de session"
     },
     {
       icon: Package,
       title: "Home Organizing",
-      description: "Rangement optimisé, tri et désencombrement pour retrouver sérénité chez vous"
+      description: "Rangement optimisé, tri et désencombrement pour retrouver sérénité chez vous",
+      price: "Au choix à partir de 60 €/h ou forfait (par pièce, selon la taille) : par exemple 4€ par m² pour un projet d'aménagement d'une pièce (avec plan, conseils, organisation) hors frais de déplacement."
     },
     {
       icon: Users,
-      title: "Coaching à Domicile",
-      description: "Accompagnement personnalisé pour transformer durablement vos habitudes"
+      title: "Projet 3D : plan + décoration",
+      description: "Pour la création d'un book déco (plans 2D/3D, moodboard, liste shopping, visuels)",
+      price: "80 € un projet standard 3D par pièce selon la surface, 120 € un projet complexe par pièce."
     }
   ];
 
@@ -103,7 +106,8 @@ export default function SKDHome() {
                           <IconComponent className="text-skd-home text-xl" />
                           <h3 className="font-semibold text-gray-800">{service.title}</h3>
                         </div>
-                        <p className="text-gray-600">{service.description}</p>
+                        <p className="text-gray-600 mb-3">{service.description}</p>
+                        <p className="text-sm text-gray-700 font-medium">{service.price}</p>
                       </CardContent>
                     </Card>
                   );
@@ -150,7 +154,7 @@ export default function SKDHome() {
                   1
                 </div>
                 <h4 className="font-semibold text-gray-800 mb-2">Diagnostic</h4>
-                <p className="text-sm text-gray-600">Analyse de vos espaces et de vos besoins</p>
+                <p className="text-sm text-gray-600">Analyse de vos espaces, de vos besoins et de vos objectifs.</p>
               </CardContent>
             </Card>
             
@@ -159,8 +163,8 @@ export default function SKDHome() {
                 <div className="w-12 h-12 bg-skd-home text-white rounded-full flex items-center justify-center font-bold mb-4 mx-auto text-lg">
                   2
                 </div>
-                <h4 className="font-semibold text-gray-800 mb-2">Plan d'Action</h4>
-                <p className="text-sm text-gray-600">Proposition de solutions personnalisées</p>
+                <h4 className="font-semibold text-gray-800 mb-2">Plan d'action</h4>
+                <p className="text-sm text-gray-600">Proposition de solutions personnalisées et adaptées à votre budget.</p>
               </CardContent>
             </Card>
             
@@ -170,7 +174,7 @@ export default function SKDHome() {
                   3
                 </div>
                 <h4 className="font-semibold text-gray-800 mb-2">Transformation</h4>
-                <p className="text-sm text-gray-600">Mise en œuvre avec votre participation</p>
+                <p className="text-sm text-gray-600">Mise en œuvre du projet, avec votre participation ou en toute autonomie.</p>
               </CardContent>
             </Card>
             
@@ -180,7 +184,7 @@ export default function SKDHome() {
                   4
                 </div>
                 <h4 className="font-semibold text-gray-800 mb-2">Suivi</h4>
-                <p className="text-sm text-gray-600">Accompagnement pour maintenir l'organisation</p>
+                <p className="text-sm text-gray-600">Accompagnement et conseils pour maintenir l'organisation dans le temps.</p>
               </CardContent>
             </Card>
           </div>

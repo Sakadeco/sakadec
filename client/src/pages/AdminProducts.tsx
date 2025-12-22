@@ -296,7 +296,7 @@ export default function AdminProducts() {
                 <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
                   <span>Stock: {product.stockQuantity}</span>
                   <span>
-                    {product.dailyRentalPrice && `Location: ${formatPrice(product.dailyRentalPrice)}/jour`}
+                    {product.dailyRentalPrice && `Location: ${formatPrice(product.dailyRentalPrice * 1.20)} TTC`}
                   </span>
                 </div>
                 <div className="flex space-x-2">

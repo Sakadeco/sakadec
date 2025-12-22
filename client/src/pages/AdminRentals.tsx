@@ -478,7 +478,7 @@ const AdminRentals: React.FC = () => {
                         <div className="flex-1">
                           <h4 className="font-medium text-gray-900">{item.product?.name || 'Produit supprimé'}</h4>
                           <p className="text-sm text-gray-600">
-                            Quantité: {item.quantity} | Prix/jour: {item.dailyPrice.toFixed(2)}€
+                            Quantité: {item.quantity} | Prix: {(item.dailyPrice * 1.20).toFixed(2)}€ TTC ({item.dailyPrice.toFixed(2)}€ HT)
                           </p>
                           <p className="text-xs text-gray-500">
                             {item.rentalDays} jours - Du {new Date(item.rentalStartDate).toLocaleDateString('fr-FR')} au {new Date(item.rentalEndDate).toLocaleDateString('fr-FR')}

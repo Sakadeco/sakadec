@@ -9,19 +9,33 @@ export default function Co() {
       icon: ClipboardList,
       title: "Coordination A à Z",
       description: "Gestion complète de l'événement, de la planification initiale à la coordination du jour J",
-      features: ["Recherche de prestataires", "Gestion du budget", "Planning détaillé", "Suivi qualité"]
+      features: ["Recherche de prestataires", "Gestion du budget", "Planning détaillé", "Suivi qualité"],
+      price: "À partir de 1800 € – Sur devis",
+      delay: "Minimum 9 mois pour une organisation optimale"
     },
     {
       icon: CalendarCheck,
-      title: "Gestion Jour J",
-      description: "Présence sur place pour coordonner tous les prestataires et assurer le bon déroulement",
-      features: ["Coordination équipes", "Gestion des imprévus", "Respect du timing", "Assistance complète"]
+      title: "Organisation partielle",
+      description: "Accompagnement sur certaines étapes de votre événement selon vos besoins",
+      features: ["Recherche de prestataires", "Gestion du budget", "Planning détaillé", "Suivi qualité"],
+      price: "À partir de 900 € – Sur devis",
+      delay: "Minimum 6 mois pour une organisation optimale"
     },
     {
       icon: Lightbulb,
-      title: "Création de Concept",
-      description: "Développement de thèmes originaux et scénographies personnalisées pour votre événement",
-      features: ["Thèmes sur-mesure", "Scénographie unique", "Ambiances personnalisées", "Innovation créative"]
+      title: "Gestion Jour J",
+      description: "Présence sur place pour coordonner tous les prestataires et assurer le bon déroulement",
+      features: ["Coordination équipes", "Gestion des imprévus", "Respect du timing", "Assistance complète"],
+      price: "950 € – 1 300 € selon la formule",
+      delay: "Minimum 3 mois pour une organisation optimale"
+    },
+    {
+      icon: Users,
+      title: "Accompagnement & Conseil",
+      description: "Formule Accompagnement continu",
+      features: ["Conseils personnalisés", "Suivi régulier", "Optimisation continue"],
+      price: "120 €/mois",
+      delay: "Formule continue"
     }
   ];
 
@@ -80,11 +94,15 @@ export default function Co() {
                     <p className="text-gray-600">{service.description}</p>
                   </CardHeader>
                   <CardContent>
-                    <ul className="text-sm text-gray-500 space-y-2">
+                    <ul className="text-sm text-gray-500 space-y-2 mb-4">
                       {service.features.map((feature, featureIndex) => (
                         <li key={featureIndex}>• {feature}</li>
                       ))}
                     </ul>
+                    <div className="border-t pt-4 mt-4">
+                      <p className="text-sm font-semibold text-gray-800 mb-1">{service.price}</p>
+                      <p className="text-xs text-gray-600">{service.delay}</p>
+                    </div>
                   </CardContent>
                 </Card>
               );

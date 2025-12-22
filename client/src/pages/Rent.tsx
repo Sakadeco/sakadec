@@ -151,9 +151,9 @@ const Rent: React.FC = () => {
               <div className="flex justify-between items-center mb-3">
                 <div>
                   <span className="text-xl font-bold text-orange-600">
-                    {product.dailyRentalPrice?.toFixed(2) || '0.00'}€ HT/jour
+                    {product.dailyRentalPrice ? ((product.dailyRentalPrice * 1.20).toFixed(2)) : '0.00'}€ TTC
                   </span>
-                  <p className="text-xs text-gray-500">TVA non incluse</p>
+                  <p className="text-xs text-gray-500">{product.dailyRentalPrice?.toFixed(2) || '0.00'}€ HT</p>
                 </div>
                 <Badge variant="default" className="bg-orange-500">
                   Disponible
@@ -180,6 +180,73 @@ const Rent: React.FC = () => {
           </p>
         </div>
       )}
+
+      {/* Fonctionnement de la location */}
+      <section className="py-20 bg-gray-50 mt-12">
+        <div className="max-w-6xl mx-auto px-4">
+          <h2 className="text-3xl font-playfair font-bold text-gray-800 mb-8 text-center">
+            Fonctionnement de la location
+          </h2>
+          
+          <div className="grid md:grid-cols-2 gap-8 mb-12">
+            <Card className="border-l-4 border-orange-500">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Calendar className="w-5 h-5 text-orange-500" />
+                  Retrait & Retour
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-3 text-gray-700">
+                  <li className="flex items-start">
+                    <span className="text-orange-500 mr-2">•</span>
+                    <span>Retrait et retour uniquement à l'entrepôt (aucune livraison).</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="text-orange-500 mr-2">•</span>
+                    <span>Location week-end : vendredi → lundi.</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="text-orange-500 mr-2">•</span>
+                    <span>Réservation validée après paiement.</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="text-orange-500 mr-2">•</span>
+                    <span>Caution obligatoire • matériel à rendre en parfait état.</span>
+                  </li>
+                </ul>
+              </CardContent>
+            </Card>
+
+            <Card className="border-l-4 border-orange-500">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Calendar className="w-5 h-5 text-orange-500" />
+                  Comment réserver ?
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ol className="space-y-3 text-gray-700 list-decimal list-inside">
+                  <li>Choisissez la date de votre événement.</li>
+                  <li>Réglez votre commande en ligne.</li>
+                  <li>Recevez votre e-mail de confirmation avec tous les détails de votre location.</li>
+                </ol>
+              </CardContent>
+            </Card>
+          </div>
+
+          <Card className="bg-orange-50 border-2 border-orange-200">
+            <CardContent className="p-6">
+              <h3 className="text-xl font-semibold text-gray-800 mb-3">
+                Voir le matériel en vrai ?
+              </h3>
+              <p className="text-gray-700">
+                C'est possible sur rendez-vous, afin de vérifier les couleurs, les matières et les dimensions.
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
     </div>
     </Layout>
   );

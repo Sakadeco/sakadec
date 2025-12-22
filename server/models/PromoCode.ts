@@ -73,3 +73,4 @@ PromoCodeSchema.index({ isActive: 1, validFrom: 1, validUntil: 1 });
 
 export const PromoCode = mongoose.model<IPromoCode>('PromoCode', PromoCodeSchema);
 
+

@@ -72,9 +72,9 @@ router.post('/create-checkout-session', async (req: Request, res: Response) => {
       });
     }
 
-    // TVA non incluse - pas de calcul de TVA
-    const tax = 0;
-    const deposit = subtotal * 0.30; // Dépôt de 30%
+    // TVA à 20%
+    const tax = subtotal * 0.20;
+    const deposit = subtotal * 0.30; // Acompte de 30%
     const total = subtotal + tax + deposit;
 
     // Créer la session Stripe
@@ -94,17 +94,22 @@ router.post('/create-checkout-session', async (req: Request, res: Response) => {
 
     // Créer la location en base
     const rental = new Rental({
-      items: items.map(item => ({
-        product: item.productId,
-        quantity: item.quantity,
-        dailyPrice: item.dailyPrice,
-        rentalStartDate: item.rentalStartDate,
-        rentalEndDate: item.rentalEndDate,
-        rentalDays: Math.max(1, Math.ceil((new Date(item.rentalEndDate).getTime() - new Date(item.rentalStartDate).getTime()) / (1000 * 60 * 60 * 24))),
-        totalPrice: (item.dailyPrice || 0) * Math.max(1, Math.ceil((new Date(item.rentalEndDate).getTime() - new Date(item.rentalStartDate).getTime()) / (1000 * 60 * 60 * 24))) * item.quantity,
-        customizations: item.customizations || {},
-        customMessage: item.customMessage || ''
-      })),
+      items: items.map(item => {
+        const rentalDays = Math.max(1, Math.ceil((new Date(item.rentalEndDate).getTime() - new Date(item.rentalStartDate).getTime()) / (1000 * 60 * 60 * 24)));
+        // Le prix ne dépend que de la quantité, pas du nombre de jours
+        const totalPrice = (item.dailyPrice || 0) * item.quantity;
+        return {
+          product: item.productId,
+          quantity: item.quantity,
+          dailyPrice: item.dailyPrice,
+          rentalStartDate: item.rentalStartDate,
+          rentalEndDate: item.rentalEndDate,
+          rentalDays: rentalDays,
+          totalPrice: totalPrice,
+          customizations: item.customizations || {},
+          customMessage: item.customMessage || ''
+        };
+      }),
       customerEmail,
       shippingAddress,
       subtotal,

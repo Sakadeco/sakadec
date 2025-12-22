@@ -143,8 +143,8 @@ router.post('/create-checkout-session', async (req: Request, res: Response) => {
       });
     }
 
-    // TVA non incluse - pas de calcul de TVA
-    const tax = 0;
+    // TVA à 20%
+    const tax = subtotal * 0.20;
     const shipping = 0; // Frais de livraison gratuits pour l'instant
     
     // La réduction du code promo est déjà appliquée dans les prix unitaires des line items
@@ -154,7 +154,7 @@ router.post('/create-checkout-session', async (req: Request, res: Response) => {
       return sum + itemTotal;
     }, 0) / 100; // Convertir de centimes en euros
     
-    const total = Math.round((totalFromLineItems + tax + shipping) * 100) / 100;
+    const total = Math.round((subtotal + tax + shipping) * 100) / 100;
     const subtotalAfterDiscount = totalFromLineItems;
     
     console.log('💰 Calcul des prix:', {
@@ -384,7 +384,26 @@ router.get('/orders/detail/:orderId', async (req: Request, res: Response) => {
       return res.status(404).json({ message: 'Commande non trouvée' });
     }
 
-    res.json(order);
+    res.json({ 
+      order: {
+        _id: order._id,
+        orderNumber: order.orderNumber || order._id.toString(),
+        user: order.user,
+        items: order.items,
+        subtotal: order.subtotal,
+        tax: order.tax,
+        shipping: order.shipping,
+        total: order.total,
+        status: order.status,
+        paymentStatus: order.paymentStatus,
+        shippingAddress: order.shippingAddress,
+        billingAddress: order.billingAddress,
+        paymentMethod: order.paymentMethod,
+        stripeSessionId: order.stripeSessionId,
+        createdAt: order.createdAt,
+        updatedAt: order.updatedAt
+      }
+    });
   } catch (error) {
     console.error('Erreur récupération commande:', error);
     res.status(500).json({ message: 'Erreur serveur' });

@@ -141,9 +141,9 @@ const Shop: React.FC = () => {
               <div className="flex justify-between items-center mb-3">
                 <div>
                   <span className="text-xl font-bold text-green-600">
-                    {product.price.toFixed(2)}€ HT
+                    {(product.price * 1.20).toFixed(2)}€ TTC
                   </span>
-                  <p className="text-xs text-gray-500">TVA non incluse</p>
+                  <p className="text-xs text-gray-500">{product.price.toFixed(2)}€ HT</p>
                 </div>
                 <Badge variant={product.stockQuantity > 0 ? "default" : "destructive"}>
                   {product.stockQuantity > 0 ? 'En stock' : 'Rupture'}

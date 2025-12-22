@@ -268,9 +268,9 @@ export default function ProductDetail() {
                 <div className="flex items-center space-x-4">
                   <div>
                     <span className="text-3xl font-bold text-skd-shop">
-                      {totalPrice.toFixed(2)}€ HT
+                      {(totalPrice * 1.20).toFixed(2)}€ TTC
                     </span>
-                    <p className="text-xs text-gray-500 mt-1">TVA non incluse</p>
+                    <p className="text-xs text-gray-500 mt-1">{totalPrice.toFixed(2)}€ HT</p>
                     {quantity > 1 && (
                       <span className="text-sm text-gray-500 ml-2 block mt-1">
                         ({(totalPrice / quantity).toFixed(2)}€ HT l'unité)
@@ -279,7 +279,7 @@ export default function ProductDetail() {
                   </div>
                   {product.isRentable && product.dailyRentalPrice && (
                     <span className="text-sm text-gray-500">
-                      ou {product.dailyRentalPrice.toFixed(2)}€ HT/jour
+                      ou {(product.dailyRentalPrice * 1.20).toFixed(2)}€ TTC
                     </span>
                   )}
                 </div>

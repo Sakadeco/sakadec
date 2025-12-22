@@ -63,8 +63,11 @@ export default function Events() {
             <p className="text-lg text-gray-700 mb-4 leading-relaxed">
               Nous créons des univers visuels sur mesure, pensés à votre image, pour sublimer chaque moment important.
             </p>
-            <p className="text-lg text-gray-700 mb-8 leading-relaxed">
+            <p className="text-lg text-gray-700 mb-4 leading-relaxed">
               De la conception à l'installation, nous imaginons des décors élégants, harmonieux et mémorables.
+            </p>
+            <p className="text-lg font-semibold text-skd-events mb-8">
+              À partir de 600 € – Sur devis
             </p>
           </div>
 

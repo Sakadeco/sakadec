@@ -92,14 +92,13 @@ export class InvoiceService {
     doc.fontSize(24)
        .font('Helvetica-Bold')
        .fillColor('#2D3748')
-       .text('SAKADECO', 50, 50);
+       .text('Sakadeco', 50, 50);
 
     doc.fontSize(12)
        .font('Helvetica')
        .fillColor('#4A5568')
-       .text('Décoration et aménagement intérieur', 50, 80)
-       .text('Email: sakadeco.contact@gmail.com', 50, 95)
-       .text('Tél: +33 1 23 45 67 89', 50, 110);
+       .text('L\'élégance au service de vos moments', 50, 80)
+       .text('Email: sakadeco.contact@gmail.com | Tél: +33 6 88 00 39 28', 50, 95);
 
     // Numéro de facture et date
     const invoiceNumber = invoiceData.invoiceNumber;
@@ -170,52 +169,91 @@ export class InvoiceService {
     const yStart = invoiceData.shippingAddress.country ? 320 : 310;
     
     // En-tête du tableau
-    doc.fontSize(12)
+    doc.fontSize(10)
        .font('Helvetica-Bold')
        .fillColor('#FFFFFF')
-       .rect(50, yStart, 500, 25)
+       .rect(50, yStart, 500, 30)
        .fill('#4A5568');
 
-    doc.text('Article', 60, yStart + 8);
-    doc.text('Quantité', 300, yStart + 8);
-    doc.text('Prix unitaire', 380, yStart + 8);
-    doc.text('Total', 480, yStart + 8);
+    doc.text('Désignation', 60, yStart + 8);
+    doc.text('Qté', 220, yStart + 8);
+    doc.text('Prix unitaire HT', 260, yStart + 8);
+    doc.text('Prix HT', 360, yStart + 8);
+    doc.text('TVA 20%', 420, yStart + 8);
+    doc.text('Prix TTC', 480, yStart + 8);
 
-    let currentY = yStart + 25;
+    let currentY = yStart + 30;
+    let pageBreakNeeded = false;
 
     // Articles
     invoiceData.items.forEach((item, index) => {
+      const pageHeight = doc.page.height;
+      // Vérifier si on doit créer une nouvelle page (laisser au moins 100px pour le contenu)
+      if (currentY > pageHeight - 100) {
+        doc.addPage();
+        currentY = 50;
+        // Réimprimer l'en-tête du tableau
+        doc.fontSize(10)
+           .font('Helvetica-Bold')
+           .fillColor('#FFFFFF')
+           .rect(50, currentY, 500, 30)
+           .fill('#4A5568');
+        doc.text('Désignation', 60, currentY + 8);
+        doc.text('Qté', 220, currentY + 8);
+        doc.text('Prix unitaire HT', 260, currentY + 8);
+        doc.text('Prix HT', 360, currentY + 8);
+        doc.text('TVA 20%', 420, currentY + 8);
+        doc.text('Prix TTC', 480, currentY + 8);
+        currentY += 30;
+      }
+
       const isEven = index % 2 === 0;
       const bgColor = isEven ? '#F7FAFC' : '#FFFFFF';
       
-      doc.rect(50, currentY, 500, 30)
+      const rowHeight = item.isRental && item.rentalStartDate && item.rentalEndDate ? 40 : 30;
+      
+      doc.rect(50, currentY, 500, rowHeight)
          .fill(bgColor);
 
-      // Nom de l'article
+      // Nom du produit
       doc.fontSize(10)
-         .font('Helvetica')
+         .font('Helvetica-Bold')
          .fillColor('#2D3748')
-         .text(item.name, 60, currentY + 8, { width: 230 });
+         .text(item.name, 60, currentY + 8, { width: 150 });
 
       // Description si c'est une location
       if (item.isRental && item.rentalStartDate && item.rentalEndDate) {
+        const startDate = new Date(item.rentalStartDate).toLocaleDateString('fr-FR');
+        const endDate = new Date(item.rentalEndDate).toLocaleDateString('fr-FR');
         doc.fontSize(8)
+           .font('Helvetica')
            .fillColor('#4A5568')
-           .text(`Du ${new Date(item.rentalStartDate).toLocaleDateString('fr-FR')} au ${new Date(item.rentalEndDate).toLocaleDateString('fr-FR')}`, 60, currentY + 20, { width: 230 });
+           .text(`Période: Du ${startDate} au ${endDate}`, 60, currentY + 22, { width: 150 });
       }
 
       // Quantité
       doc.fontSize(10)
+         .font('Helvetica')
          .fillColor('#2D3748')
-         .text(item.quantity.toString(), 300, currentY + 8);
+         .text(item.quantity.toString(), 220, currentY + 8);
 
-      // Prix unitaire
-      doc.text(`${item.unitPrice.toFixed(2)}€`, 380, currentY + 8);
+      // Prix unitaire HT
+      const unitPriceHT = item.unitPrice;
+      doc.text(`${unitPriceHT.toFixed(2)}€`, 260, currentY + 8);
 
-      // Total
-      doc.text(`${item.totalPrice.toFixed(2)}€`, 480, currentY + 8);
+      // Prix HT total
+      const totalHT = item.totalPrice;
+      doc.text(`${totalHT.toFixed(2)}€`, 360, currentY + 8);
 
-      currentY += 30;
+      // TVA 20%
+      const tvaAmount = totalHT * 0.20;
+      doc.text(`${tvaAmount.toFixed(2)}€`, 420, currentY + 8);
+
+      // Prix TTC
+      const totalTTC = totalHT + tvaAmount;
+      doc.text(`${totalTTC.toFixed(2)}€`, 480, currentY + 8);
+
+      currentY += rowHeight;
     });
 
     // Ligne de séparation
@@ -225,18 +263,30 @@ export class InvoiceService {
   }
 
   private static addTotals(doc: PDFDocument, invoiceData: InvoiceData) {
-    const yStart = 500;
+    // Calculer la TVA à 20%
+    const subtotalHT = invoiceData.subtotal;
+    const tvaAmount = subtotalHT * 0.20;
+    const subtotalTTC = subtotalHT + tvaAmount;
     
-    // Sous-total
+    const pageHeight = doc.page.height;
+    let yStart = doc.y + 20; // Espacement après le tableau
+    
+    // Vérifier si on a assez d'espace pour les totaux (au moins 150px)
+    if (yStart > pageHeight - 150) {
+      doc.addPage();
+      yStart = 50;
+    }
+    
+    // Total HT
     doc.fontSize(12)
        .font('Helvetica')
        .fillColor('#4A5568')
-       .text('Sous-total:', 400, yStart)
-       .text(`${invoiceData.subtotal.toFixed(2)}€`, 480, yStart);
+       .text('Total HT:', 400, yStart)
+       .text(`${subtotalHT.toFixed(2)}€`, 480, yStart);
 
-    // TVA
+    // TVA 20%
     doc.text('TVA (20%):', 400, yStart + 20)
-       .text(`${invoiceData.tax.toFixed(2)}€`, 480, yStart + 20);
+       .text(`${tvaAmount.toFixed(2)}€`, 480, yStart + 20);
 
     // Frais de livraison
     if (invoiceData.shipping > 0) {
@@ -244,19 +294,20 @@ export class InvoiceService {
          .text(`${invoiceData.shipping.toFixed(2)}€`, 480, yStart + 40);
     }
 
-    // Dépôt pour les locations
+    // Acompte pour les locations (remplace "dépôt")
     if (invoiceData.isRental && invoiceData.deposit) {
-      doc.text('Dépôt de garantie:', 400, yStart + 60)
+      doc.text('Acompte (30%):', 400, yStart + 60)
          .text(`${invoiceData.deposit.toFixed(2)}€`, 480, yStart + 60);
     }
 
-    // Total
+    // Total TTC
+    const totalTTC = subtotalTTC + (invoiceData.shipping || 0);
     const totalY = invoiceData.isRental && invoiceData.deposit ? yStart + 100 : yStart + 60;
     doc.fontSize(14)
        .font('Helvetica-Bold')
        .fillColor('#2D3748')
-       .text('TOTAL:', 400, totalY)
-       .text(`${invoiceData.total.toFixed(2)}€`, 480, totalY);
+       .text('TOTAL TTC:', 400, totalY)
+       .text(`${totalTTC.toFixed(2)}€`, 480, totalY);
 
     // Ligne de séparation
     doc.moveTo(400, totalY + 10)
@@ -266,14 +317,41 @@ export class InvoiceService {
 
   private static addFooter(doc: PDFDocument) {
     const pageHeight = doc.page.height;
+    const currentY = doc.y;
     
-    doc.fontSize(10)
+    // Vérifier si on a assez d'espace pour le footer (au moins 200px)
+    if (currentY > pageHeight - 200) {
+      doc.addPage();
+    }
+    
+    const yPos = doc.y;
+    
+    // Mentions légales
+    doc.fontSize(9)
+       .font('Helvetica-Bold')
+       .fillColor('#2D3748')
+       .text('MENTIONS LÉGALES', 50, yPos);
+    
+    doc.fontSize(7)
        .font('Helvetica')
        .fillColor('#4A5568')
-       .text('Merci pour votre confiance !', 50, pageHeight - 100)
-       .text('SAKADECO - Décoration et aménagement intérieur', 50, pageHeight - 80)
-       .text('Email: sakadeco.contact@gmail.com | Tél: +33 1 23 45 67 89', 50, pageHeight - 60)
-       .text('SIRET: 123 456 789 00012 | TVA: FR12 123456789', 50, pageHeight - 40);
+       .text('Éditeur du site', 50, yPos + 12, { width: 500 })
+       .text('Youlou Pajusly – Entreprise Individuelle', 50, yPos + 22, { width: 500 })
+       .text('Nom commercial : SAKADECO (SKD GROUP)', 50, yPos + 32, { width: 500 })
+       .text('Autres Noms commerciaux : SKD Shop, SKD Events, SKD Rent, SKD Créa, SKD Home, SKD & Co', 50, yPos + 42, { width: 500 })
+       .text('SIRET : 829 611 888 00035 | TVA intracommunautaire : FR73 829611888', 50, yPos + 52, { width: 500 })
+       .text('Siège social : Rue pasteur 33200 Bordeaux', 50, yPos + 62, { width: 500 })
+       .text('Contact : Email : sakadeco.contact@gmail.com', 50, yPos + 72, { width: 500 })
+       .text('Toute location, prestation de service, vaut acceptation des conditions générales.', 50, yPos + 82, { width: 500 });
+    
+    const footerY = pageHeight - 50;
+    doc.fontSize(9)
+       .font('Helvetica')
+       .fillColor('#4A5568')
+       .text('Merci pour votre confiance !', 50, footerY, { width: 500 })
+       .text('Sakadeco - L\'élégance au service de vos moments', 50, footerY + 12, { width: 500 })
+       .text('Email: sakadeco.contact@gmail.com | Tél: +33 6 88 00 39 28', 50, footerY + 24, { width: 500 })
+       .text('SIRET: 829 611 888 00035 | TVA: FR73 829611888', 50, footerY + 36, { width: 500 });
   }
 
   static async generateInvoiceForOrder(order: any): Promise<Buffer> {
@@ -310,9 +388,9 @@ export class InvoiceService {
         };
       }),
       subtotal: order.subtotal,
-      tax: order.tax,
+      tax: order.subtotal * 0.20, // TVA à 20%
       shipping: order.shipping,
-      total: order.total,
+      total: order.subtotal * 1.20 + order.shipping, // TTC
       isRental: false
     };
 
@@ -355,9 +433,9 @@ export class InvoiceService {
         };
       }),
       subtotal: rental.subtotal,
-      tax: rental.tax,
+      tax: rental.subtotal * 0.20, // TVA à 20%
       shipping: 0,
-      total: rental.total,
+      total: rental.subtotal * 1.20, // TTC
       isRental: true,
       deposit: rental.deposit
     };

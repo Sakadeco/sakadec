@@ -164,7 +164,7 @@ const RentalSuccess: React.FC = () => {
                   <div className="flex-1">
                     <h3 className="font-semibold">{item.product.name}</h3>
                     <p className="text-sm text-gray-600">
-                      Quantité: {item.quantity} | {item.dailyPrice.toFixed(2)}€/jour
+                      Quantité: {item.quantity} | {(item.dailyPrice * 1.20).toFixed(2)}€ TTC ({item.dailyPrice.toFixed(2)}€ HT)
                     </p>
                     <p className="text-sm text-gray-600">
                       Du {format(new Date(item.rentalStartDate), 'dd/MM/yyyy', { locale: fr })} 
