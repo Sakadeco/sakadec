@@ -6,11 +6,84 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Phone, Mail, MapPin, Clock, Facebook, Instagram, MessageSquare } from "lucide-react";
 import Logo from "@/components/Logo";
+import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
 
 export default function Contact() {
-  const handleSubmit = (e: React.FormEvent) => {
+  const { toast } = useToast();
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    service: "",
+    eventDate: "",
+    budget: "",
+    message: "",
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const createQuoteMutation = useMutation({
+    mutationFn: async () => {
+      const quoteData = {
+        customerName: `${formData.firstName} ${formData.lastName}`.trim(),
+        customerEmail: formData.email,
+        customerPhone: formData.phone || undefined,
+        serviceType: formData.service || undefined,
+        service: formData.service || undefined,
+        description: formData.message,
+        eventDate: formData.eventDate || undefined,
+        budget: formData.budget || undefined,
+      };
+      return await apiRequest("POST", "/api/quotes", quoteData);
+    },
+    onSuccess: () => {
+      toast({
+        title: "Demande envoyée",
+        description: "Nous avons bien reçu votre demande. Nous vous recontactons dans les plus brefs délais.",
+      });
+      // Reset form
+      setFormData({
+        firstName: "",
+        lastName: "",
+        email: "",
+        phone: "",
+        service: "",
+        eventDate: "",
+        budget: "",
+        message: "",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Erreur",
+        description: error.message || "Impossible d'envoyer votre demande",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission
+    
+    // Validation
+    if (!formData.firstName || !formData.lastName || !formData.email || !formData.message) {
+      toast({
+        title: "Champs requis",
+        description: "Veuillez remplir tous les champs obligatoires",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      await createQuoteMutation.mutateAsync();
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -37,49 +110,49 @@ export default function Contact() {
             {/* Contact Information */}
             <div className="space-y-8">
               <div>
-                <h2 className="text-3xl font-playfair font-bold text-gray-800 mb-6">Informations de contact</h2>
+                <h2 className="text-2xl md:text-3xl font-playfair font-bold text-gray-800 mb-6">Informations de contact</h2>
                 <div className="space-y-6">
                   
-                  <div className="flex items-start space-x-4">
-                    <div className="w-12 h-12 bg-gold/20 rounded-full flex items-center justify-center mt-1">
-                      <Phone className="text-gold w-6 h-6" />
+                  <div className="flex items-start gap-4">
+                    <div className="flex-shrink-0 w-12 h-12 bg-gold/20 rounded-full flex items-center justify-center">
+                      <Phone className="text-gold w-5 h-5 md:w-6 md:h-6" />
                     </div>
-                    <div>
-                      <h3 className="font-semibold text-gray-800 mb-1">Téléphone</h3>
-                      <p className="text-gray-600">06 88 00 39 28</p>
-                      <p className="text-sm text-gray-500">Lundi - Samedi, 9h - 19h</p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start space-x-4">
-                    <div className="w-12 h-12 bg-gold/20 rounded-full flex items-center justify-center mt-1">
-                      <Mail className="text-gold w-6 h-6" />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-gray-800 mb-1">Email</h3>
-                      <p className="text-gray-600">sakadeco.contact@gmail.com</p>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold text-gray-800 mb-1 text-base md:text-lg">Téléphone</h3>
+                      <p className="text-gray-600 text-sm md:text-base whitespace-nowrap">06 88 00 39 28</p>
+                      <p className="text-xs md:text-sm text-gray-500 mt-1">Lundi - Samedi, 9h - 19h</p>
                     </div>
                   </div>
 
-                  <div className="flex items-start space-x-4">
-                    <div className="w-12 h-12 bg-gold/20 rounded-full flex items-center justify-center mt-1">
-                      <MapPin className="text-gold w-6 h-6" />
+                  <div className="flex items-start gap-4">
+                    <div className="flex-shrink-0 w-12 h-12 bg-gold/20 rounded-full flex items-center justify-center">
+                      <Mail className="text-gold w-5 h-5 md:w-6 md:h-6" />
                     </div>
-                    <div>
-                      <h3 className="font-semibold text-gray-800 mb-1">Zone d'intervention</h3>
-                      <p className="text-gray-600">Île-de-France & Bordeaux Métropole</p>
-                      <p className="text-sm text-gray-500">Je me déplace dans toute la France — et à l'international — pour accompagner vos projets d'exception.</p>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold text-gray-800 mb-1 text-base md:text-lg">Email</h3>
+                      <p className="text-gray-600 text-sm md:text-base break-all">sakadeco.contact@gmail.com</p>
                     </div>
                   </div>
 
-                  <div className="flex items-start space-x-4">
-                    <div className="w-12 h-12 bg-gold/20 rounded-full flex items-center justify-center mt-1">
-                      <Clock className="text-gold w-6 h-6" />
+                  <div className="flex items-start gap-4">
+                    <div className="flex-shrink-0 w-12 h-12 bg-gold/20 rounded-full flex items-center justify-center">
+                      <MapPin className="text-gold w-5 h-5 md:w-6 md:h-6" />
                     </div>
-                    <div>
-                      <h3 className="font-semibold text-gray-800 mb-1">Horaires</h3>
-                      <p className="text-gray-600">Sur rendez-vous uniquement</p>
-                      <p className="text-sm text-gray-500">N'ayant pas de magasin physique pour l'instant</p>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold text-gray-800 mb-1 text-base md:text-lg">Zone d'intervention</h3>
+                      <p className="text-gray-600 text-sm md:text-base mb-1">Île-de-France & Bordeaux Métropole</p>
+                      <p className="text-xs md:text-sm text-gray-500">Je me déplace dans toute la France — et à l'international — pour accompagner vos projets d'exception.</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-4">
+                    <div className="flex-shrink-0 w-12 h-12 bg-gold/20 rounded-full flex items-center justify-center">
+                      <Clock className="text-gold w-5 h-5 md:w-6 md:h-6" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold text-gray-800 mb-1 text-base md:text-lg">Horaires</h3>
+                      <p className="text-gray-600 text-sm md:text-base mb-1">Sur rendez-vous uniquement</p>
+                      <p className="text-xs md:text-sm text-gray-500">N'ayant pas de magasin physique pour l'instant</p>
                     </div>
                   </div>
                 </div>
@@ -134,22 +207,43 @@ export default function Contact() {
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="firstName">Prénom *</Label>
-                      <Input id="firstName" required />
+                      <Input 
+                        id="firstName" 
+                        required 
+                        value={formData.firstName}
+                        onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                      />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="lastName">Nom *</Label>
-                      <Input id="lastName" required />
+                      <Input 
+                        id="lastName" 
+                        required 
+                        value={formData.lastName}
+                        onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                      />
                     </div>
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="email">Email *</Label>
-                    <Input id="email" type="email" required />
+                    <Input 
+                      id="email" 
+                      type="email" 
+                      required 
+                      value={formData.email}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    />
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="phone">Téléphone</Label>
-                    <Input id="phone" type="tel" />
+                    <Input 
+                      id="phone" 
+                      type="tel" 
+                      value={formData.phone}
+                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    />
                   </div>
 
                   <div className="space-y-2">
@@ -157,6 +251,8 @@ export default function Contact() {
                     <select 
                       id="service" 
                       className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gold focus:border-transparent"
+                      value={formData.service}
+                      onChange={(e) => setFormData({ ...formData, service: e.target.value })}
                     >
                       <option value="">Sélectionnez un service</option>
                       <option value="shop">SKD Shop - Vente de produits</option>
@@ -170,7 +266,12 @@ export default function Contact() {
 
                   <div className="space-y-2">
                     <Label htmlFor="eventDate">Date de l'événement</Label>
-                    <Input id="eventDate" type="date" />
+                    <Input 
+                      id="eventDate" 
+                      type="date" 
+                      value={formData.eventDate}
+                      onChange={(e) => setFormData({ ...formData, eventDate: e.target.value })}
+                    />
                   </div>
 
                   <div className="space-y-2">
@@ -178,6 +279,8 @@ export default function Contact() {
                     <select 
                       id="budget" 
                       className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-gold focus:border-transparent"
+                      value={formData.budget}
+                      onChange={(e) => setFormData({ ...formData, budget: e.target.value })}
                     >
                       <option value="">Sélectionnez votre budget</option>
                       <option value="moins-500">Moins de 500€</option>
@@ -198,11 +301,17 @@ export default function Contact() {
                       placeholder="Parlez-nous de votre événement, de vos attentes, de vos idées..." 
                       className="min-h-[120px]"
                       required 
+                      value={formData.message}
+                      onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                     />
                   </div>
 
-                  <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 text-lg">
-                    Envoyer ma demande
+                  <Button 
+                    type="submit" 
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 text-lg"
+                    disabled={isSubmitting || createQuoteMutation.isPending}
+                  >
+                    {isSubmitting || createQuoteMutation.isPending ? "Envoi en cours..." : "Envoyer ma demande"}
                   </Button>
                 </form>
               </CardContent>

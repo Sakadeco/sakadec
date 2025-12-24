@@ -8,7 +8,7 @@ import { Label } from '../components/ui/label';
 import { Calendar } from '../components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '../components/ui/popover';
 import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '../components/ui/alert-dialog';
-import { CalendarIcon, Plus, Minus, Calendar as CalendarIcon2, ChevronLeft, ChevronRight } from 'lucide-react';
+import { CalendarIcon, Plus, Minus, Calendar as CalendarIcon2, ChevronLeft, ChevronRight, Package } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import ImageWithFallback from '../components/ImageWithFallback';
@@ -25,6 +25,7 @@ interface Product {
   isForRent: boolean;
   isCustomizable: boolean;
   customizationOptions?: Record<string, string[]>;
+  stockQuantity?: number;
 }
 
 interface RentalDate {
@@ -115,6 +116,12 @@ const RentalDetail: React.FC = () => {
   const handleAddToCart = () => {
     if (!product || !rentalStartDate || !rentalEndDate) {
       alert('Veuillez sélectionner les dates de location');
+      return;
+    }
+
+    // Vérifier le stock
+    if (product.stockQuantity !== undefined && product.stockQuantity <= 0) {
+      alert('Ce produit est en rupture de stock et ne peut pas être ajouté au panier.');
       return;
     }
 
@@ -320,6 +327,19 @@ const RentalDetail: React.FC = () => {
               {(product.dailyRentalPrice * 1.20).toFixed(2)}€ TTC
             </div>
             <p className="text-xs text-gray-500 mb-4">{product.dailyRentalPrice.toFixed(2)}€ HT</p>
+            
+            {/* Stock Info */}
+            {product.stockQuantity !== undefined && (
+              <div className="flex items-center space-x-2 text-sm mb-4">
+                <Package className="w-4 h-4" />
+                <span className={product.stockQuantity > 0 ? 'text-gray-600' : 'text-red-600 font-semibold'}>
+                  {product.stockQuantity > 0 
+                    ? `${product.stockQuantity} en stock` 
+                    : 'Rupture de stock'
+                  }
+                </span>
+              </div>
+            )}
           </div>
 
           {/* Sélection des dates */}
@@ -549,11 +569,17 @@ const RentalDetail: React.FC = () => {
           {/* Bouton d'action */}
           <Button
             onClick={handleAddToCart}
-            disabled={!rentalStartDate || !rentalEndDate}
-            className="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 text-lg"
+            disabled={!rentalStartDate || !rentalEndDate || (product.stockQuantity !== undefined && product.stockQuantity <= 0)}
+            className="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 text-lg disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Ajouter au panier
           </Button>
+          
+          {product.stockQuantity !== undefined && product.stockQuantity === 0 && (
+            <p className="text-sm text-red-600 text-center mt-2">
+              Ce produit est en rupture de stock et ne peut pas être ajouté au panier.
+            </p>
+          )}
         </div>
       </div>
     </div>

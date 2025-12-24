@@ -13,6 +13,7 @@ import path from "path";
 import express from "express";
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
+import emailService from "./services/emailService";
 
 // Obtenir __dirname pour ES modules
 const __filename = fileURLToPath(import.meta.url);

@@ -437,8 +437,8 @@ export default function ProductDetail() {
                     {/* Add to Cart Button */}
                     <Button
                       onClick={handleAddToCart}
-                      disabled={isAddingToCart}
-                      className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold shadow-lg"
+                      disabled={isAddingToCart || product.stockQuantity === 0}
+                      className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
                       size="lg"
                     >
                       {isAddingToCart ? (
