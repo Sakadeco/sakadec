@@ -209,7 +209,7 @@ const Invoice: React.FC = () => {
 
           {/* Informations client */}
           <div className="p-8 border-b border-gray-200">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
               <div>
                 <h3 className="text-lg font-semibold text-gray-800 mb-4">Adresse de facturation</h3>
                 <p className="text-gray-600">

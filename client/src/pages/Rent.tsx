@@ -150,17 +150,23 @@ const Rent: React.FC = () => {
               </p>
               <div className="flex justify-between items-center mb-3">
                 <div>
-                  <span className="text-xl font-bold text-orange-600">
-                    {product.dailyRentalPrice ? ((product.dailyRentalPrice * 1.20).toFixed(2)) : '0.00'}€ TTC
-                  </span>
-                  <p className="text-xs text-gray-500">{product.dailyRentalPrice?.toFixed(2) || '0.00'}€ HT</p>
+                  {product.dailyRentalPrice && product.dailyRentalPrice > 0 ? (
+                    <>
+                      <span className="text-xl font-bold text-orange-600">
+                        {(product.dailyRentalPrice * 1.20).toFixed(2)}€ TTC
+                      </span>
+                      <p className="text-xs text-gray-500">{product.dailyRentalPrice.toFixed(2)}€ HT</p>
+                    </>
+                  ) : (
+                    <span className="text-sm text-gray-500">Sur devis</span>
+                  )}
                 </div>
                 <Badge variant="default" className="bg-orange-500">
                   Disponible
                 </Badge>
               </div>
-              <Link href={`/rental/${product._id.toString()}`}>
-                <Button className="w-full bg-orange-500 hover:bg-orange-600">
+              <Link to={`/rental/${product._id.toString()}`}>
+                <Button className="w-full bg-orange-500 hover:bg-orange-600" disabled={!product.dailyRentalPrice || product.dailyRentalPrice <= 0}>
                   Louer ce produit
                 </Button>
               </Link>

@@ -65,9 +65,11 @@ const insertQuoteSchema = z.object({
   customerName: z.string(),
   customerEmail: z.string().email(),
   customerPhone: z.string().optional(),
-  service: z.string(),
+  serviceType: z.string().optional(),
+  service: z.string().optional(), // Pour compatibilité
   description: z.string(),
   eventDate: z.string().optional(),
+  budget: z.string().optional(),
   estimatedPrice: z.number().optional(),
 });
 
@@ -816,6 +818,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post('/api/quotes', async (req, res) => {
     try {
       const quoteData = insertQuoteSchema.parse(req.body);
+      // Normaliser serviceType/service pour compatibilité
+      if (quoteData.serviceType && !quoteData.service) {
+        quoteData.service = quoteData.serviceType;
+      }
       const quote = await storage.createQuote(quoteData);
       
       // Envoyer les emails

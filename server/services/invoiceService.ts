@@ -26,6 +26,9 @@ export interface InvoiceData {
     rentalEndDate?: string;
   }>;
   subtotal: number;
+  promoCode?: string;
+  promoDiscount?: number;
+  subtotalAfterDiscount?: number;
   tax: number;
   shipping: number;
   total: number;
@@ -288,8 +291,11 @@ export class InvoiceService {
   }
 
   private static addTotals(doc: PDFDocument, invoiceData: InvoiceData) {
-    // Calculer la TVA à 20%
-    const subtotalHT = invoiceData.subtotal;
+    // Utiliser subtotalAfterDiscount si disponible (après code promo), sinon subtotal
+    const subtotalHT = invoiceData.subtotalAfterDiscount !== undefined ? invoiceData.subtotalAfterDiscount : invoiceData.subtotal;
+    const promoDiscount = invoiceData.promoDiscount || 0;
+    
+    // Calculer la TVA à 20% sur le subtotal après réduction
     const tvaAmount = subtotalHT * 0.20;
     const subtotalTTC = subtotalHT + tvaAmount;
     
@@ -302,43 +308,90 @@ export class InvoiceService {
       yStart = 50;
     }
     
-    // Total HT
-    doc.fontSize(12)
-       .font('Helvetica')
-       .fillColor('#4A5568')
-       .text('Total HT:', 400, yStart)
-       .text(`${subtotalHT.toFixed(2)}€`, 480, yStart);
+    let currentY = yStart;
+    
+    // Total HT avant réduction (si code promo)
+    if (promoDiscount > 0) {
+      doc.fontSize(12)
+         .font('Helvetica')
+         .fillColor('#4A5568')
+         .text('Total HT:', 400, currentY)
+         .text(`${invoiceData.subtotal.toFixed(2)}€`, 480, currentY);
+      currentY += 20;
+      
+      // Ligne remise
+      doc.text(`Remise (${invoiceData.promoCode || 'Code promo'}):`, 400, currentY)
+         .text(`-${promoDiscount.toFixed(2)}€`, 480, currentY);
+      currentY += 20;
+      
+      // Total HT après réduction
+      doc.font('Helvetica-Bold')
+         .text('Total HT après remise:', 400, currentY)
+         .text(`${subtotalHT.toFixed(2)}€`, 480, currentY);
+      currentY += 20;
+    } else {
+      // Total HT (pas de code promo)
+      doc.fontSize(12)
+         .font('Helvetica')
+         .fillColor('#4A5568')
+         .text('Total HT:', 400, currentY)
+         .text(`${subtotalHT.toFixed(2)}€`, 480, currentY);
+      currentY += 20;
+    }
 
     // TVA 20%
-    doc.text('TVA (20%):', 400, yStart + 20)
-       .text(`${tvaAmount.toFixed(2)}€`, 480, yStart + 20);
+    doc.font('Helvetica')
+       .text('TVA (20%):', 400, currentY)
+       .text(`${tvaAmount.toFixed(2)}€`, 480, currentY);
+    currentY += 20;
 
     // Frais de livraison
     if (invoiceData.shipping > 0) {
-      doc.text('Frais de livraison:', 400, yStart + 40)
-         .text(`${invoiceData.shipping.toFixed(2)}€`, 480, yStart + 40);
+      doc.text('Frais de livraison:', 400, currentY)
+         .text(`${invoiceData.shipping.toFixed(2)}€`, 480, currentY);
+      currentY += 20;
     }
 
-    // Total TTC (acompte supprimé)
+    // Total TTC
     const totalTTC = subtotalTTC + (invoiceData.shipping || 0);
-    const totalY = invoiceData.shipping > 0 ? yStart + 80 : yStart + 60;
+    
+    // Vérifier qu'on a assez d'espace pour le total TTC avant de l'afficher
+    const pageHeight = doc.page.height;
+    let finalY = currentY;
+    if (finalY > pageHeight - 50) {
+      doc.addPage();
+      finalY = 50;
+    }
+    
     doc.fontSize(14)
        .font('Helvetica-Bold')
        .fillColor('#2D3748')
-       .text('TOTAL TTC:', 400, totalY)
-       .text(`${totalTTC.toFixed(2)}€`, 480, totalY);
+       .text('TOTAL TTC:', 400, finalY)
+       .text(`${totalTTC.toFixed(2)}€`, 480, finalY);
   }
 
   private static addFooter(doc: PDFDocument) {
     const pageHeight = doc.page.height;
     const currentY = doc.y;
     
-    // Vérifier si on a assez d'espace pour le footer (au moins 200px)
-    if (currentY > pageHeight - 200) {
+    // Calculer la hauteur nécessaire pour le footer (environ 100px)
+    const footerHeight = 100;
+    
+    // Vérifier si on a assez d'espace pour le footer
+    // Si on n'a pas assez d'espace, créer une nouvelle page
+    if (currentY > pageHeight - footerHeight) {
       doc.addPage();
     }
     
     const yPos = doc.y;
+    
+    // Vérifier que le footer ne dépasse pas la page
+    // Si le contenu du footer est trop long, ajuster la position
+    const maxY = pageHeight - 50; // Laisser 50px de marge en bas
+    if (yPos + footerHeight > maxY) {
+      // Si le footer ne rentre pas, créer une nouvelle page
+      doc.addPage();
+    }
     
     // Mentions légales uniquement (suppression des infos en double)
     doc.fontSize(9)
@@ -393,9 +446,12 @@ export class InvoiceService {
         };
       }),
       subtotal: order.subtotal,
-      tax: order.subtotal * 0.20, // TVA à 20%
+      promoCode: order.promoCode || undefined,
+      promoDiscount: order.promoDiscount || 0,
+      subtotalAfterDiscount: order.subtotalAfterDiscount !== undefined ? order.subtotalAfterDiscount : order.subtotal,
+      tax: (order.subtotalAfterDiscount !== undefined ? order.subtotalAfterDiscount : order.subtotal) * 0.20, // TVA à 20% sur le subtotal après réduction
       shipping: order.shipping,
-      total: order.subtotal * 1.20 + order.shipping, // TTC
+      total: order.total, // Utiliser le total de la commande
       isRental: false
     };
 

@@ -254,6 +254,26 @@ const CartPage: React.FC = () => {
       return;
     }
 
+    // Vérifier le stock pour les produits de vente
+    for (const item of saleItems) {
+      try {
+        const response = await fetch(`/api/products/${item.productId}`);
+        if (response.ok) {
+          const product = await response.json();
+          if (product.stockQuantity < item.quantity) {
+            alert(`Stock insuffisant pour ${item.name}. Stock disponible : ${product.stockQuantity}, quantité demandée : ${item.quantity}`);
+            return;
+          }
+          if (product.stockQuantity <= 0) {
+            alert(`Le produit ${item.name} est en rupture de stock`);
+            return;
+          }
+        }
+      } catch (error) {
+        console.error('Erreur vérification stock:', error);
+      }
+    }
+
     setIsLoading(true);
 
     try {
@@ -287,7 +307,9 @@ const CartPage: React.FC = () => {
           billingAddress: shippingAddress, 
           isRental: hasRentals,
           promoCode: appliedPromoCode?.code || null,
-          promoDiscount: promoDiscount || 0
+          promoDiscount: promoDiscount || 0,
+          deliveryMethod: deliveryMethod || null,
+          shipping: shipping || 0
         }),
       });
 
@@ -337,7 +359,7 @@ const CartPage: React.FC = () => {
       <div className="min-h-screen bg-gray-50 py-12">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header */}
-          <div className="flex items-center justify-between mb-8">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
             <div className="flex items-center space-x-4">
               <Button 
                 variant="ghost" 
@@ -345,16 +367,18 @@ const CartPage: React.FC = () => {
                 className="flex items-center space-x-2"
               >
                 <ArrowLeft className="w-4 h-4" />
-                <span>Continuer les achats</span>
+                <span className="hidden sm:inline">Continuer les achats</span>
+                <span className="sm:hidden">Retour</span>
               </Button>
             </div>
-            <h1 className="text-3xl font-bold text-gray-900">Votre Panier</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Votre Panier</h1>
             <Button 
               variant="outline" 
               onClick={clearCart}
-              className="text-red-600 hover:text-red-700"
+              className="text-red-600 hover:text-red-700 text-sm sm:text-base"
             >
-              Vider le panier
+              <span className="hidden sm:inline">Vider le panier</span>
+              <span className="sm:hidden">Vider</span>
             </Button>
           </div>
 
@@ -368,11 +392,11 @@ const CartPage: React.FC = () => {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   {cartItems.map((item) => (
-                    <div key={item.productId} className="flex items-center space-x-4 p-4 border rounded-lg">
+                    <div key={item.productId} className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 border rounded-lg">
                       <img 
                         src={item.image} 
                         alt={item.name}
-                        className="w-20 h-20 object-cover rounded-lg"
+                        className="w-full sm:w-20 h-48 sm:h-20 object-cover rounded-lg"
                         onError={(e) => {
                           e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik00MCAyMEMyOS4wNTQ5IDIwIDIwIDI5LjA1NDkgMjAgNDBDMjAgNTAuOTQ1MSAyOS4wNTQ5IDYwIDQwIDYwQzUwLjk0NTEgNjAgNjAgNTAuOTQ1MSA2MCA0MEM2MCAyOS4wNTQ5IDUwLjk0NTEgMjAgNDAgMjBaIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik00MCAyNEMzMS4xNjM0IDI0IDI0IDMxLjE2MzQgMjQgNDBDMjQgNDguODM2NiAzMS4xNjM0IDU2IDQwIDU2QzQ4LjgzNjYgNTYgNTYgNDguODM2NiA1NiA0MEM1NiAzMS4xNjM0IDQ4LjgzNjYgMjQgNDAgMjRaIiBmaWxsPSIjRjNGNEY2Ii8+Cjwvc3ZnPgo=';
                         }}
@@ -627,7 +651,7 @@ const CartPage: React.FC = () => {
                   <CardTitle className="text-lg font-bold text-green-600">🚚 Adresse de livraison</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <Label htmlFor="firstName">Prénom *</Label>
                       <Input
@@ -656,7 +680,7 @@ const CartPage: React.FC = () => {
                       required
                     />
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <Label htmlFor="city">Ville *</Label>
                       <Input
@@ -816,7 +840,19 @@ const CartPage: React.FC = () => {
                       className="mt-1"
                     />
                     <Label htmlFor="terms" className="text-sm cursor-pointer">
-                      J'accepte les{' '}
+                      Merci de consulter les conditions correspondant à votre service :{' '}
+                      <a href="/legal/cgv" className="text-blue-600 hover:text-blue-800 underline" target="_blank" rel="noopener noreferrer">
+                        Vente
+                      </a>
+                      {' · '}
+                      <a href="/legal/cgl" className="text-blue-600 hover:text-blue-800 underline" target="_blank" rel="noopener noreferrer">
+                        Location
+                      </a>
+                      {' · '}
+                      <a href="/legal/cgps" className="text-blue-600 hover:text-blue-800 underline" target="_blank" rel="noopener noreferrer">
+                        Service
+                      </a>
+                      . En validant, vous confirmez avoir lu la rubrique applicable à votre commande.{' '}
                       <Dialog open={isCGVModalOpen} onOpenChange={setIsCGVModalOpen}>
                         <DialogTrigger asChild>
                           <button
@@ -827,14 +863,39 @@ const CartPage: React.FC = () => {
                               setIsCGVModalOpen(true);
                             }}
                           >
-                            Conditions Générales
+                            (Voir les Conditions Générales)
                           </button>
                         </DialogTrigger>
                         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
                           <DialogHeader>
                             <DialogTitle className="text-2xl font-playfair font-bold text-gray-800">
-                              Conditions Générales de Vente
+                              Conditions Générales
                             </DialogTitle>
+                            <div className="mt-2 p-3 bg-blue-50 border-l-4 border-blue-500 rounded">
+                              <p className="text-sm text-gray-700 mb-2">
+                                <strong>Important :</strong> Veuillez consulter les conditions générales correspondant à votre type de commande :
+                              </p>
+                              <ul className="list-disc list-inside text-sm text-gray-700 space-y-1">
+                                <li>
+                                  <a href="/legal/cgv" className="text-blue-600 hover:text-blue-800 underline" target="_blank" rel="noopener noreferrer">
+                                    Conditions Générales de Vente
+                                  </a>
+                                  {' - Pour les achats de produits'}
+                                </li>
+                                <li>
+                                  <a href="/legal/cgl" className="text-blue-600 hover:text-blue-800 underline" target="_blank" rel="noopener noreferrer">
+                                    Conditions Générales de Location
+                                  </a>
+                                  {' - Pour les locations de produits'}
+                                </li>
+                                <li>
+                                  <a href="/legal/cgps" className="text-blue-600 hover:text-blue-800 underline" target="_blank" rel="noopener noreferrer">
+                                    Conditions Générales de Prestations de Service
+                                  </a>
+                                  {' - Pour les prestations de service (SKD Events, SKD Home, SKD & Co)'}
+                                </li>
+                              </ul>
+                            </div>
                           </DialogHeader>
                           <div className="mt-4 space-y-6">
                             <p className="text-gray-600">
@@ -843,7 +904,7 @@ const CartPage: React.FC = () => {
 
                             <Card>
                               <CardHeader>
-                                <CardTitle>Préambule</CardTitle>
+                                <CardTitle>Préambule - Conditions Générales de Vente</CardTitle>
                               </CardHeader>
                               <CardContent>
                                 <p className="text-gray-700 mb-4">

@@ -66,9 +66,17 @@ export default function Events() {
             <p className="text-lg text-gray-700 mb-4 leading-relaxed">
               De la conception à l'installation, nous imaginons des décors élégants, harmonieux et mémorables.
             </p>
-            <p className="text-lg font-semibold text-skd-events mb-8">
+            <p className="text-lg font-semibold text-skd-events mb-4">
               À partir de 600 € – Sur devis
             </p>
+            <div className="bg-yellow-50 border-l-4 border-skd-events p-4 mb-8 rounded">
+              <p className="text-gray-700 text-sm">
+                <strong>Délai minimum de réservation :</strong> Afin de garantir une prestation soignée, harmonieuse et parfaitement orchestrée, un délai minimum de réservation est requis selon votre événement (ex : Mariage — 6 mois · Autres événements — 3 mois).
+              </p>
+              <p className="text-gray-700 text-sm mt-2">
+                Si votre date est plus proche, nous pouvons mettre en place un traitement prioritaire. Cependant, en raison de l'organisation accélérée et des ressources mobilisées en urgence, des frais supplémentaires pourront s'appliquer.
+              </p>
+            </div>
           </div>
 
           {/* Nos Prestations */}
@@ -160,7 +168,7 @@ export default function Events() {
           <h3 className="text-2xl font-playfair font-semibold text-gray-800 mb-8 text-center">
             Galerie de nos Créations
           </h3>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {galleryImages.map((image, index) => (
               <div key={index} className="group cursor-pointer relative overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all duration-300">
                 <img 

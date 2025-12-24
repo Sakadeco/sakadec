@@ -1068,6 +1068,9 @@ router.post('/realisations', adminAuth, upload.fields([
             imageUrls.push(`/uploads/realisations/${file.filename}`);
           }
         } else {
+          // ⚠️ ATTENTION: Stockage local - les images disparaîtront après redémarrage du serveur
+          // Il est fortement recommandé de configurer Cloudinary pour un stockage persistant
+          console.warn('⚠️  Stockage local utilisé pour les réalisations - les images peuvent disparaître après redémarrage');
           imageUrls.push(`/uploads/realisations/${file.filename}`);
         }
       }
@@ -1149,6 +1152,9 @@ router.put('/realisations/:id', adminAuth, upload.fields([
             imageUrls.push(`/uploads/realisations/${file.filename}`);
           }
         } else {
+          // ⚠️ ATTENTION: Stockage local - les images disparaîtront après redémarrage du serveur
+          // Il est fortement recommandé de configurer Cloudinary pour un stockage persistant
+          console.warn('⚠️  Stockage local utilisé pour les réalisations - les images peuvent disparaître après redémarrage');
           imageUrls.push(`/uploads/realisations/${file.filename}`);
         }
       }

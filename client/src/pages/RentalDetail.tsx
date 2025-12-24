@@ -96,7 +96,15 @@ const RentalDetail: React.FC = () => {
 
   const calculateRentalDays = () => {
     if (!rentalStartDate || !rentalEndDate) return 0;
-    const diffTime = Math.abs(rentalEndDate.getTime() - rentalStartDate.getTime());
+    // Normaliser les dates (enlever les heures pour comparer uniquement les dates)
+    const start = new Date(rentalStartDate);
+    const end = new Date(rentalEndDate);
+    start.setHours(0, 0, 0, 0);
+    end.setHours(0, 0, 0, 0);
+    // Calculer le nombre de jours inclus (date de début et date de fin incluses)
+    const timeDiff = end.getTime() - start.getTime();
+    return Math.floor(timeDiff / (1000 * 60 * 60 * 24)) + 1; // +1 car on inclut le jour de début
+  };
     return Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1; // +1 pour inclure le jour de début
   };
 

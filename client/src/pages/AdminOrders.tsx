@@ -24,10 +24,12 @@ interface OrderItem {
     _id: string;
     name: string;
     price: number;
+    dailyRentalPrice?: number;
     mainImageUrl: string;
   };
   quantity: number;
   price: number;
+  dailyPrice?: number;
   isRental: boolean;
   customizations?: any;
   customText?: string;
@@ -197,7 +199,7 @@ const AdminOrders: React.FC = () => {
 
   const renderOrderDetails = (order: Order) => (
     <div className="space-y-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <h4 className="font-medium text-gray-900 mb-2">Informations client</h4>
           <div className="text-sm text-gray-600 space-y-1">
@@ -340,7 +342,7 @@ const AdminOrders: React.FC = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <div className="text-center p-4 bg-gray-50 rounded-lg">
           <p className="text-sm text-gray-600">Sous-total</p>
           <p className="text-lg font-semibold">{order.subtotal.toFixed(2)}€</p>
@@ -503,7 +505,7 @@ const AdminOrders: React.FC = () => {
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
                         <div>
                           <h4 className="font-medium text-gray-900 mb-2">Client</h4>
                           <div className="text-sm text-gray-600">
@@ -521,7 +523,11 @@ const AdminOrders: React.FC = () => {
                               <div key={index} className="text-sm text-gray-600">
                                 <p>{item.product?.name || 'Produit supprimé'} x{item.quantity}</p>
                                 <p className="text-xs text-gray-500">
-                                  {item.isRental ? 'Location' : 'Achat'} - {item.price.toFixed(2)}€
+                                  {item.isRental ? 'Location' : 'Achat'} - {
+                                    item.isRental && item.dailyPrice 
+                                      ? `${item.dailyPrice.toFixed(2)}€ HT (${(item.dailyPrice * 1.20).toFixed(2)}€ TTC)`
+                                      : `${item.price.toFixed(2)}€ HT (${(item.price * 1.20).toFixed(2)}€ TTC)`
+                                  }
                                 </p>
                               </div>
                             ))}

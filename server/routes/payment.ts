@@ -39,7 +39,7 @@ router.post('/create-checkout-session', async (req: Request, res: Response) => {
       });
     }
 
-    const { items, shippingAddress, billingAddress, isRental, isMixedCart, cartType, promoCode, promoDiscount } = req.body;
+    const { items, shippingAddress, billingAddress, isRental, isMixedCart, cartType, promoCode, promoDiscount, deliveryMethod, shipping } = req.body;
 
     if (!items || items.length === 0) {
       return res.status(400).json({ message: 'Aucun article dans le panier' });
@@ -52,11 +52,25 @@ router.post('/create-checkout-session', async (req: Request, res: Response) => {
     // Récupérer le montant de réduction du code promo
     const discountAmount = promoDiscount ? parseFloat(promoDiscount) : 0;
 
-    // Première passe : calculer le subtotal sans réduction
+    // Première passe : calculer le subtotal sans réduction et vérifier le stock
     for (const item of items) {
       const product = await Product.findById(item.productId);
       if (!product) {
         return res.status(404).json({ message: `Produit ${item.productId} non trouvé` });
+      }
+
+      // Vérifier le stock pour les produits de vente (pas pour les locations)
+      if (!isRental && product.isForSale) {
+        if (product.stockQuantity < item.quantity) {
+          return res.status(400).json({ 
+            message: `Stock insuffisant pour ${product.name}. Stock disponible : ${product.stockQuantity}, quantité demandée : ${item.quantity}` 
+          });
+        }
+        if (product.stockQuantity <= 0) {
+          return res.status(400).json({ 
+            message: `Le produit ${product.name} est en rupture de stock` 
+          });
+        }
       }
 
       // Utiliser le prix du panier (qui inclut déjà les ajustements de valuePrices) si disponible
@@ -172,10 +186,11 @@ router.post('/create-checkout-session', async (req: Request, res: Response) => {
     
     // TVA à 20% calculée sur le subtotal APRÈS réduction
     const tax = subtotalAfterDiscount * 0.20;
-    const shipping = 0; // Frais de livraison gratuits pour l'instant
+    // Utiliser les frais de livraison fournis par le client, ou 0 par défaut
+    const shippingCost = shipping ? parseFloat(shipping.toString()) : 0;
     
     // Calculer le total avec le subtotal après réduction
-    const total = Math.round((subtotalAfterDiscount + tax + shipping) * 100) / 100;
+    const total = Math.round((subtotalAfterDiscount + tax + shippingCost) * 100) / 100;
     
     console.log('💰 Calcul des prix:', {
       subtotal: subtotal.toFixed(2),
@@ -183,7 +198,7 @@ router.post('/create-checkout-session', async (req: Request, res: Response) => {
       discountAmount: discountAmount.toFixed(2),
       subtotalAfterDiscount: subtotalAfterDiscount.toFixed(2),
       tax: tax.toFixed(2),
-      shipping: shipping.toFixed(2),
+      shipping: shippingCost.toFixed(2),
       total: total.toFixed(2)
     });
 
@@ -311,10 +326,21 @@ router.post('/webhook', async (req: Request, res: Response) => {
           order.stripePaymentIntentId = session.payment_intent as string;
           await order.save();
           
-          // Incrémenter le compteur de ventes pour chaque produit
+          // Incrémenter le compteur de ventes et décrémenter le stock pour chaque produit
           const { Product } = await import('../models/Product');
           for (const item of order.items) {
-            await Product.findByIdAndUpdate(item.product, { $inc: { salesCount: item.quantity } });
+            // Décrémenter le stock uniquement pour les produits de vente (pas les locations)
+            if (!order.isRental) {
+              await Product.findByIdAndUpdate(item.product, { 
+                $inc: { 
+                  salesCount: item.quantity,
+                  stockQuantity: -item.quantity // Décrémenter le stock
+                } 
+              });
+            } else {
+              // Pour les locations, incrémenter seulement le compteur de ventes
+              await Product.findByIdAndUpdate(item.product, { $inc: { salesCount: item.quantity } });
+            }
           }
           
           console.log(`Commande ${order._id} marquée comme payée`);

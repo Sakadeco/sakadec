@@ -194,7 +194,7 @@ export default function RealisationDetail() {
 
               {/* Thumbnail Gallery */}
               {realisation.images.length > 1 && (
-                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
                   {realisation.images.map((image, index) => (
                     <div
                       key={index}

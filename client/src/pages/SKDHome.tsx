@@ -147,7 +147,7 @@ export default function SKDHome() {
           <h3 className="text-2xl font-playfair font-semibold text-gray-800 mb-8 text-center">
             Notre Méthode d'Intervention
           </h3>
-          <div className="grid md:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
             <Card className="text-center border-2 border-skd-home/20 hover:border-skd-home/50 transition-colors">
               <CardContent className="pt-6">
                 <div className="w-12 h-12 bg-skd-home text-white rounded-full flex items-center justify-center font-bold mb-4 mx-auto text-lg">

@@ -52,29 +52,33 @@ export default function ProductDetail() {
   const [showRentalWarning, setShowRentalWarning] = useState(false);
 
   // Extract product ID from URL
-  const productId = location.split('/')[2]; // /product/{id}
+  const pathParts = location.split('/').filter(Boolean);
+  const productId = pathParts[pathParts.length - 1]; // Dernier segment de l'URL
 
   const { data: product, isLoading, error } = useQuery<Product>({
     queryKey: ["product", productId],
     queryFn: async () => {
+      if (!productId || productId === 'undefined' || productId === '[object Object]') {
+        throw new Error('ID de produit invalide');
+      }
       const response = await fetch(`/api/products/${productId}`);
       if (!response.ok) {
         throw new Error('Failed to fetch product');
       }
       return response.json();
     },
-    enabled: !!productId,
+    enabled: !!productId && productId !== 'undefined' && productId !== '[object Object]',
   });
 
   const [priceAdjustment, setPriceAdjustment] = useState(0);
-  const [currentBasePrice, setCurrentBasePrice] = useState(product?.price || 0);
+  const [currentBasePrice, setCurrentBasePrice] = useState(0);
 
   // Mettre à jour currentBasePrice quand le produit change
   useEffect(() => {
-    if (product) {
+    if (product && product.price) {
       setCurrentBasePrice(product.price);
     }
-  }, [product?.price]);
+  }, [product]);
 
   const handleCustomizationChange = (newCustomizations: CustomizationSelection, adjustment: number = 0) => {
     setCustomizations(newCustomizations);
@@ -89,9 +93,22 @@ export default function ProductDetail() {
   const handleAddToCart = async () => {
     if (!product) return;
 
-    // Récupérer le panier existant pour vérifier
+    // Vérifier le stock
+    if (product.stockQuantity <= 0) {
+      alert('Ce produit est en rupture de stock et ne peut pas être ajouté au panier.');
+      return;
+    }
+
+    // Vérifier que la quantité demandée est disponible
     const existingCart = localStorage.getItem('cart');
     const cartItems = existingCart ? JSON.parse(existingCart) : [];
+    const existingItem = cartItems.find((item: any) => item.productId === product._id && !item.isRental);
+    const totalQuantityInCart = existingItem ? existingItem.quantity : 0;
+    
+    if (totalQuantityInCart + quantity > product.stockQuantity) {
+      alert(`Stock insuffisant. Il ne reste que ${product.stockQuantity} unité(s) en stock. Vous avez déjà ${totalQuantityInCart} unité(s) dans votre panier.`);
+      return;
+    }
 
     // Vérifier s'il y a des produits de location dans le panier
     const hasRentalItems = cartItems.some((item: any) => item.isRental === true);
@@ -176,7 +193,24 @@ export default function ProductDetail() {
     );
   }
 
-  if (error || !product) {
+  if (error) {
+    console.error('Erreur chargement produit:', error);
+    return (
+      <Layout>
+        <div className="container mx-auto px-4 py-8">
+          <div className="text-center">
+            <h2 className="text-2xl font-bold text-red-600 mb-4">Erreur lors du chargement du produit</h2>
+            <p className="text-gray-600 mb-4">{error instanceof Error ? error.message : 'Erreur inconnue'}</p>
+            <Button onClick={() => setLocation('/shop')}>
+              Retour à la boutique
+            </Button>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
+
+  if (!product) {
     return (
       <Layout>
         <div className="text-center py-12">

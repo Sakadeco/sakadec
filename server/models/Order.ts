@@ -115,6 +115,18 @@ const orderSchema = new mongoose.Schema({
   isRental: {
     type: Boolean,
     default: false
+  },
+  promoCode: {
+    type: String,
+    default: null
+  },
+  promoDiscount: {
+    type: Number,
+    default: 0
+  },
+  subtotalAfterDiscount: {
+    type: Number,
+    default: 0
   }
 }, {
   timestamps: true

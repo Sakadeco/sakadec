@@ -1,6 +1,8 @@
 import Layout from "@/components/Layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Palette } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Palette, ShoppingBag } from "lucide-react";
+import { Link } from "wouter";
 
 export default function Crea() {
   return (
@@ -171,6 +173,18 @@ export default function Crea() {
               </CardContent>
             </Card>
           </div>
+        </div>
+      </section>
+
+      {/* Bouton Boutique */}
+      <section className="py-12 bg-gray-50">
+        <div className="max-w-6xl mx-auto px-4 text-center">
+          <Button asChild size="lg" className="bg-skd-crea hover:bg-skd-crea/90 text-white">
+            <Link to="/shop">
+              <ShoppingBag className="mr-2 h-5 w-5" />
+              Voir la boutique
+            </Link>
+          </Button>
         </div>
       </section>
     </Layout>

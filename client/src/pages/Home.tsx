@@ -282,19 +282,30 @@ export default function HomePage() {
                     <h3 className="font-semibold text-gray-800 dark:text-gray-100 mb-2 group-hover:text-gold transition-colors">{product.name}</h3>
                     <p className="text-sm text-gray-600 dark:text-gray-400 mb-3 line-clamp-2">{product.description}</p>
                     <div className="flex justify-between items-center">
-                      <span className="text-lg font-bold text-gold">{product.price?.toFixed(2) || '0.00'}€ HT</span>
+                      <div>
+                        {product.isRentable && product.dailyRentalPrice ? (
+                          <>
+                            <span className="text-lg font-bold text-gold">{(product.dailyRentalPrice * 1.20).toFixed(2)}€ TTC</span>
+                            <p className="text-xs text-gray-500">{product.dailyRentalPrice.toFixed(2)}€ HT</p>
+                          </>
+                        ) : (
+                          <>
+                            <span className="text-lg font-bold text-gold">{(product.price * 1.20).toFixed(2)}€ TTC</span>
+                            <p className="text-xs text-gray-500">{product.price?.toFixed(2) || '0.00'}€ HT</p>
+                          </>
+                        )}
+                      </div>
                       <Button 
                         size="sm" 
                         variant="outline" 
                         className="border-gold text-gold hover:bg-gold hover:text-white"
                         asChild
                       >
-                        <Link to={`/product/${product._id || product.id}`}>
+                        <Link to={product.isRentable ? `/rental/${product._id || product.id}` : `/product/${product._id || product.id}`}>
                           Voir détails
                         </Link>
                       </Button>
                     </div>
-                    <p className="text-xs text-gray-500 mt-1">TVA non incluse</p>
                   </CardContent>
                 </Card>
               ))}

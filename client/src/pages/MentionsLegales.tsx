@@ -58,10 +58,10 @@ export default function MentionsLegales() {
           <CardContent className="p-6">
             <h2 className="text-2xl font-semibold text-gray-800 mb-4">Hébergement</h2>
             <p className="text-gray-700">
-              [Nom de l'hébergeur]
+              <strong>Nom de l'hébergeur :</strong> Render
             </p>
             <p className="text-gray-700">
-              [Adresse de l'hébergeur]
+              <strong>Adresse de l'hébergeur :</strong> render.com
             </p>
           </CardContent>
         </Card>
@@ -69,9 +69,41 @@ export default function MentionsLegales() {
         <Card>
           <CardContent className="p-6">
             <h2 className="text-2xl font-semibold text-gray-800 mb-4">Conditions générales</h2>
-            <p className="text-gray-700">
+            <p className="text-gray-700 mb-4">
               Toute location, prestation de service, vaut acceptation des conditions générales ci-dessus.
             </p>
+            <p className="text-gray-700 mb-2">
+              <strong>Consultez les conditions générales correspondant à votre service :</strong>
+            </p>
+            <ul className="list-disc list-inside text-gray-700 ml-4 space-y-2">
+              <li>
+                <a href="/legal/cgv" className="text-blue-600 hover:text-blue-800 underline">
+                  Vente
+                </a>
+                {' - '}
+                <a href="/legal/cgv" className="text-blue-600 hover:text-blue-800">
+                  Conditions Générales de Vente
+                </a>
+              </li>
+              <li>
+                <a href="/legal/cgl" className="text-blue-600 hover:text-blue-800 underline">
+                  Location
+                </a>
+                {' - '}
+                <a href="/legal/cgl" className="text-blue-600 hover:text-blue-800">
+                  Conditions Générales de Location
+                </a>
+              </li>
+              <li>
+                <a href="/legal/cgps" className="text-blue-600 hover:text-blue-800 underline">
+                  Prestation de service
+                </a>
+                {' - '}
+                <a href="/legal/cgps" className="text-blue-600 hover:text-blue-800">
+                  Conditions Générales de Prestations de Service
+                </a>
+              </li>
+            </ul>
           </CardContent>
         </Card>
       </div>

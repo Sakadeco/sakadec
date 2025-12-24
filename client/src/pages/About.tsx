@@ -60,7 +60,7 @@ export default function About() {
             À propos de <span className="metallic-gold">Pajusly</span>
           </h1>
           <p className="text-xl text-gray-600 mb-8">Fondatrice de SakaDeco Group</p>
-          <div className="flex items-center justify-center space-x-6 text-gray-600">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 text-gray-600">
             <div className="flex items-center space-x-2">
               <MapPin className="text-gold w-5 h-5" />
               <span>Bordeaux</span>
@@ -194,7 +194,7 @@ export default function About() {
             <p className="text-xl text-gray-600">Ce qui guide notre approche</p>
           </div>
           
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 md:gap-8">
             {values.map((value) => {
               const IconComponent = value.icon;
               return (
@@ -203,23 +203,23 @@ export default function About() {
                     <IconComponent className="text-gold w-8 h-8" />
                   </div>
                   <h3 className="text-xl font-playfair font-semibold text-gray-800 mb-2">{value.title}</h3>
-                  <p className="text-gray-600">{value.description}</p>
+                  <p className="text-gray-600 text-sm">{value.description}</p>
                 </div>
               );
             })}
-          </div>
-          
-          <div className="grid md:grid-cols-2 gap-8 mt-16">
             <div className="text-center">
+              <div className="w-16 h-16 bg-gold/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-gold text-2xl">✨</span>
+              </div>
               <h3 className="text-xl font-playfair font-semibold text-gray-800 mb-2">Simplicité</h3>
-              <p className="text-gray-600">Rendre les choses belles sans les compliquer.</p>
+              <p className="text-gray-600 text-sm">Rendre les choses belles sans les compliquer.</p>
             </div>
             <div className="text-center">
               <div className="w-16 h-16 bg-gold/20 rounded-full flex items-center justify-center mx-auto mb-4">
                 <span className="text-gold text-2xl">👂</span>
               </div>
               <h3 className="text-xl font-playfair font-semibold text-gray-800 mb-2">Écoute</h3>
-              <p className="text-gray-600">Vous êtes au cœur du projet.</p>
+              <p className="text-gray-600 text-sm">Vous êtes au cœur du projet.</p>
             </div>
           </div>
         </div>

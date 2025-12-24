@@ -260,7 +260,7 @@ export default function Realisations() {
             </Badge>
           </div>
           
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
             {(realisations.length > 0 
               ? realisations.flatMap(r => r.images).slice(0, 8)
               : allImages.slice(0, 8)

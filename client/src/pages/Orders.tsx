@@ -177,7 +177,7 @@ const Orders: React.FC = () => {
             </div>
           ) : (
             <Tabs defaultValue="all" className="space-y-6">
-              <TabsList className="grid w-full grid-cols-3">
+              <TabsList className="grid w-full grid-cols-1 sm:grid-cols-3">
                 <TabsTrigger value="all">
                   Toutes ({orders.length})
                 </TabsTrigger>
@@ -312,7 +312,15 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
                 <div className="flex-1">
                                           <h4 className="font-medium">{item.product?.name || 'Produit supprimé'}</h4>
                   <p className="text-sm text-gray-600">
-                    Quantité: {item.quantity} × {item.price.toFixed(2)}€
+                    Quantité: {item.quantity} × {
+                      item.isRental && item.dailyPrice 
+                        ? `${item.dailyPrice.toFixed(2)}€ HT`
+                        : `${item.price.toFixed(2)}€ HT`
+                    } = {
+                      item.isRental && item.dailyPrice
+                        ? `${(item.dailyPrice * item.quantity).toFixed(2)}€ HT`
+                        : `${(item.price * item.quantity).toFixed(2)}€ HT`
+                    }
                   </p>
                   {item.isRental && item.rentalDays && (
                     <p className="text-sm text-gray-600">

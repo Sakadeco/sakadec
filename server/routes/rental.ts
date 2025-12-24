@@ -44,6 +44,10 @@ router.post('/create-checkout-session', async (req: Request, res: Response) => {
       const startDate = new Date(item.rentalStartDate);
       const endDate = new Date(item.rentalEndDate);
       
+      // Normaliser les dates (enlever les heures pour comparer uniquement les dates)
+      startDate.setHours(0, 0, 0, 0);
+      endDate.setHours(0, 0, 0, 0);
+      
       if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
         return res.status(400).json({ message: 'Dates de location invalides' });
       }
@@ -52,8 +56,14 @@ router.post('/create-checkout-session', async (req: Request, res: Response) => {
         return res.status(400).json({ message: 'La date de fin doit être postérieure à la date de début' });
       }
 
+      // Calculer le nombre de jours inclus (date de début et date de fin incluses)
       const timeDiff = endDate.getTime() - startDate.getTime();
-      const rentalDays = Math.max(1, Math.ceil(timeDiff / (1000 * 60 * 60 * 24)));
+      const rentalDays = Math.floor(timeDiff / (1000 * 60 * 60 * 24)) + 1; // +1 car on inclut le jour de début
+      
+      // Durée minimum de 3 jours
+      if (rentalDays < 3) {
+        return res.status(400).json({ message: 'La durée minimum de location est de 3 jours' });
+      }
       // Le prix ne dépend pas du nombre de jours, seulement de la quantité
       const itemTotal = (product.dailyRentalPrice || 0) * item.quantity;
       subtotal += itemTotal;
@@ -94,7 +104,13 @@ router.post('/create-checkout-session', async (req: Request, res: Response) => {
     // Créer la location en base
     const rental = new Rental({
       items: items.map(item => {
-        const rentalDays = Math.max(1, Math.ceil((new Date(item.rentalEndDate).getTime() - new Date(item.rentalStartDate).getTime()) / (1000 * 60 * 60 * 24)));
+        // Calculer le nombre de jours inclus (date de début et date de fin incluses)
+        const startDate = new Date(item.rentalStartDate);
+        const endDate = new Date(item.rentalEndDate);
+        startDate.setHours(0, 0, 0, 0);
+        endDate.setHours(0, 0, 0, 0);
+        const timeDiff = endDate.getTime() - startDate.getTime();
+        const rentalDays = Math.floor(timeDiff / (1000 * 60 * 60 * 24)) + 1; // +1 car on inclut le jour de début
         // Le prix ne dépend que de la quantité, pas du nombre de jours
         const totalPrice = (item.dailyPrice || 0) * item.quantity;
         return {
