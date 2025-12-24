@@ -48,12 +48,20 @@ export default function Crea() {
                 <CardTitle className="font-playfair text-gray-800">Processus de commande</CardTitle>
               </CardHeader>
               <CardContent>
-                <ol className="space-y-3 text-gray-700 list-decimal list-inside">
+                <ol className="space-y-3 text-gray-700 list-decimal list-inside mb-6">
                   <li>Parcourez la boutique et ajoutez vos produits au panier</li>
                   <li>Choisissez votre thème (existant ou sur mesure : couleurs, personnage, univers…)</li>
                   <li>Vérifiez vos informations de personnalisation</li>
                   <li>Validez votre commande et le paiement</li>
                 </ol>
+                <div className="mt-4">
+                  <Button asChild className="w-full bg-skd-crea hover:bg-skd-crea/90 text-white">
+                    <Link to="/shop">
+                      <ShoppingBag className="mr-2 h-4 w-4" />
+                      Découvrez notre boutique
+                    </Link>
+                  </Button>
+                </div>
               </CardContent>
             </Card>
             

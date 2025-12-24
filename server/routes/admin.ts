@@ -1386,13 +1386,26 @@ router.post('/themes', adminAuth, uploadThemes.single('image'), async (req: Admi
           });
           imageUrl = result.secure_url;
           console.log('✅ Image thème uploadée vers Cloudinary:', result.secure_url);
+          
+          // Supprimer le fichier local après upload réussi vers Cloudinary
+          try {
+            const fs = await import('fs');
+            if (fs.existsSync(req.file.path)) {
+              fs.unlinkSync(req.file.path);
+              console.log('🗑️  Fichier local supprimé après upload Cloudinary');
+            }
+          } catch (deleteError) {
+            console.warn('⚠️  Impossible de supprimer le fichier local:', deleteError);
+          }
         } catch (cloudinaryError) {
           console.error('❌ Erreur upload Cloudinary pour thème:', cloudinaryError);
           imageUrl = `/uploads/themes/${req.file.filename}`;
           console.warn('⚠️  Utilisation de l\'image locale (sera perdue après redéploiement)');
+          console.warn('⚠️  Vérifiez vos variables d\'environnement CLOUDINARY_* sur Render');
         }
       } else {
         console.warn('⚠️  Cloudinary non configuré - image stockée localement (sera perdue après redéploiement)');
+        console.warn('⚠️  Configurez CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY et CLOUDINARY_API_SECRET sur Render');
         imageUrl = `/uploads/themes/${req.file.filename}`;
       }
     }
@@ -1438,13 +1451,26 @@ router.put('/themes/:id', adminAuth, uploadThemes.single('image'), async (req: A
           });
           imageUrl = result.secure_url;
           console.log('✅ Image thème uploadée vers Cloudinary:', result.secure_url);
+          
+          // Supprimer le fichier local après upload réussi vers Cloudinary
+          try {
+            const fs = await import('fs');
+            if (fs.existsSync(req.file.path)) {
+              fs.unlinkSync(req.file.path);
+              console.log('🗑️  Fichier local supprimé après upload Cloudinary');
+            }
+          } catch (deleteError) {
+            console.warn('⚠️  Impossible de supprimer le fichier local:', deleteError);
+          }
         } catch (cloudinaryError) {
           console.error('❌ Erreur upload Cloudinary pour thème:', cloudinaryError);
           imageUrl = `/uploads/themes/${req.file.filename}`;
           console.warn('⚠️  Utilisation de l\'image locale (sera perdue après redéploiement)');
+          console.warn('⚠️  Vérifiez vos variables d\'environnement CLOUDINARY_* sur Render');
         }
       } else {
         console.warn('⚠️  Cloudinary non configuré - image stockée localement (sera perdue après redéploiement)');
+        console.warn('⚠️  Configurez CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY et CLOUDINARY_API_SECRET sur Render');
         imageUrl = `/uploads/themes/${req.file.filename}`;
       }
     }
