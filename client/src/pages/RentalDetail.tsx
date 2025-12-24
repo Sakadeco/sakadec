@@ -105,8 +105,6 @@ const RentalDetail: React.FC = () => {
     const timeDiff = end.getTime() - start.getTime();
     return Math.floor(timeDiff / (1000 * 60 * 60 * 24)) + 1; // +1 car on inclut le jour de début
   };
-    return Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1; // +1 pour inclure le jour de début
-  };
 
   const calculateTotalPrice = () => {
     if (!product) return 0;
