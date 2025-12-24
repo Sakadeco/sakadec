@@ -356,7 +356,6 @@ export class InvoiceService {
     const totalTTC = subtotalTTC + (invoiceData.shipping || 0);
     
     // Vérifier qu'on a assez d'espace pour le total TTC avant de l'afficher
-    const pageHeight = doc.page.height;
     let finalY = currentY;
     if (finalY > pageHeight - 50) {
       doc.addPage();
