@@ -445,11 +445,24 @@ const RentalDetail: React.FC = () => {
                 >
                   <Minus className="w-4 h-4" />
                 </Button>
-                <span className="text-lg font-semibold w-8 text-center">{quantity}</span>
+                <Input
+                  type="number"
+                  min="1"
+                  max={product.stockQuantity !== undefined ? product.stockQuantity : undefined}
+                  value={quantity}
+                  onChange={(e) => {
+                    const value = parseInt(e.target.value) || 1;
+                    const maxQty = product.stockQuantity !== undefined ? product.stockQuantity : 9999;
+                    const newQuantity = Math.max(1, Math.min(value, maxQty));
+                    setQuantity(newQuantity);
+                  }}
+                  className="w-16 text-center font-semibold text-lg"
+                />
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => setQuantity(quantity + 1)}
+                  disabled={product.stockQuantity !== undefined && quantity >= product.stockQuantity}
                 >
                   <Plus className="w-4 h-4" />
                 </Button>

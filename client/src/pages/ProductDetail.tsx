@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import Layout from "@/components/Layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
@@ -485,7 +486,18 @@ export default function ProductDetail() {
                         >
                           <Minus className="w-4 h-4" />
                         </Button>
-                        <span className="w-12 text-center font-medium">{quantity}</span>
+                        <Input
+                          type="number"
+                          min="1"
+                          max={product.stockQuantity}
+                          value={quantity}
+                          onChange={(e) => {
+                            const value = parseInt(e.target.value) || 1;
+                            const newQuantity = Math.max(1, Math.min(value, product.stockQuantity));
+                            setQuantity(newQuantity);
+                          }}
+                          className="w-16 text-center font-medium"
+                        />
                         <Button
                           variant="outline"
                           size="sm"
