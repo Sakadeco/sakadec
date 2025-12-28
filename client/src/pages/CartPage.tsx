@@ -532,30 +532,44 @@ const CartPage: React.FC = () => {
                    <CardTitle>Récapitulatif</CardTitle>
                  </CardHeader>
                  <CardContent className="space-y-4">
-                   <div className="flex justify-between">
+                   <div className="flex justify-between items-center">
                      <span>Sous-total produits HT</span>
-                     <span>{subtotal.toFixed(2)}€ HT</span>
+                     <span className="flex items-center whitespace-nowrap">
+                       <span>{subtotal.toFixed(2)}</span>
+                       <span className="ml-1">€ HT</span>
+                     </span>
                    </div>
                    
                    {appliedPromoCode && (
-                     <div className="flex justify-between text-green-600">
+                     <div className="flex justify-between items-center text-green-600">
                        <span>Code promo ({appliedPromoCode.code})</span>
-                       <span>-{promoDiscount.toFixed(2)}€</span>
+                       <span className="flex items-center whitespace-nowrap">
+                         <span>-{promoDiscount.toFixed(2)}</span>
+                         <span className="ml-1">€</span>
+                       </span>
                      </div>
                    )}
                    
-                   <div className="flex justify-between">
+                   <div className="flex justify-between items-center">
                      <span>Livraison</span>
-                     <span>
+                     <span className="flex items-center whitespace-nowrap">
                        {shipping > 0 
-                         ? `${shipping.toFixed(2)}€` 
+                         ? (
+                           <>
+                             <span>{shipping.toFixed(2)}</span>
+                             <span className="ml-1">€</span>
+                           </>
+                         )
                          : 'Gratuit'}
                      </span>
                    </div>
                    <div className="border-t pt-4">
-                     <div className="flex justify-between font-bold text-lg">
+                     <div className="flex justify-between items-center font-bold text-lg">
                        <span>Total HT</span>
-                       <span>{total.toFixed(2)}€ HT</span>
+                       <span className="flex items-center whitespace-nowrap">
+                         <span>{total.toFixed(2)}</span>
+                         <span className="ml-1">€ HT</span>
+                       </span>
                      </div>
                      <p className="text-xs text-gray-500 text-center mt-1">TVA non incluse</p>
                      {appliedPromoCode && (
@@ -725,7 +739,10 @@ const CartPage: React.FC = () => {
                                     <span className="font-medium">Colissimo sans signature</span>
                                     <p className="text-xs text-gray-600">Livraison 48-72h - Vers France Métropolitaine, Monaco et Andorre</p>
                                   </div>
-                                  <span className="font-bold text-green-600">9,59 €</span>
+                                  <span className="font-bold text-green-600 flex items-center whitespace-nowrap">
+                                    <span>9,59</span>
+                                    <span className="ml-1">€</span>
+                                  </span>
                                 </div>
                               </Label>
                             </div>
@@ -746,7 +763,10 @@ const CartPage: React.FC = () => {
                                   <span className="font-medium">Chrono Classic</span>
                                   <p className="text-xs text-gray-600">Livraison dans 38 pays européens - Délais : 2 à 3 jours dans les principaux centres économiques de l'UE</p>
                                 </div>
-                                <span className="font-bold text-green-600">16,90 €</span>
+                                <span className="font-bold text-green-600 flex items-center whitespace-nowrap">
+                                  <span>16,90</span>
+                                  <span className="ml-1">€</span>
+                                </span>
                               </div>
                             </Label>
                           </div>
@@ -1120,7 +1140,10 @@ const CartPage: React.FC = () => {
                   ) : (
                     <>
                       <span className="mr-2">💳</span>
-                      Payer {total.toFixed(2)}€
+                      <span className="flex items-center whitespace-nowrap">
+                        <span>Payer {total.toFixed(2)}</span>
+                        <span className="ml-1">€</span>
+                      </span>
                     </>
                   )}
                 </Button>
