@@ -34,7 +34,9 @@ interface Product {
   mainImageUrl: string;
   additionalImages: string[];
   isCustomizable: boolean;
-  isRentable: boolean;
+  isForSale?: boolean;
+  isForRent?: boolean;
+  isRentable?: boolean;
   isActive?: boolean;
   stockQuantity: number;
   dailyRentalPrice?: number;
@@ -273,9 +275,14 @@ export default function AdminProducts() {
                         Personnalisable
                       </Badge>
                     )}
-                    {product.isRentable && (
+                    {product.isForRent && (
                       <Badge variant="outline" className="text-xs">
                         Location
+                      </Badge>
+                    )}
+                    {product.isForSale && (
+                      <Badge variant="outline" className="text-xs">
+                        Vente
                       </Badge>
                     )}
                   </div>
@@ -285,11 +292,11 @@ export default function AdminProducts() {
                     {getCategoryLabel(product.category)}
                   </Badge>
                   <span className="text-lg font-bold text-gold">
-                    {product.isRentable && product.dailyRentalPrice && product.dailyRentalPrice > 0
-                      ? formatPrice(product.dailyRentalPrice)
-                      : product.price > 0
+                    {product.isForRent && product.dailyRentalPrice && product.dailyRentalPrice > 0
+                      ? `${formatPrice(product.dailyRentalPrice)}/jour`
+                      : product.isForSale && product.price > 0
                         ? formatPrice(product.price)
-                        : '0,00 €'}
+                        : 'Sur devis'}
                   </span>
                 </div>
               </CardHeader>
@@ -299,9 +306,14 @@ export default function AdminProducts() {
                 </p>
                 <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
                   <span>Stock: {product.stockQuantity}</span>
-                  {product.isRentable && product.dailyRentalPrice && (
+                  {product.isForRent && product.dailyRentalPrice && product.dailyRentalPrice > 0 && (
                     <span>
-                      Location: {formatPrice(product.dailyRentalPrice * 1.20)} TTC ({formatPrice(product.dailyRentalPrice)} HT)
+                      Location: {formatPrice(product.dailyRentalPrice * 1.20)} TTC/jour ({formatPrice(product.dailyRentalPrice)} HT/jour)
+                    </span>
+                  )}
+                  {product.isForSale && product.price > 0 && (
+                    <span>
+                      Vente: {formatPrice(product.price * 1.20)} TTC ({formatPrice(product.price)} HT)
                     </span>
                   )}
                 </div>

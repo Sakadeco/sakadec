@@ -4,7 +4,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card'
 import { Button } from '../components/ui/button';
 import { Badge } from '../components/ui/badge';
 import { Input } from '../components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
 import { Search, Filter, ShoppingCart } from 'lucide-react';
 import ImageWithFallback from '../components/ImageWithFallback';
 import Layout from '../components/Layout';
@@ -26,7 +25,6 @@ const Shop: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('all');
 
   useEffect(() => {
     fetchProducts();
@@ -60,15 +58,8 @@ const Shop: React.FC = () => {
       );
     }
 
-    // Filtrer par catégorie
-    if (selectedCategory !== 'all') {
-      filtered = filtered.filter(product => product.category === selectedCategory);
-    }
-
     return filtered;
   };
-
-  const categories = ['all', ...Array.from(new Set(products.map(p => p.category)))];
 
   if (loading) {
     return (
@@ -101,18 +92,6 @@ const Shop: React.FC = () => {
             className="pl-10"
           />
         </div>
-        <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-          <SelectTrigger className="w-full sm:w-48">
-            <SelectValue placeholder="Catégorie" />
-          </SelectTrigger>
-          <SelectContent>
-            {categories.map(category => (
-              <SelectItem key={category} value={category}>
-                {category === 'all' ? 'Toutes les catégories' : category}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
       </div>
 
       {/* Grille des produits */}

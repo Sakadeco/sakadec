@@ -69,8 +69,6 @@ export default function AdminEditProduct() {
     name: "",
     description: "",
     price: "",
-    category: "",
-    subcategory: "",
     theme: "",
     isCustomizable: false,
     isForSale: true,
@@ -162,8 +160,6 @@ export default function AdminEditProduct() {
         name: product.name || "",
         description: product.description || "",
         price: product.price ? product.price.toString() : "0",
-        category: product.category || "shop",
-        subcategory: product.subcategory || "",
         theme: product.theme?._id || product.theme || "",
         isCustomizable: product.isCustomizable || false,
         isForSale: product.isForSale !== undefined ? product.isForSale : true,
@@ -268,6 +264,10 @@ export default function AdminEditProduct() {
         customizationOptionsObj[option.type] = option.values;
       });
 
+      // Définir automatiquement la catégorie selon la destination
+      // Si vente → "shop", si location → "rent", si les deux → "shop" (priorité vente)
+      const autoCategory = formData.isForSale ? 'shop' : 'rent';
+      
       // Créer FormData pour envoyer les fichiers
       const formDataToSend = new FormData();
       
@@ -275,8 +275,7 @@ export default function AdminEditProduct() {
       formDataToSend.append('name', formData.name);
       formDataToSend.append('description', formData.description);
       formDataToSend.append('price', formData.price);
-      formDataToSend.append('category', formData.category);
-      formDataToSend.append('subcategory', formData.subcategory);
+      formDataToSend.append('category', autoCategory);
       if (formData.theme) {
         formDataToSend.append('theme', formData.theme);
       }
@@ -446,34 +445,6 @@ export default function AdminEditProduct() {
                 />
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="category">Catégorie *</Label>
-                  <Select value={formData.category} onValueChange={(value) => handleInputChange("category", value)}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Sélectionner une catégorie" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="shop">Boutique</SelectItem>
-                      <SelectItem value="events">Événements</SelectItem>
-                      <SelectItem value="rent">Location</SelectItem>
-                      <SelectItem value="crea">Création</SelectItem>
-                      <SelectItem value="home">Maison</SelectItem>
-                      <SelectItem value="co">Co</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label htmlFor="subcategory">Sous-catégorie *</Label>
-                  <Input
-                    id="subcategory"
-                    value={formData.subcategory}
-                    onChange={(e) => handleInputChange("subcategory", e.target.value)}
-                    placeholder="Ex: Fleurs, Décoration, etc."
-                    required
-                  />
-                </div>
-              </div>
 
               <div>
                 <Label>Images du produit</Label>

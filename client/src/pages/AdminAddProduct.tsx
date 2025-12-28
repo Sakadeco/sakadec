@@ -51,8 +51,6 @@ export default function AdminAddProduct() {
     name: "",
     description: "",
     price: "",
-    category: "",
-    subcategory: "",
     theme: "",
     isCustomizable: false,
     isForSale: true,
@@ -288,7 +286,6 @@ export default function AdminAddProduct() {
     const errors = [];
     if (!formData.name?.trim()) errors.push('Le nom est requis');
     if (!formData.description?.trim()) errors.push('La description est requise');
-    if (!formData.category?.trim()) errors.push('La catégorie est requise');
     
     // Validation selon la destination
     if (formData.isForSale && (!formData.price || parseFloat(formData.price) <= 0)) {
@@ -319,12 +316,15 @@ export default function AdminAddProduct() {
       // Créer FormData pour envoyer les fichiers
       const formDataToSend = new FormData();
       
+      // Définir automatiquement la catégorie selon la destination
+      // Si vente → "shop", si location → "rent", si les deux → "shop" (priorité vente)
+      const autoCategory = formData.isForSale ? 'shop' : 'rent';
+      
       // Ajouter les données du formulaire
       formDataToSend.append('name', formData.name);
       formDataToSend.append('description', formData.description);
       formDataToSend.append('price', formData.price);
-      formDataToSend.append('category', formData.category);
-      formDataToSend.append('subcategory', formData.subcategory);
+      formDataToSend.append('category', autoCategory);
       if (formData.theme && formData.theme !== "none") {
         formDataToSend.append('theme', formData.theme);
       }
@@ -457,29 +457,6 @@ export default function AdminAddProduct() {
                     />
                   </div>
                 )}
-                <div>
-                  <Label htmlFor="category">Catégorie *</Label>
-                  <Select value={formData.category} onValueChange={(value) => handleInputChange('category', value)}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Sélectionner une catégorie" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="shop">Boutique</SelectItem>
-                      <SelectItem value="rent">Location</SelectItem>
-                      <SelectItem value="events">Événements</SelectItem>
-                      <SelectItem value="home">Maison</SelectItem>
-                      <SelectItem value="co">Co</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label htmlFor="subcategory">Sous-catégorie (optionnel)</Label>
-                  <Input
-                    id="subcategory"
-                    value={formData.subcategory}
-                    onChange={(e) => handleInputChange('subcategory', e.target.value)}
-                  />
-                </div>
                 <div>
                   <Label htmlFor="theme">Thème (optionnel)</Label>
                   <Select 

@@ -193,11 +193,14 @@ router.post('/products', adminAuth, upload.fields([
     const errors: any = {};
     if (!name) errors.name = 'Le nom est requis';
     if (!description) errors.description = 'La description est requise';
-    if (!category) errors.category = 'La catégorie est requise';
     
     // Validation conditionnelle selon la destination
     const isForSaleBool = isForSale === 'true' || isForSale === true;
     const isForRentBool = isForRent === 'true' || isForRent === true;
+    
+    // Définir automatiquement la catégorie selon la destination
+    // Si vente → "shop", si location → "rent", si les deux → "shop" (priorité vente)
+    const autoCategory = isForSaleBool ? 'shop' : 'rent';
     
     if (isForSaleBool && (!price || parseFloat(price) <= 0)) {
       errors.price = 'Le prix de vente doit être supérieur à 0';
@@ -233,8 +236,8 @@ router.post('/products', adminAuth, upload.fields([
       name: name.trim(),
       description: description.trim(),
       price: isForSaleBool ? parseFloat(price) : 0, // Prix 0 si pas destiné à la vente
-      category: category.trim(),
-      subcategory: subcategory ? subcategory.trim() : undefined,
+      category: autoCategory, // Catégorie définie automatiquement
+      subcategory: undefined, // Plus de sous-catégorie
       theme: theme && theme.trim() ? new mongoose.Types.ObjectId(theme.trim()) : undefined,
       mainImageUrl: finalMainImageUrl,
       additionalImages: additionalImageUrls.length > 0 ? additionalImageUrls : (additionalImages || []),
@@ -477,13 +480,17 @@ router.put('/products/:id', adminAuth, upload.fields([
     // Validation conditionnelle selon la destination
     const isForSaleBool = isForSale === 'true' || isForSale === true;
     const isForRentBool = isForRent === 'true' || isForRent === true;
+    
+    // Définir automatiquement la catégorie selon la destination
+    // Si vente → "shop", si location → "rent", si les deux → "shop" (priorité vente)
+    const autoCategory = isForSaleBool ? 'shop' : 'rent';
 
     const product = await Product.findByIdAndUpdate(id, {
       name,
       description,
       price: isForSaleBool ? parseFloat(price) : existingProduct.price,
-      category,
-      subcategory,
+      category: autoCategory, // Catégorie définie automatiquement
+      subcategory: undefined, // Plus de sous-catégorie
       theme: theme && theme.trim() ? new mongoose.Types.ObjectId(theme.trim()) : (theme === '' ? null : existingProduct.theme),
       mainImageUrl: finalMainImageUrl,
       additionalImages: additionalImageUrls,
