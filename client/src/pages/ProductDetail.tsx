@@ -175,13 +175,15 @@ export default function ProductDetail() {
     }
 
     // Vérifier que la quantité demandée est disponible
+    // Calculer la quantité totale en stock en comptant TOUS les articles de ce produit dans le panier
+    // (peu importe les personnalisations, car ils partagent le même stock)
     const existingCart = localStorage.getItem('cart');
     const cartItems = existingCart ? JSON.parse(existingCart) : [];
-    const existingItem = cartItems.find((item: any) => item.productId === product._id && !item.isRental);
-    const totalQuantityInCart = existingItem ? existingItem.quantity : 0;
+    const itemsWithSameProduct = cartItems.filter((item: any) => item.productId === product._id && !item.isRental);
+    const totalQuantityInCart = itemsWithSameProduct.reduce((sum: number, item: any) => sum + item.quantity, 0);
     
     if (totalQuantityInCart + quantity > product.stockQuantity) {
-      alert(`Stock insuffisant. Il ne reste plus assez d'unités en stock. Vous avez déjà ${totalQuantityInCart} unité(s) dans votre panier.`);
+      alert(`Stock insuffisant. Il ne reste plus assez d'unités en stock. Vous avez déjà ${totalQuantityInCart} unité(s) de ce produit dans votre panier.`);
       return;
     }
 
@@ -213,20 +215,70 @@ export default function ProductDetail() {
         totalPrice: finalPrice
       };
 
-      // Vérifier si le produit est déjà dans le panier
-      const existingItemIndex = cartItems.findIndex((item: any) => 
-        item.productId === product._id && !item.isRental
-      );
+      // Fonction pour comparer deux objets de personnalisation
+      const areCustomizationsEqual = (custom1: any, custom2: any): boolean => {
+        if (!custom1 && !custom2) return true;
+        if (!custom1 || !custom2) return false;
+        
+        const keys1 = Object.keys(custom1 || {});
+        const keys2 = Object.keys(custom2 || {});
+        
+        if (keys1.length !== keys2.length) return false;
+        
+        for (const key of keys1) {
+          const val1 = custom1[key];
+          const val2 = custom2[key];
+          
+          // Comparer les valeurs (gérer les objets et les valeurs simples)
+          if (typeof val1 === 'object' && val1 !== null && typeof val2 === 'object' && val2 !== null) {
+            // Comparer les objets de personnalisation
+            // Si c'est un objet avec textValue/imageValue (type 'both')
+            if (val1.hasOwnProperty('textValue') || val2.hasOwnProperty('textValue') || 
+                val1.hasOwnProperty('imageValue') || val2.hasOwnProperty('imageValue')) {
+              if (val1.textValue !== val2.textValue || val1.imageValue !== val2.imageValue) {
+                return false;
+              }
+            }
+            // Si c'est un objet avec value et type (type 'text' ou 'image')
+            else if (val1.hasOwnProperty('value') || val2.hasOwnProperty('value')) {
+              if (val1.value !== val2.value || val1.type !== val2.type) {
+                return false;
+              }
+            }
+            // Sinon comparer directement les objets (cas générique)
+            else {
+              const objKeys1 = Object.keys(val1);
+              const objKeys2 = Object.keys(val2);
+              if (objKeys1.length !== objKeys2.length) return false;
+              for (const objKey of objKeys1) {
+                if (val1[objKey] !== val2[objKey]) return false;
+              }
+            }
+          } else if (val1 !== val2) {
+            return false;
+          }
+        }
+        
+        return true;
+      };
+
+      // Vérifier si le produit avec les mêmes personnalisations est déjà dans le panier
+      const existingItemIndex = cartItems.findIndex((item: any) => {
+        if (item.productId !== product._id || item.isRental !== false) {
+          return false;
+        }
+        // Vérifier si les personnalisations sont identiques
+        return areCustomizationsEqual(item.customizations, customizations);
+      });
 
       if (existingItemIndex >= 0) {
-        // Mettre à jour la quantité
+        // Mettre à jour la quantité si le produit avec les mêmes personnalisations existe
         cartItems[existingItemIndex].quantity += quantity;
-        cartItems[existingItemIndex].customizations = customizations;
-        cartItems[existingItemIndex].customizationPrice = 0; // Pas de frais supplémentaires pour les personnalisations
+        cartItems[existingItemIndex].customizationPrice = 0;
         cartItems[existingItemIndex].price = finalPrice;
         cartItems[existingItemIndex].totalPrice = finalPrice;
       } else {
-        // Ajouter le nouvel article
+        // Ajouter le nouvel article (produit différent ou personnalisations différentes)
         cartItems.push(cartItem);
       }
 
