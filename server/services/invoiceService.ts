@@ -310,10 +310,11 @@ export class InvoiceService {
     
     let currentY = yStart;
     
-    // Positions fixes pour l'alignement : descriptions à gauche, prix à droite
+    // Positions fixes pour l'alignement : descriptions alignées avec "Prix unitaire HT" du tableau, prix à droite
     // La page A4 fait 595px de large, avec une marge de 50px de chaque côté = 495px de contenu utilisable
-    const labelX = 380; // Position X pour les descriptions (labels) - décalé à gauche
-    const priceX = 470; // Position X de départ pour les prix - espacement important (90px entre label et prix)
+    // "Prix unitaire HT" est à X = 260 dans le tableau, on aligne les descriptions à cette position
+    const labelX = 260; // Position X pour les descriptions (labels) - aligné avec "Prix unitaire HT" du tableau
+    const priceX = 470; // Position X de départ pour les prix - grand espacement (210px entre label et prix)
     const priceWidth = 75; // Largeur suffisante pour éviter les retours à la ligne même pour les grands montants (jusqu'à 545px max)
     
     // Total HT avant réduction (si code promo)
