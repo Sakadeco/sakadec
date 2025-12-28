@@ -3,7 +3,7 @@ import { useLocation } from 'wouter';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Badge } from '../components/ui/badge';
-import { CheckCircle, Calendar, Package, Download, Mail } from 'lucide-react';
+import { CheckCircle, Calendar, Package, Download } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 
@@ -62,12 +62,6 @@ const RentalSuccess: React.FC = () => {
       setError('Erreur lors de la récupération des données de location');
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleViewInvoice = () => {
-    if (rentalData) {
-      window.open(`/rental/invoice/${rentalData._id}`, '_blank');
     }
   };
 
@@ -207,18 +201,10 @@ const RentalSuccess: React.FC = () => {
         </Card>
 
         {/* Actions */}
-        <div className="flex flex-col sm:flex-row gap-4">
-          <Button
-            onClick={handleViewInvoice}
-            className="flex-1 bg-blue-600 hover:bg-blue-700"
-          >
-            <Mail className="w-4 h-4 mr-2" />
-            Voir la facture
-          </Button>
+        <div className="flex justify-center">
           <Button
             onClick={handleDownloadInvoice}
-            variant="outline"
-            className="flex-1"
+            className="bg-blue-600 hover:bg-blue-700"
           >
             <Download className="w-4 h-4 mr-2" />
             Télécharger la facture

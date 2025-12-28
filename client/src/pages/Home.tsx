@@ -5,7 +5,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ShoppingBag, Palette, Handshake, Star, Home, Users, Phone, MapPin, ArrowRight } from "lucide-react";
-import { ReviewsSection } from "@/components/ReviewsSection";
 import { Features } from "@/components/Features";
 import RealisationsShowcase from "@/components/RealisationsShowcase";
 import Logo from "@/components/Logo";
@@ -246,9 +245,6 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-
-      {/* Customer Reviews */}
-      <ReviewsSection />
 
       {/* Contact Section */}
       <section className="py-20 bg-gradient-to-br from-gold/10 via-pink-50/50 to-gray-50 dark:from-gray-900 dark:to-gray-800">

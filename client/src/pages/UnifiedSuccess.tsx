@@ -3,7 +3,7 @@ import { useLocation } from 'wouter';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Badge } from '../components/ui/badge';
-import { CheckCircle, Calendar, Package, Download, Mail, ShoppingCart, Home } from 'lucide-react';
+import { CheckCircle, Calendar, Package, Download, ShoppingCart, Home } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 
@@ -209,12 +209,6 @@ const UnifiedSuccess: React.FC = () => {
     }
   };
 
-  const handleViewSaleInvoice = () => {
-    if (orderData) {
-      window.open(`/invoice/${orderData._id}`, '_blank');
-    }
-  };
-
   const handleDownloadSaleInvoice = async () => {
     if (orderData) {
       try {
@@ -236,12 +230,6 @@ const UnifiedSuccess: React.FC = () => {
         console.error('Erreur téléchargement facture vente:', error);
         alert('Erreur lors du téléchargement de la facture de vente');
       }
-    }
-  };
-
-  const handleViewRentalInvoice = () => {
-    if (rentalData) {
-      window.open(`/rental/invoice/${rentalData._id}`, '_blank');
     }
   };
 
@@ -390,43 +378,25 @@ const UnifiedSuccess: React.FC = () => {
         </Card>
 
         {/* Boutons d'action */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+        <div className="flex justify-center gap-4 mb-8">
           {orderData && (
-            <>
-              <Button 
-                onClick={handleViewSaleInvoice}
-                className="w-full bg-blue-600 hover:bg-blue-700"
-              >
-                <Mail className="w-4 h-4 mr-2" />
-                Voir la facture de vente
-              </Button>
-              <Button 
-                onClick={handleDownloadSaleInvoice}
-                className="w-full bg-blue-500 hover:bg-blue-600"
-              >
-                <Download className="w-4 h-4 mr-2" />
-                Télécharger la facture de vente
-              </Button>
-            </>
+            <Button 
+              onClick={handleDownloadSaleInvoice}
+              className="bg-blue-600 hover:bg-blue-700"
+            >
+              <Download className="w-4 h-4 mr-2" />
+              Télécharger la facture de vente
+            </Button>
           )}
 
           {rentalData && (
-            <>
-              <Button 
-                onClick={handleViewRentalInvoice}
-                className="w-full bg-orange-600 hover:bg-orange-700"
-              >
-                <Mail className="w-4 h-4 mr-2" />
-                Voir la facture de location
-              </Button>
-              <Button 
-                onClick={handleDownloadRentalInvoice}
-                className="w-full bg-orange-500 hover:bg-orange-600"
-              >
-                <Download className="w-4 h-4 mr-2" />
-                Télécharger la facture de location
-              </Button>
-            </>
+            <Button 
+              onClick={handleDownloadRentalInvoice}
+              className="bg-orange-600 hover:bg-orange-700"
+            >
+              <Download className="w-4 h-4 mr-2" />
+              Télécharger la facture de location
+            </Button>
           )}
         </div>
 
