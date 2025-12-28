@@ -53,8 +53,8 @@ export default function AnnouncementPopup() {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <Card className="max-w-2xl w-full relative animate-in fade-in slide-in-from-bottom-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-end bg-black/50 p-4">
+      <Card className="max-w-md w-full mr-4 relative animate-in fade-in slide-in-from-right-4">
         <Button
           variant="ghost"
           size="icon"

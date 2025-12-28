@@ -1421,6 +1421,11 @@ router.post('/themes', adminAuth, uploadThemes.single('image'), async (req: Admi
     // Si une URL d'image existante est fournie
     if (req.body.existingImageUrl && !req.file) {
       imageUrl = req.body.existingImageUrl;
+      // Vérifier si l'URL existante est locale - si oui et que Cloudinary est configuré, c'est un problème
+      if (imageUrl.startsWith('/uploads/') && isCloudinaryConfigured) {
+        console.warn('⚠️  URL locale détectée alors que Cloudinary est configuré:', imageUrl);
+        console.warn('⚠️  Cette image sera perdue après redéploiement. Veuillez re-uploader l\'image.');
+      }
     }
 
     if (!imageUrl) {
@@ -1446,7 +1451,13 @@ router.put('/themes/:id', adminAuth, uploadThemes.single('image'), async (req: A
   try {
     const { title, isActive, existingImageUrl } = req.body;
 
-    let imageUrl = existingImageUrl || '';
+    // Récupérer le thème existant pour préserver l'image si aucune nouvelle n'est fournie
+    const existingTheme = await Theme.findById(req.params.id);
+    if (!existingTheme) {
+      return res.status(404).json({ message: 'Thème non trouvé' });
+    }
+
+    let imageUrl = existingImageUrl || existingTheme.imageUrl;
 
     // Traiter la nouvelle image si uploadée
     if (req.file) {
@@ -1480,6 +1491,13 @@ router.put('/themes/:id', adminAuth, uploadThemes.single('image'), async (req: A
         console.warn('⚠️  Cloudinary non configuré - image stockée localement (sera perdue après redéploiement)');
         console.warn('⚠️  Configurez CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY et CLOUDINARY_API_SECRET sur Render');
         imageUrl = `/uploads/themes/${req.file.filename}`;
+      }
+    } else {
+      // Si aucune nouvelle image n'est uploadée, vérifier si l'URL existante est locale
+      // et si Cloudinary est configuré, alerter l'utilisateur
+      if (imageUrl && imageUrl.startsWith('/uploads/') && isCloudinaryConfigured) {
+        console.warn('⚠️  URL locale détectée pour thème alors que Cloudinary est configuré:', imageUrl);
+        console.warn('⚠️  Cette image sera perdue après redéploiement. Veuillez re-uploader l\'image.');
       }
     }
 
