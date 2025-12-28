@@ -242,14 +242,14 @@ export default function ProductCustomization({
          if (engravingType === 'text') {
            return (
              <div className="space-y-2">
-               <Label>Texte à graver</Label>
+               <Label>Inscription souhaitée</Label>
                <Textarea
                  value={customText}
                  onChange={(e) => {
                    setCustomText(e.target.value);
                    handleTextImageUploadChange(key, 'text', e.target.value);
                  }}
-                 placeholder="Entrez le texte à graver sur le produit"
+                 placeholder="Entrez l'inscription souhaitée"
                  maxLength={option.maxLength}
                  rows={3}
                />
@@ -272,7 +272,7 @@ export default function ProductCustomization({
          if (engravingType === 'image') {
            return (
              <div className="space-y-2">
-               <Label>Image à graver</Label>
+               <Label>Image pour l'inscription</Label>
                <ImageUpload
                  onImageUpload={(imageUrl) => {
                    if (typeof handleImageUpload === 'function') {
@@ -283,21 +283,21 @@ export default function ProductCustomization({
                  }}
                  maxFileSize={option.maxFileSize}
                  allowedFileTypes={option.allowedFileTypes}
-                 placeholder="Téléchargez l'image à graver sur le produit"
+                 placeholder="Téléchargez l'image pour l'inscription"
                />
                <div className="flex justify-between text-sm text-gray-500">
-                 <span>Prix de gravure</span>
+                 <span>Prix de personnalisation</span>
                  <span className="text-gray-600 font-medium">
                    Gratuit
                  </span>
                </div>
-               {customImage && (
-                 <div className="mt-2 relative">
-                   <img
-                     src={customImage}
-                     alt="Image à graver"
-                     className="w-20 h-20 object-cover rounded border"
-                   />
+                 {customImage && (
+                   <div className="mt-2 relative">
+                     <img
+                       src={customImage}
+                       alt="Image pour l'inscription"
+                       className="w-20 h-20 object-cover rounded border"
+                     />
                    <Button
                      type="button"
                      variant="destructive"
@@ -318,14 +318,14 @@ export default function ProductCustomization({
            return (
              <div className="space-y-4">
                <div>
-                 <Label>Texte à graver (optionnel)</Label>
+                 <Label>Inscription souhaitée (optionnel)</Label>
                  <Textarea
                    value={customText}
                    onChange={(e) => {
                      setCustomText(e.target.value);
                      handleTextImageUploadChange(key, 'text', e.target.value);
                    }}
-                   placeholder="Entrez le texte à graver (optionnel)"
+                   placeholder="Entrez l'inscription souhaitée (optionnel)"
                    maxLength={option.maxLength}
                    rows={2}
                  />
@@ -338,7 +338,7 @@ export default function ProductCustomization({
                </div>
 
                <div>
-                 <Label>Image à graver (optionnel)</Label>
+                 <Label>Image pour l'inscription (optionnel)</Label>
                  <ImageUpload
                    onImageUpload={(imageUrl) => {
                      if (typeof handleImageUpload === 'function') {
@@ -349,7 +349,7 @@ export default function ProductCustomization({
                    }}
                    maxFileSize={option.maxFileSize}
                    allowedFileTypes={option.allowedFileTypes}
-                   placeholder="Téléchargez l'image à graver (optionnel)"
+                   placeholder="Téléchargez l'image pour l'inscription (optionnel)"
                  />
                  <div className="flex justify-between text-sm text-gray-500 mt-1">
                    <span>Prix image</span>
@@ -361,7 +361,7 @@ export default function ProductCustomization({
                    <div className="mt-2 relative">
                      <img
                        src={customImage}
-                       alt="Image à graver"
+                       alt="Image pour l'inscription"
                        className="w-20 h-20 object-cover rounded border"
                      />
                      <Button
@@ -492,18 +492,25 @@ export default function ProductCustomization({
               optionsEntries = Object.entries(customizationOptions || {});
             }
             
-            return optionsEntries.map(([key, option]) => (
-              <div key={key} className="space-y-2">
-                <Label htmlFor={key} className="text-sm font-medium">
-                  {option.label}
-                  {option.required && <span className="text-red-500 ml-1">*</span>}
-                </Label>
-                {renderCustomizationField(key, option)}
-                {option.placeholder && (
-                  <p className="text-xs text-gray-500">{option.placeholder}</p>
-                )}
-              </div>
-            ));
+            return optionsEntries.map(([key, option]) => {
+              // Remplacer "Gravure personnalisée" par "Inscription souhaitée" pour l'affichage client
+              const displayLabel = option.label.toLowerCase().includes('gravure') 
+                ? option.label.replace(/gravure personnalisée/gi, 'Inscription souhaitée')
+                : option.label;
+              
+              return (
+                <div key={key} className="space-y-2">
+                  <Label htmlFor={key} className="text-sm font-medium">
+                    {displayLabel}
+                    {option.required && <span className="text-red-500 ml-1">*</span>}
+                  </Label>
+                  {renderCustomizationField(key, option)}
+                  {option.placeholder && (
+                    <p className="text-xs text-gray-500">{option.placeholder}</p>
+                  )}
+                </div>
+              );
+            });
           })()}
 
           {/* Résumé des prix de personnalisation - Supprimé car gratuit */}
