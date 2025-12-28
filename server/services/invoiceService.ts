@@ -310,46 +310,51 @@ export class InvoiceService {
     
     let currentY = yStart;
     
+    // Positions fixes pour l'alignement : descriptions à gauche, prix à droite
+    const labelX = 400; // Position X pour les descriptions (labels)
+    const priceX = 500; // Position X de départ pour les prix
+    const priceWidth = 50; // Largeur pour l'alignement à droite des prix
+    
     // Total HT avant réduction (si code promo)
     if (promoDiscount > 0) {
       doc.fontSize(12)
          .font('Helvetica')
          .fillColor('#4A5568')
-         .text('Total HT:', 400, currentY)
-         .text(`${invoiceData.subtotal.toFixed(2)}€`, 480, currentY);
+         .text('Total HT:', labelX, currentY);
+      doc.text(`${invoiceData.subtotal.toFixed(2)}€`, priceX, currentY, { width: priceWidth, align: 'right' });
       currentY += 20;
       
       // Ligne remise
-      doc.text(`Remise (${invoiceData.promoCode || 'Code promo'}):`, 400, currentY)
-         .text(`-${promoDiscount.toFixed(2)}€`, 480, currentY);
+      doc.text(`Remise (${invoiceData.promoCode || 'Code promo'}):`, labelX, currentY);
+      doc.text(`-${promoDiscount.toFixed(2)}€`, priceX, currentY, { width: priceWidth, align: 'right' });
       currentY += 20;
       
       // Total HT après réduction
       doc.font('Helvetica-Bold')
-         .text('Total HT après remise:', 400, currentY)
-         .text(`${subtotalHT.toFixed(2)}€`, 480, currentY);
+         .text('Total HT après remise:', labelX, currentY);
+      doc.text(`${subtotalHT.toFixed(2)}€`, priceX, currentY, { width: priceWidth, align: 'right' });
       currentY += 20;
     } else {
       // Total HT (pas de code promo)
       doc.fontSize(12)
          .font('Helvetica')
          .fillColor('#4A5568')
-         .text('Total HT:', 400, currentY)
-         .text(`${subtotalHT.toFixed(2)}€`, 480, currentY);
+         .text('Total HT:', labelX, currentY);
+      doc.text(`${subtotalHT.toFixed(2)}€`, priceX, currentY, { width: priceWidth, align: 'right' });
       currentY += 20;
     }
 
     // TVA 20%
     doc.font('Helvetica')
-       .text('TVA (20%):', 400, currentY)
-       .text(`${tvaAmount.toFixed(2)}€`, 480, currentY);
+       .fillColor('#4A5568')
+       .text('TVA (20%):', labelX, currentY);
+    doc.text(`${tvaAmount.toFixed(2)}€`, priceX, currentY, { width: priceWidth, align: 'right' });
     currentY += 20;
 
     // Frais de livraison
     if (invoiceData.shipping > 0) {
-      doc.text('Frais de livraison:', 400, currentY);
-      // Positionner le prix avec un espacement approprié (le texte fait environ 130px, donc on place le prix à 500px)
-      doc.text(`${invoiceData.shipping.toFixed(2)}€`, 500, currentY);
+      doc.text('Frais de livraison:', labelX, currentY);
+      doc.text(`${invoiceData.shipping.toFixed(2)}€`, priceX, currentY, { width: priceWidth, align: 'right' });
       currentY += 20;
     }
 
@@ -366,8 +371,8 @@ export class InvoiceService {
     doc.fontSize(14)
        .font('Helvetica-Bold')
        .fillColor('#2D3748')
-       .text('TOTAL TTC:', 400, finalY)
-       .text(`${totalTTC.toFixed(2)}€`, 480, finalY);
+       .text('TOTAL TTC:', labelX, finalY);
+    doc.text(`${totalTTC.toFixed(2)}€`, priceX, finalY, { width: priceWidth, align: 'right' });
   }
 
   private static addFooter(doc: PDFDocument) {
