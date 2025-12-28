@@ -186,7 +186,7 @@ export default function ProductCustomization({
             onValueChange={(value) => handleCustomizationChange(key, value)}
           >
             <SelectTrigger>
-              <SelectValue placeholder={`Choisir ${option.label.toLowerCase()}`} />
+              <SelectValue placeholder={`Choisir ${(option.label || '').toLowerCase()}`} />
             </SelectTrigger>
             <SelectContent>
               {option.options?.map((opt) => (
@@ -519,9 +519,11 @@ export default function ProductCustomization({
             
             return optionsEntries.map(([key, option]) => {
               // Remplacer "Gravure personnalisée" par "Inscription souhaitée" pour l'affichage client
-              const displayLabel = option.label.toLowerCase().includes('gravure') 
-                ? option.label.replace(/gravure personnalisée/gi, 'Inscription souhaitée')
-                : option.label;
+              // Vérifier que option.label existe avant d'utiliser toLowerCase
+              const label = option.label || key; // Utiliser la clé comme fallback si label n'existe pas
+              const displayLabel = label && typeof label === 'string' && label.toLowerCase().includes('gravure') 
+                ? label.replace(/gravure personnalisée/gi, 'Inscription souhaitée')
+                : label;
               
               return (
                 <div key={key} className="space-y-2">
