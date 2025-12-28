@@ -117,16 +117,10 @@ const CartPage: React.FC = () => {
     switch (deliveryMethod) {
       case 'colissimo':
         return 9.59;
-      case 'point-relais':
-        return 5.69;
-      case 'chronopost':
-        return 10.40;
       case 'chrono-classic':
         return 16.90;
       case 'retrait':
         return 0;
-      case 'international':
-        return 0; // Sur devis
       default:
         return 0;
     }
@@ -553,11 +547,9 @@ const CartPage: React.FC = () => {
                    <div className="flex justify-between">
                      <span>Livraison</span>
                      <span>
-                       {hasCustomizedProducts && deliveryMethod === 'international' 
-                         ? 'Sur devis' 
-                         : shipping > 0 
-                           ? `${shipping.toFixed(2)}€` 
-                           : 'Gratuit'}
+                       {shipping > 0 
+                         ? `${shipping.toFixed(2)}€` 
+                         : 'Gratuit'}
                      </span>
                    </div>
                    <div className="border-t pt-4">
@@ -738,36 +730,6 @@ const CartPage: React.FC = () => {
                               </Label>
                             </div>
                           </div>
-                          
-                          <div className="flex items-start space-x-3 p-3 border rounded-lg hover:bg-gray-50">
-                            <RadioGroupItem value="point-relais" id="point-relais" className="mt-1" />
-                            <div className="flex-1">
-                              <Label htmlFor="point-relais" className="cursor-pointer">
-                                <div className="flex justify-between items-center">
-                                  <div>
-                                    <span className="font-medium">Point Relais</span>
-                                    <p className="text-xs text-gray-600">Livraison 3-5 jours</p>
-                                  </div>
-                                  <span className="font-bold text-green-600">5,69 €</span>
-                                </div>
-                              </Label>
-                            </div>
-                          </div>
-                          
-                          <div className="flex items-start space-x-3 p-3 border rounded-lg hover:bg-gray-50">
-                            <RadioGroupItem value="chronopost" id="chronopost" className="mt-1" />
-                            <div className="flex-1">
-                              <Label htmlFor="chronopost" className="cursor-pointer">
-                                <div className="flex justify-between items-center">
-                                  <div>
-                                    <span className="font-medium">Chronopost</span>
-                                    <p className="text-xs text-gray-600">Livraison le lendemain avant 18h (France métropolitaine)</p>
-                                  </div>
-                                  <span className="font-bold text-green-600">10,40 €</span>
-                                </div>
-                              </Label>
-                            </div>
-                          </div>
                         </div>
                       </div>
 
@@ -785,23 +747,6 @@ const CartPage: React.FC = () => {
                                   <p className="text-xs text-gray-600">Livraison dans 38 pays européens - Délais : 2 à 3 jours dans les principaux centres économiques de l'UE</p>
                                 </div>
                                 <span className="font-bold text-green-600">16,90 €</span>
-                              </div>
-                            </Label>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* International + Outre-Mer */}
-                      <div className="space-y-3 mt-4">
-                        <Label className="text-sm font-semibold text-gray-700">International + Outre-Mer</Label>
-                        
-                        <div className="flex items-start space-x-3 p-3 border rounded-lg hover:bg-gray-50 pl-4">
-                          <RadioGroupItem value="international" id="international" className="mt-1" />
-                          <div className="flex-1">
-                            <Label htmlFor="international" className="cursor-pointer">
-                              <div>
-                                <span className="font-medium">Tarif sur devis</span>
-                                <p className="text-xs text-orange-600 font-medium mt-1">Merci de me contacter avant toute commande.</p>
                               </div>
                             </Label>
                           </div>
