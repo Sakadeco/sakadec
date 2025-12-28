@@ -127,11 +127,15 @@ export default function Crea() {
                 <ul className="space-y-2 text-gray-700">
                   <li className="flex items-start">
                     <span className="text-skd-crea mr-2">•</span>
-                    <span>Colissimo : 2 jours ouvrés (France métropolitaine)</span>
+                    <span>Colissimo</span>
                   </li>
                   <li className="flex items-start">
                     <span className="text-skd-crea mr-2">•</span>
-                    <span>Mondial Relay : 3 à 4 jours ouvrés (France métropolitaine)</span>
+                    <span>Chronopost</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="text-skd-crea mr-2">•</span>
+                    <span>Remise en main propre</span>
                   </li>
                 </ul>
               </CardContent>
