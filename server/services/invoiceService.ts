@@ -311,9 +311,10 @@ export class InvoiceService {
     let currentY = yStart;
     
     // Positions fixes pour l'alignement : descriptions à gauche, prix à droite
-    const labelX = 400; // Position X pour les descriptions (labels)
-    const priceX = 500; // Position X de départ pour les prix
-    const priceWidth = 50; // Largeur pour l'alignement à droite des prix
+    // La page A4 fait 595px de large, avec une marge de 50px de chaque côté = 495px de contenu utilisable
+    const labelX = 380; // Position X pour les descriptions (labels) - décalé à gauche
+    const priceX = 510; // Position X de départ pour les prix - espacement maximal (130px entre label et prix)
+    const priceWidth = 35; // Largeur pour l'alignement à droite des prix (jusqu'à 545px, reste 50px de marge)
     
     // Total HT avant réduction (si code promo)
     if (promoDiscount > 0) {
