@@ -2,41 +2,8 @@ import Layout from "@/components/Layout";
 import ContactForm from "@/components/ContactForm";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Star, Heart, Cake, Baby } from "lucide-react";
-import DSC6144 from "@/assets/images/DSC_6144-HDR.JPG";
-import DSC6145 from "@/assets/images/DSC_6145-HDR.JPG";
-import DSC6148 from "@/assets/images/DSC_6148-HDR.JPG";
-import DSC6151 from "@/assets/images/DSC_6151-HDR.JPG";
-import DSC6157 from "@/assets/images/DSC_6157-HDR.JPG";
-import DSC6160 from "@/assets/images/DSC_6160-HDR.JPG";
-import DSC6163 from "@/assets/images/DSC_6163-HDR.JPG";
-import DSC6175 from "@/assets/images/DSC_6175-HDR.JPG";
-import DSC6178 from "@/assets/images/DSC_6178-HDR.JPG";
-import DSC6190 from "@/assets/images/DSC_6190-HDR.JPG";
-import DSC6195 from "@/assets/images/DSC_6195-HDR.JPG";
-import DSC6196 from "@/assets/images/DSC_6196-HDR.JPG";
-import DSC6199 from "@/assets/images/DSC_6199-HDR.JPG";
-import DSC6204 from "@/assets/images/DSC_6204-HDR.JPG";
-import DSC6205 from "@/assets/images/DSC_6205-HDR.JPG";
 
 export default function Events() {
-
-  const galleryImages = [
-    { url: DSC6144, alt: "Réalisation SakaDeco Events" },
-    { url: DSC6145, alt: "Réalisation SakaDeco Events" },
-    { url: DSC6148, alt: "Réalisation SakaDeco Events" },
-    { url: DSC6151, alt: "Réalisation SakaDeco Events" },
-    { url: DSC6157, alt: "Réalisation SakaDeco Events" },
-    { url: DSC6160, alt: "Réalisation SakaDeco Events" },
-    { url: DSC6163, alt: "Réalisation SakaDeco Events" },
-    { url: DSC6175, alt: "Réalisation SakaDeco Events" },
-    { url: DSC6178, alt: "Réalisation SakaDeco Events" },
-    { url: DSC6190, alt: "Réalisation SakaDeco Events" },
-    { url: DSC6195, alt: "Réalisation SakaDeco Events" },
-    { url: DSC6196, alt: "Réalisation SakaDeco Events" },
-    { url: DSC6199, alt: "Réalisation SakaDeco Events" },
-    { url: DSC6204, alt: "Réalisation SakaDeco Events" },
-    { url: DSC6205, alt: "Réalisation SakaDeco Events" }
-  ];
 
   return (
     <Layout>
@@ -165,21 +132,15 @@ export default function Events() {
       {/* Gallery */}
       <section className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4">
-          <h3 className="text-2xl font-playfair font-semibold text-gray-800 mb-8 text-center">
-            Galerie de nos Créations
-          </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {galleryImages.map((image, index) => (
-              <div key={index} className="group cursor-pointer relative overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all duration-300">
-                <img 
-                  src={image.url}
-                  alt={image.alt}
-                  className="h-64 w-full object-cover group-hover:scale-110 transform transition-transform duration-500"
-                  loading="lazy"
-                />
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300"></div>
-              </div>
-            ))}
+          <div className="text-center">
+            <a
+              href="https://www.instagram.com/sakadeco_events/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-2xl font-playfair font-semibold text-gray-800 hover:text-skd-events transition-colors duration-300 underline decoration-2 underline-offset-4 hover:decoration-skd-events"
+            >
+              Galerie de nos Créations
+            </a>
           </div>
         </div>
       </section>
