@@ -76,12 +76,20 @@ export default function ProductCustomization({
     const newCustomizations = { ...customizations, [key]: value };
     setCustomizations(newCustomizations);
     
-    // Calculer le nouveau prix de base
-    const newBasePrice = calculateNewBasePrice(newCustomizations);
-    const priceAdjustment = newBasePrice - basePrice;
-    setCustomizationPrice(priceAdjustment);
-    
-    onCustomizationChange(newCustomizations, priceAdjustment);
+    // Ne pas appliquer de frais supplémentaires pour les personnalisations
+    // Seulement pour les options avec valuePrices (ex: tailles, couleurs avec prix différents)
+    const option = customizationOptions[key];
+    if (option && option.type === 'text_image_upload') {
+      // Pour les gravures/personnalisations, pas de prix supplémentaire
+      setCustomizationPrice(0);
+      onCustomizationChange(newCustomizations, 0);
+    } else {
+      // Pour les autres options (dropdown avec valuePrices), calculer le nouveau prix de base
+      const newBasePrice = calculateNewBasePrice(newCustomizations);
+      const priceAdjustment = newBasePrice - basePrice;
+      setCustomizationPrice(priceAdjustment);
+      onCustomizationChange(newCustomizations, priceAdjustment);
+    }
   };
 
   const handleTextImageUploadChange = (key: string, type: 'text' | 'image', value: string) => {
@@ -286,7 +294,7 @@ export default function ProductCustomization({
                  placeholder="Téléchargez l'image pour l'inscription"
                />
                <div className="flex justify-between text-sm text-gray-500">
-                 <span>Prix de personnalisation</span>
+                 <span>Gratuit</span>
                  <span className="text-gray-600 font-medium">
                    Gratuit
                  </span>
@@ -318,21 +326,21 @@ export default function ProductCustomization({
            return (
              <div className="space-y-4">
                <div>
-                 <Label>Inscription souhaitée (optionnel)</Label>
+                 <Label>Inscription souhaitée + date de l'événement (optionnel)</Label>
                  <Textarea
                    value={customText}
                    onChange={(e) => {
                      setCustomText(e.target.value);
                      handleTextImageUploadChange(key, 'text', e.target.value);
                    }}
-                   placeholder="Entrez l'inscription souhaitée (optionnel)"
+                   placeholder="Entrez l'inscription souhaitée + date de l'événement (optionnel)"
                    maxLength={option.maxLength}
                    rows={2}
                  />
                                    <div className="flex justify-between text-sm text-gray-500 mt-1">
                     <span>{customText.length}/{option.maxLength || 50} caractères</span>
-                    <span className="text-blue-600 font-medium">
-                      {customText.length > 0 ? `+${((option.basePrice || 3) + (Math.max(0, customText.length - (option.maxLength || 0)) * (option.pricePerCharacter || 0.1))).toFixed(2)}€` : '0.00€'}
+                    <span className="text-gray-600 font-medium">
+                      Gratuit
                     </span>
                   </div>
                </div>
@@ -352,9 +360,9 @@ export default function ProductCustomization({
                    placeholder="Téléchargez l'image pour l'inscription (optionnel)"
                  />
                  <div className="flex justify-between text-sm text-gray-500 mt-1">
-                   <span>Prix image</span>
-                   <span className="text-blue-600 font-medium">
-                     {customImage ? `+${(option.basePrice || 5).toFixed(2)}€` : '0.00€'}
+                   <span>Gratuit</span>
+                   <span className="text-gray-600 font-medium">
+                     Gratuit
                    </span>
                  </div>
                  {customImage && (

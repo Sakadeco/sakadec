@@ -134,7 +134,7 @@ export default function ProductDetail() {
         image: product.mainImageUrl,
         isRental: false,
         customizations: customizations,
-        customizationPrice: priceAdjustment, // Ajustement du prix
+        customizationPrice: 0, // Pas de frais supplémentaires pour les personnalisations
         totalPrice: finalPrice
       };
 
@@ -147,7 +147,7 @@ export default function ProductDetail() {
         // Mettre à jour la quantité
         cartItems[existingItemIndex].quantity += quantity;
         cartItems[existingItemIndex].customizations = customizations;
-        cartItems[existingItemIndex].customizationPrice = priceAdjustment;
+        cartItems[existingItemIndex].customizationPrice = 0; // Pas de frais supplémentaires pour les personnalisations
         cartItems[existingItemIndex].price = finalPrice;
         cartItems[existingItemIndex].totalPrice = finalPrice;
       } else {
