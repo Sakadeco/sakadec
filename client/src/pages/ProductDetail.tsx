@@ -106,7 +106,7 @@ export default function ProductDetail() {
     const totalQuantityInCart = existingItem ? existingItem.quantity : 0;
     
     if (totalQuantityInCart + quantity > product.stockQuantity) {
-      alert(`Stock insuffisant. Il ne reste que ${product.stockQuantity} unité(s) en stock. Vous avez déjà ${totalQuantityInCart} unité(s) dans votre panier.`);
+      alert(`Stock insuffisant. Il ne reste plus assez d'unités en stock. Vous avez déjà ${totalQuantityInCart} unité(s) dans votre panier.`);
       return;
     }
 
@@ -371,15 +371,17 @@ export default function ProductDetail() {
               </div>
 
               {/* Stock Info */}
-              <div className="flex items-center space-x-2 text-sm text-gray-600">
-                <Package className="w-4 h-4" />
-                <span>
-                  {product.stockQuantity > 0 
-                    ? `${product.stockQuantity} en stock` 
-                    : 'Rupture de stock'
-                  }
-                </span>
-              </div>
+              {product.isForSale && (
+                <div className="flex items-center space-x-2 text-sm text-gray-600">
+                  <Package className="w-4 h-4" />
+                  <span>
+                    {product.stockQuantity > 0 
+                      ? 'En stock' 
+                      : 'Rupture de stock'
+                    }
+                  </span>
+                </div>
+              )}
 
               {/* Customization Options */}
               {product.isCustomizable && product.customizationOptions && (
