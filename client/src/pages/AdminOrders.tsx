@@ -433,19 +433,6 @@ const AdminOrders: React.FC = () => {
                   </Select>
                 </div>
 
-                <div className="flex items-end">
-                  <Button 
-                    variant="outline" 
-                    onClick={() => {
-                      setSearchTerm('');
-                      setStatusFilter('all');
-                      setPaymentStatusFilter('all');
-                    }}
-                    className="w-full"
-                  >
-                    Réinitialiser
-                  </Button>
-                </div>
               </div>
             </CardContent>
           </Card>

@@ -23,10 +23,6 @@ export default function HomePage() {
   const { data: products, isLoading } = useQuery<Product[]>({
     queryKey: ["/api/products"],
   });
-  
-  const { data: featuredProducts, isLoading: isLoadingFeatured } = useQuery<Product[]>({
-    queryKey: ["/api/products/featured"],
-  });
 
   const services = [
     {
@@ -253,74 +249,6 @@ export default function HomePage() {
 
       {/* Customer Reviews */}
       <ReviewsSection />
-
-      {/* Featured Products */}
-      {!isLoadingFeatured && featuredProducts && featuredProducts.length > 0 && (
-        <section className="py-20">
-          <div className="max-w-7xl mx-auto px-4">
-            <div className="text-center mb-16">
-              <h2 className="text-4xl font-playfair font-bold text-gray-800 dark:text-gray-100 mb-4">Nos Produits Vedettes</h2>
-              <p className="text-xl text-gray-600 dark:text-gray-400">Une sélection de nos créations les plus appréciées</p>
-            </div>
-            
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {featuredProducts.map((product: any) => (
-                <Card key={product._id || product.id} className="group hover:shadow-lg transition-all duration-300 border-0 shadow-md hover:shadow-xl">
-                  <div className="aspect-square overflow-hidden rounded-t-lg relative">
-                    <img 
-                      src={product.mainImageUrl || product.imageUrl || "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"}
-                      alt={product.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                    {product.isCustomizable && (
-                      <Badge className="absolute top-3 left-3 bg-gold text-white px-2 py-1 text-xs">
-                        ✨ Personnalisable
-                      </Badge>
-                    )}
-                  </div>
-                  <CardContent className="p-4">
-                    <h3 className="font-semibold text-gray-800 dark:text-gray-100 mb-2 group-hover:text-gold transition-colors">{product.name}</h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-3 line-clamp-2">{product.description}</p>
-                    <div className="flex justify-between items-center">
-                      <div>
-                        {product.isRentable && product.dailyRentalPrice ? (
-                          <>
-                            <span className="text-lg font-bold text-gold">{(product.dailyRentalPrice * 1.20).toFixed(2)}€ TTC</span>
-                            <p className="text-xs text-gray-500">{product.dailyRentalPrice.toFixed(2)}€ HT</p>
-                          </>
-                        ) : (
-                          <>
-                            <span className="text-lg font-bold text-gold">{(product.price * 1.20).toFixed(2)}€ TTC</span>
-                            <p className="text-xs text-gray-500">{product.price?.toFixed(2) || '0.00'}€ HT</p>
-                          </>
-                        )}
-                      </div>
-                      <Button 
-                        size="sm" 
-                        variant="outline" 
-                        className="border-gold text-gold hover:bg-gold hover:text-white"
-                        asChild
-                      >
-                        <Link to={product.isRentable ? `/rental/${product._id || product.id}` : `/product/${product._id || product.id}`}>
-                          Voir détails
-                        </Link>
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-            <div className="text-center mt-12">
-              <Button asChild size="lg" className="bg-gradient-to-r from-gold to-yellow-500 hover:from-yellow-500 hover:to-gold text-white">
-                <Link to="/shop">
-                  <ShoppingBag className="mr-2 h-5 w-5" />
-                  Découvrir tous nos produits
-                </Link>
-              </Button>
-            </div>
-          </div>
-        </section>
-      )}
 
       {/* Contact Section */}
       <section className="py-20 bg-gradient-to-br from-gold/10 via-pink-50/50 to-gray-50 dark:from-gray-900 dark:to-gray-800">
