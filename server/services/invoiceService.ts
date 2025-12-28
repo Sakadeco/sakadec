@@ -347,8 +347,9 @@ export class InvoiceService {
 
     // Frais de livraison
     if (invoiceData.shipping > 0) {
-      doc.text('Frais de livraison:', 400, currentY)
-         .text(`${invoiceData.shipping.toFixed(2)}€`, 480, currentY);
+      doc.text('Frais de livraison:', 400, currentY);
+      // Positionner le prix avec un espacement approprié (le texte fait environ 130px, donc on place le prix à 500px)
+      doc.text(`${invoiceData.shipping.toFixed(2)}€`, 500, currentY);
       currentY += 20;
     }
 

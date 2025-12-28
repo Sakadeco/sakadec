@@ -250,16 +250,21 @@ export default function ProductCustomization({
          if (engravingType === 'text') {
            return (
              <div className="space-y-2">
-               <Label>Inscription souhaitée</Label>
+               <Label>
+                 Inscription souhaitée
+                 {option.required && <span className="text-red-500 ml-1">*</span>}
+                 {!option.required && <span className="text-gray-500 ml-1">(optionnel)</span>}
+               </Label>
                <Textarea
                  value={customText}
                  onChange={(e) => {
                    setCustomText(e.target.value);
                    handleTextImageUploadChange(key, 'text', e.target.value);
                  }}
-                 placeholder="Entrez l'inscription souhaitée"
+                 placeholder={option.required ? "Entrez l'inscription souhaitée" : "Entrez l'inscription souhaitée (optionnel)"}
                  maxLength={option.maxLength}
                  rows={3}
+                 required={option.required}
                />
                <div className="flex justify-between text-sm text-gray-500">
                  <span>{customText.length}/{option.maxLength || 50} caractères</span>
@@ -280,7 +285,11 @@ export default function ProductCustomization({
          if (engravingType === 'image') {
            return (
              <div className="space-y-2">
-               <Label>Image pour l'inscription</Label>
+               <Label>
+                 Image pour l'inscription
+                 {option.required && <span className="text-red-500 ml-1">*</span>}
+                 {!option.required && <span className="text-gray-500 ml-1">(optionnel)</span>}
+               </Label>
                <ImageUpload
                  onImageUpload={(imageUrl) => {
                    if (typeof handleImageUpload === 'function') {
@@ -291,7 +300,7 @@ export default function ProductCustomization({
                  }}
                  maxFileSize={option.maxFileSize}
                  allowedFileTypes={option.allowedFileTypes}
-                 placeholder="Téléchargez l'image pour l'inscription"
+                 placeholder={option.required ? "Téléchargez l'image pour l'inscription" : "Téléchargez l'image pour l'inscription (optionnel)"}
                />
                <div className="flex justify-between text-sm text-gray-500">
                  <span>Gratuit</span>
@@ -326,16 +335,21 @@ export default function ProductCustomization({
            return (
              <div className="space-y-4">
                <div>
-                 <Label>Inscription souhaitée + date de l'événement (optionnel)</Label>
+                 <Label>
+                   Inscription souhaitée + date de l'événement
+                   {option.required && <span className="text-red-500 ml-1">*</span>}
+                   {!option.required && <span className="text-gray-500 ml-1">(optionnel)</span>}
+                 </Label>
                  <Textarea
                    value={customText}
                    onChange={(e) => {
                      setCustomText(e.target.value);
                      handleTextImageUploadChange(key, 'text', e.target.value);
                    }}
-                   placeholder="Entrez l'inscription souhaitée + date de l'événement (optionnel)"
+                   placeholder={option.required ? "Entrez l'inscription souhaitée + date de l'événement" : "Entrez l'inscription souhaitée + date de l'événement (optionnel)"}
                    maxLength={option.maxLength}
                    rows={2}
+                   required={option.required}
                  />
                                    <div className="flex justify-between text-sm text-gray-500 mt-1">
                     <span>{customText.length}/{option.maxLength || 50} caractères</span>
@@ -346,7 +360,10 @@ export default function ProductCustomization({
                </div>
 
                <div>
-                 <Label>Image pour l'inscription (optionnel)</Label>
+                 <Label>
+                   Image pour l'inscription
+                   {!option.required && <span className="text-gray-500 ml-1">(optionnel)</span>}
+                 </Label>
                  <ImageUpload
                    onImageUpload={(imageUrl) => {
                      if (typeof handleImageUpload === 'function') {
@@ -357,7 +374,7 @@ export default function ProductCustomization({
                    }}
                    maxFileSize={option.maxFileSize}
                    allowedFileTypes={option.allowedFileTypes}
-                   placeholder="Téléchargez l'image pour l'inscription (optionnel)"
+                   placeholder={option.required ? "Téléchargez l'image pour l'inscription" : "Téléchargez l'image pour l'inscription (optionnel)"}
                  />
                  <div className="flex justify-between text-sm text-gray-500 mt-1">
                    <span>Gratuit</span>
@@ -511,6 +528,7 @@ export default function ProductCustomization({
                   <Label htmlFor={key} className="text-sm font-medium">
                     {displayLabel}
                     {option.required && <span className="text-red-500 ml-1">*</span>}
+                    {!option.required && <span className="text-gray-500 ml-1 text-sm font-normal">(optionnel)</span>}
                   </Label>
                   {renderCustomizationField(key, option)}
                   {option.placeholder && (

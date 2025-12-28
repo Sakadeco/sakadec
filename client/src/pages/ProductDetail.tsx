@@ -90,8 +90,82 @@ export default function ProductDetail() {
     }
   };
 
+  const validateRequiredCustomizations = (): boolean => {
+    if (!product || !product.customizationOptions) return true;
+
+    // Convertir Map en objet si nécessaire
+    const options = product.customizationOptions instanceof Map
+      ? Object.fromEntries(product.customizationOptions)
+      : product.customizationOptions;
+
+    // Vérifier chaque option obligatoire
+    for (const [key, option] of Object.entries(options)) {
+      if (option.required) {
+        const customization = customizations[key];
+        
+        // Si l'option n'existe pas dans customizations, elle n'est pas remplie
+        if (!customization) {
+          alert(`Le champ "${option.label || key}" est obligatoire. Veuillez le remplir avant d'ajouter le produit au panier.`);
+          return false;
+        }
+
+        // Pour les options de type text_image_upload
+        if (option.type === 'text_image_upload') {
+          const engravingType = option.engravingType || 'both';
+          
+          if (engravingType === 'text' || engravingType === 'both') {
+            // Vérifier si le texte est rempli
+            // Pour engravingType === 'text', la structure est { type: 'text', value: '...' }
+            // Pour engravingType === 'both', la structure est { type: 'both', textValue: '...' }
+            let textValue = null;
+            if (customization && typeof customization === 'object') {
+              textValue = customization.textValue || customization.value || (customization.type === 'text' ? customization.value : null);
+            } else if (typeof customization === 'string') {
+              textValue = customization;
+            }
+            
+            if (!textValue || (typeof textValue === 'string' && textValue.trim() === '')) {
+              const fieldName = engravingType === 'both' ? 'Inscription souhaitée + date de l\'événement' : 'Inscription souhaitée';
+              alert(`Le champ "${option.label || fieldName}" est obligatoire. Veuillez remplir le texte avant d'ajouter le produit au panier.`);
+              return false;
+            }
+          }
+          
+          // Pour engravingType === 'image', l'image est obligatoire si required est true
+          // Pour engravingType === 'both', même si required est true, l'image reste optionnelle (seul le texte est obligatoire)
+          if (engravingType === 'image') {
+            // Vérifier si l'image est remplie (obligatoire uniquement si engravingType est 'image')
+            let imageValue = null;
+            if (customization && typeof customization === 'object') {
+              imageValue = customization.imageValue || customization.image || (customization.type === 'image' ? customization.value : null);
+            }
+            
+            if (!imageValue || (typeof imageValue === 'string' && imageValue.trim() === '')) {
+              alert(`Le champ "${option.label || 'Image pour l\'inscription'}" est obligatoire. Veuillez télécharger une image avant d'ajouter le produit au panier.`);
+              return false;
+            }
+          }
+          // Pour 'both', on ne vérifie que le texte (déjà fait ci-dessus), l'image reste optionnelle
+        } else {
+          // Pour les autres types (dropdown, checkbox, text, textarea)
+          if (!customization || (typeof customization === 'string' && customization.trim() === '')) {
+            alert(`Le champ "${option.label || key}" est obligatoire. Veuillez le remplir avant d'ajouter le produit au panier.`);
+            return false;
+          }
+        }
+      }
+    }
+
+    return true;
+  };
+
   const handleAddToCart = async () => {
     if (!product) return;
+
+    // Vérifier les champs obligatoires de personnalisation
+    if (!validateRequiredCustomizations()) {
+      return;
+    }
 
     // Vérifier le stock
     if (product.stockQuantity <= 0) {

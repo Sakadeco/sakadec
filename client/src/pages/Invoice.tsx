@@ -13,6 +13,10 @@ interface InvoiceItem {
   };
   quantity: number;
   price: number;
+  customizations?: Record<string, any>;
+  customMessage?: string;
+  dailyPrice?: number;
+  isRental?: boolean;
 }
 
 interface Invoice {
@@ -61,22 +65,32 @@ const Invoice: React.FC = () => {
   useEffect(() => {
     const fetchInvoice = async () => {
       try {
+        if (!orderId) {
+          setError('ID de commande manquant');
+          setLoading(false);
+          return;
+        }
+
         const response = await fetch(`/api/payment/orders/detail/${orderId}`);
         if (!response.ok) {
           throw new Error('Facture non trouvée');
         }
         const data = await response.json();
+        
+        if (!data || !data.order) {
+          throw new Error('Données de facture invalides');
+        }
+        
         setInvoice(data.order);
       } catch (err) {
+        console.error('Erreur lors du chargement de la facture:', err);
         setError(err instanceof Error ? err.message : 'Erreur lors du chargement');
       } finally {
         setLoading(false);
       }
     };
 
-    if (orderId) {
-      fetchInvoice();
-    }
+    fetchInvoice();
   }, [orderId]);
 
   const handlePrint = () => {
@@ -119,30 +133,34 @@ const Invoice: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Chargement de la facture...</p>
+      <Layout>
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
+            <p className="mt-4 text-gray-600">Chargement de la facture...</p>
+          </div>
         </div>
-      </div>
+      </Layout>
     );
   }
 
   if (error || !invoice) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-red-500 text-6xl mb-4">⚠️</div>
-          <h1 className="text-2xl font-bold text-gray-800 mb-2">Facture non trouvée</h1>
-          <p className="text-gray-600 mb-4">{error || 'Cette facture n\'existe pas ou vous n\'y avez pas accès.'}</p>
-          <a
-            href="/"
-            className="inline-block bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors"
-          >
-            Retour à l'accueil
-          </a>
+      <Layout>
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+          <div className="text-center">
+            <div className="text-red-500 text-6xl mb-4">⚠️</div>
+            <h1 className="text-2xl font-bold text-gray-800 mb-2">Facture non trouvée</h1>
+            <p className="text-gray-600 mb-4">{error || 'Cette facture n\'existe pas ou vous n\'y avez pas accès.'}</p>
+            <a
+              href="/"
+              className="inline-block bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors"
+            >
+              Retour à l'accueil
+            </a>
+          </div>
         </div>
-      </div>
+      </Layout>
     );
   }
 
@@ -265,18 +283,45 @@ const Invoice: React.FC = () => {
                             <p className="font-medium text-gray-800">{item.product?.name || 'Produit supprimé'}</p>
                             <p className="text-sm text-gray-600">Ref: {item.product?._id || 'N/A'}</p>
                             {/* Personnalisations */}
-                            {item.customizations && Object.keys(item.customizations).length > 0 && (
-                              <div className="mt-2">
-                                <p className="text-xs font-semibold text-gray-700">Personnalisations:</p>
-                                <ul className="text-xs text-gray-600">
-                                  {Object.entries(item.customizations).map(([key, value]) => (
-                                    <li key={key}>
-                                      <span className="font-medium">{key.replace(/_/g, ' ')}:</span> {value}
-                                    </li>
-                                  ))}
-                                </ul>
-                              </div>
-                            )}
+                            {item.customizations && (() => {
+                              // Convertir Map en objet si nécessaire
+                              const customizationsObj = item.customizations instanceof Map 
+                                ? Object.fromEntries(item.customizations)
+                                : item.customizations;
+                              
+                              const keys = Object.keys(customizationsObj || {});
+                              
+                              if (keys.length === 0) return null;
+                              
+                              return (
+                                <div className="mt-2">
+                                  <p className="text-xs font-semibold text-gray-700">Personnalisations:</p>
+                                  <ul className="text-xs text-gray-600">
+                                    {keys.map((key) => {
+                                      const value = customizationsObj[key];
+                                      // Gérer les valeurs complexes (objets)
+                                      let displayValue = value;
+                                      if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+                                        if (value.textValue) {
+                                          displayValue = value.textValue;
+                                        } else if (value.imageValue) {
+                                          displayValue = 'Image personnalisée';
+                                        } else if (value.value) {
+                                          displayValue = value.value;
+                                        } else {
+                                          displayValue = JSON.stringify(value);
+                                        }
+                                      }
+                                      return (
+                                        <li key={key}>
+                                          <span className="font-medium">{key.replace(/_/g, ' ')}:</span> {String(displayValue)}
+                                        </li>
+                                      );
+                                    })}
+                                  </ul>
+                                </div>
+                              );
+                            })()}
                             {/* Message personnalisé */}
                             {item.customMessage && (
                               <div className="mt-2">
