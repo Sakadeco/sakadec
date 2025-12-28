@@ -313,8 +313,8 @@ export class InvoiceService {
     // Positions fixes pour l'alignement : descriptions à gauche, prix à droite
     // La page A4 fait 595px de large, avec une marge de 50px de chaque côté = 495px de contenu utilisable
     const labelX = 380; // Position X pour les descriptions (labels) - décalé à gauche
-    const priceX = 510; // Position X de départ pour les prix - espacement maximal (130px entre label et prix)
-    const priceWidth = 35; // Largeur pour l'alignement à droite des prix (jusqu'à 545px, reste 50px de marge)
+    const priceX = 470; // Position X de départ pour les prix - espacement important (90px entre label et prix)
+    const priceWidth = 75; // Largeur suffisante pour éviter les retours à la ligne même pour les grands montants (jusqu'à 545px max)
     
     // Total HT avant réduction (si code promo)
     if (promoDiscount > 0) {
@@ -369,7 +369,8 @@ export class InvoiceService {
       finalY = 50;
     }
     
-    doc.fontSize(14)
+    // Réduire la taille de la police pour éviter que le total passe sur 2 lignes
+    doc.fontSize(11)
        .font('Helvetica-Bold')
        .fillColor('#2D3748')
        .text('TOTAL TTC:', labelX, finalY);
