@@ -1172,6 +1172,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Public route for active announcement
+  app.get('/api/announcement/active', async (req, res) => {
+    try {
+      if (db.connection.readyState === 1) {
+        const { Announcement } = await import('./models/Announcement');
+        const announcement = await Announcement.findOne({ isActive: true })
+          .sort({ createdAt: -1 });
+        res.json(announcement || null);
+      } else {
+        res.json(null);
+      }
+    } catch (error) {
+      console.error('Erreur récupération actualité:', error);
+      res.status(500).json({ message: 'Erreur serveur' });
+    }
+  });
+
   // Get products by theme
   app.get('/api/themes/:themeId/products', async (req, res) => {
     try {

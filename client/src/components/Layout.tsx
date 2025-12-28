@@ -1,5 +1,6 @@
 import Navigation from "./Navigation";
 import Logo from "./Logo";
+import AnnouncementPopup from "./AnnouncementPopup";
 import { Facebook, Instagram, MessageSquare } from "lucide-react";
 
 interface LayoutProps {
@@ -10,6 +11,7 @@ export default function Layout({ children }: LayoutProps) {
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
+      <AnnouncementPopup />
       <main className="pt-24">
         {children}
       </main>

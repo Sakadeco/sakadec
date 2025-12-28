@@ -7,6 +7,7 @@ import Order from '../models/Order';
 import { Realisation } from '../models/Realisation';
 import { PromoCode } from '../models/PromoCode';
 import { Theme } from '../models/Theme';
+import { Announcement } from '../models/Announcement';
 import { adminAuth, AdminRequest, requireSuperAdmin } from '../middleware/adminAuth';
 import upload from '../middleware/upload';
 import uploadThemes from '../middleware/uploadThemes';
@@ -1514,6 +1515,98 @@ router.delete('/themes/:id', adminAuth, async (req: AdminRequest, res: Response)
     res.json({ message: 'Thème supprimé avec succès' });
   } catch (error) {
     console.error('Erreur suppression thème:', error);
+    res.status(500).json({ message: 'Erreur serveur' });
+  }
+});
+
+// ========== ROUTES POUR LES ACTUALITÉS ==========
+
+// GET all announcements
+router.get('/announcements', adminAuth, async (req: AdminRequest, res: Response) => {
+  try {
+    const announcements = await Announcement.find().sort({ createdAt: -1 });
+    res.json(announcements);
+  } catch (error) {
+    console.error('Erreur récupération actualités:', error);
+    res.status(500).json({ message: 'Erreur serveur' });
+  }
+});
+
+// GET announcement by ID
+router.get('/announcements/:id', adminAuth, async (req: AdminRequest, res: Response) => {
+  try {
+    const announcement = await Announcement.findById(req.params.id);
+    if (!announcement) {
+      return res.status(404).json({ message: 'Actualité non trouvée' });
+    }
+    res.json(announcement);
+  } catch (error) {
+    console.error('Erreur récupération actualité:', error);
+    res.status(500).json({ message: 'Erreur serveur' });
+  }
+});
+
+// POST create announcement
+router.post('/announcements', adminAuth, async (req: AdminRequest, res: Response) => {
+  try {
+    const { title, content, isActive } = req.body;
+
+    if (!title || !content) {
+      return res.status(400).json({ message: 'Titre et contenu requis' });
+    }
+
+    const announcement = new Announcement({
+      title: title.trim(),
+      content: content.trim(),
+      isActive: isActive === 'true' || isActive === true
+    });
+
+    await announcement.save();
+    res.status(201).json(announcement);
+  } catch (error) {
+    console.error('Erreur création actualité:', error);
+    res.status(500).json({ message: 'Erreur création actualité', error: error.message });
+  }
+});
+
+// PUT update announcement
+router.put('/announcements/:id', adminAuth, async (req: AdminRequest, res: Response) => {
+  try {
+    const { title, content, isActive } = req.body;
+
+    const updateData: any = {
+      title: title.trim(),
+      content: content.trim(),
+      isActive: isActive === 'true' || isActive === true
+    };
+
+    const announcement = await Announcement.findByIdAndUpdate(
+      req.params.id,
+      updateData,
+      { new: true }
+    );
+
+    if (!announcement) {
+      return res.status(404).json({ message: 'Actualité non trouvée' });
+    }
+
+    res.json(announcement);
+  } catch (error) {
+    console.error('Erreur mise à jour actualité:', error);
+    res.status(500).json({ message: 'Erreur mise à jour actualité', error: error.message });
+  }
+});
+
+// DELETE announcement
+router.delete('/announcements/:id', adminAuth, async (req: AdminRequest, res: Response) => {
+  try {
+    const announcement = await Announcement.findByIdAndDelete(req.params.id);
+    if (!announcement) {
+      return res.status(404).json({ message: 'Actualité non trouvée' });
+    }
+    res.json({ message: 'Actualité supprimée avec succès' });
+  } catch (error) {
+    console.error('Erreur suppression actualité:', error);
     res.status(500).json({ message: 'Erreur serveur' });
   }
 });

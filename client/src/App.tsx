@@ -36,6 +36,7 @@ import AdminEditPromoCode from "@/pages/AdminEditPromoCode";
 import AdminThemes from "@/pages/AdminThemes";
 import AdminAddTheme from "@/pages/AdminAddTheme";
 import AdminEditTheme from "@/pages/AdminEditTheme";
+import AdminAnnouncements from "@/pages/AdminAnnouncements";
 import ProductDetail from "@/pages/ProductDetail";
 import Orders from "@/pages/Orders";
 import PaymentSuccess from "@/pages/PaymentSuccess";
@@ -112,6 +113,7 @@ function Router() {
             <Route path="/admin/themes" component={AdminThemes} />
             <Route path="/admin/themes/add" component={AdminAddTheme} />
             <Route path="/admin/themes/:id/edit" component={AdminEditTheme} />
+            <Route path="/admin/announcements" component={AdminAnnouncements} />
       <Route component={NotFound} />
     </Switch>
   );
