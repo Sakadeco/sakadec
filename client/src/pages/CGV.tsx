@@ -4,46 +4,46 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 export default function CGV() {
   return (
     <Layout>
-      <div className="container mx-auto px-4 py-12 max-w-4xl">
-        <h1 className="text-4xl font-playfair font-bold text-gray-800 mb-8">
+      <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-10 md:py-12 max-w-4xl">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-playfair font-bold text-gray-800 mb-6 sm:mb-8">
           Conditions Générales de Vente
         </h1>
-        <p className="text-gray-600 mb-8">
+        <p className="text-sm sm:text-base text-gray-600 mb-6 sm:mb-8">
           SKD GROUP_ SKD Shop/ SKD Créa
         </p>
 
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle>Préambule</CardTitle>
+        <Card className="mb-4 sm:mb-6">
+          <CardHeader className="p-4 sm:p-6">
+            <CardTitle className="text-lg sm:text-xl">Préambule</CardTitle>
           </CardHeader>
-          <CardContent>
-            <p className="text-gray-700 mb-4">
+          <CardContent className="p-4 sm:p-6">
+            <p className="text-sm sm:text-base text-gray-700 mb-4">
               Les présentes Conditions Générales de Vente (ci-après « CGV ») régissent l'ensemble des ventes réalisées via notre boutique, spécialisé dans la vente d'articles décoratifs et de produits personnalisés.
             </p>
-            <p className="text-gray-700 mb-2">
+            <p className="text-sm sm:text-base text-gray-700 mb-2">
               <strong>Vendeur :</strong> Youlou Pajusly – Entreprise Individuelle, exerçant sous le nom commercial « SKD SHOP » et « SKD CREA ».
             </p>
-            <p className="text-gray-700 mb-2">
+            <p className="text-sm sm:text-base text-gray-700 mb-2">
               <strong>Statut :</strong> Entreprise individuelle
             </p>
-            <p className="text-gray-700 mb-2">
+            <p className="text-sm sm:text-base text-gray-700 mb-2">
               <strong>SIRET :</strong> 89956934700011
             </p>
-            <p className="text-gray-700 mb-2">
+            <p className="text-sm sm:text-base text-gray-700 mb-2">
               <strong>Contact :</strong> sakadeco.contact@gmail.com
             </p>
-            <p className="text-gray-700">
+            <p className="text-sm sm:text-base text-gray-700">
               Les CGV s'appliquent à toute commande passée par une personne physique ou morale (ci-après « le Client ») sur le site internet de : Youlou Pajusly – Entreprise Individuelle, exerçant sous le nom commercial « SKD SHOP » et « SKD CREA ».
             </p>
           </CardContent>
         </Card>
 
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle>Article 1 – Objet</CardTitle>
+        <Card className="mb-4 sm:mb-6">
+          <CardHeader className="p-4 sm:p-6">
+            <CardTitle className="text-lg sm:text-xl">Article 1 – Objet</CardTitle>
           </CardHeader>
-          <CardContent>
-            <p className="text-gray-700">
+          <CardContent className="p-4 sm:p-6">
+            <p className="text-sm sm:text-base text-gray-700">
               Les présentes CGV définissent les droits et obligations des parties dans le cadre de la vente en ligne de produits proposés par : Youlou Pajusly – Entreprise Individuelle, exerçant sous le nom commercial « SKD SHOP » et « SKD CREA ».
             </p>
           </CardContent>

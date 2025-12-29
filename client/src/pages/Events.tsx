@@ -8,48 +8,48 @@ export default function Events() {
   return (
     <Layout>
       {/* Header */}
-      <section className="py-20 bg-gradient-to-br from-skd-events/10 to-white">
-        <div className="max-w-6xl mx-auto px-4">
-          <div className="text-center mb-16">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-skd-events rounded-full mb-6">
-              <Star className="text-white text-2xl" />
+      <section className="py-12 sm:py-16 md:py-20 bg-gradient-to-br from-skd-events/10 to-white">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <div className="text-center mb-8 sm:mb-12 md:mb-16">
+            <div className="inline-flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 bg-skd-events rounded-full mb-4 sm:mb-6">
+              <Star className="text-white text-xl sm:text-2xl" />
             </div>
-            <h1 className="text-4xl font-playfair font-bold text-gray-800 mb-4">SKD Events</h1>
-            <p className="text-xl text-gray-600 mb-2">Décoration d'événements</p>
-            <p className="text-lg font-playfair text-skd-events italic">« L'art de décorer vos plus beaux jours »</p>
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-playfair font-bold text-gray-800 mb-3 sm:mb-4">SKD Events</h1>
+            <p className="text-base sm:text-lg md:text-xl text-gray-600 mb-2">Décoration d'événements</p>
+            <p className="text-sm sm:text-base md:text-lg font-playfair text-skd-events italic">« L'art de décorer vos plus beaux jours »</p>
           </div>
         </div>
       </section>
 
       {/* Services */}
-      <section className="py-20">
-        <div className="max-w-6xl mx-auto px-4">
+      <section className="py-12 sm:py-16 md:py-20">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
           {/* Nos Créations */}
-          <div className="mb-16">
-            <h2 className="text-3xl font-playfair font-bold text-gray-800 mb-6">Nos Créations</h2>
-            <p className="text-lg text-gray-700 mb-4 leading-relaxed">
+          <div className="mb-8 sm:mb-12 md:mb-16">
+            <h2 className="text-2xl sm:text-3xl font-playfair font-bold text-gray-800 mb-4 sm:mb-6">Nos Créations</h2>
+            <p className="text-sm sm:text-base md:text-lg text-gray-700 mb-3 sm:mb-4 leading-relaxed">
               Nous créons des univers visuels sur mesure, pensés à votre image, pour sublimer chaque moment important.
             </p>
-            <p className="text-lg text-gray-700 mb-4 leading-relaxed">
+            <p className="text-sm sm:text-base md:text-lg text-gray-700 mb-3 sm:mb-4 leading-relaxed">
               De la conception à l'installation, nous imaginons des décors élégants, harmonieux et mémorables.
             </p>
-            <p className="text-lg font-semibold text-skd-events mb-4">
+            <p className="text-base sm:text-lg font-semibold text-skd-events mb-3 sm:mb-4">
               À partir de 600 € – Sur devis
             </p>
-            <div className="bg-yellow-50 border-l-4 border-skd-events p-4 mb-8 rounded">
-              <p className="text-gray-700 text-sm">
+            <div className="bg-yellow-50 border-l-4 border-skd-events p-3 sm:p-4 mb-6 sm:mb-8 rounded">
+              <p className="text-xs sm:text-sm text-gray-700">
                 <strong>Délai minimum de réservation :</strong> Afin de garantir une prestation soignée, harmonieuse et parfaitement orchestrée, un délai minimum de réservation est requis selon votre événement (ex : Mariage — 6 mois · Autres événements — 3 mois).
               </p>
-              <p className="text-gray-700 text-sm mt-2">
+              <p className="text-xs sm:text-sm text-gray-700 mt-2">
                 Si votre date est plus proche, nous pouvons mettre en place un traitement prioritaire. Cependant, en raison de l'organisation accélérée et des ressources mobilisées en urgence, des frais supplémentaires pourront s'appliquer.
               </p>
             </div>
           </div>
 
           {/* Nos Prestations */}
-          <div className="mb-16">
-            <h3 className="text-2xl font-playfair font-semibold text-gray-800 mb-6">Nos prestations incluent :</h3>
-            <div className="grid md:grid-cols-2 gap-4">
+          <div className="mb-8 sm:mb-12 md:mb-16">
+            <h3 className="text-xl sm:text-2xl font-playfair font-semibold text-gray-800 mb-4 sm:mb-6">Nos prestations incluent :</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
               <div className="flex items-start space-x-3">
                 <div className="flex-shrink-0 w-6 h-6 bg-skd-events rounded-full flex items-center justify-center mt-1">
                   <div className="w-2 h-2 bg-white rounded-full"></div>
@@ -84,16 +84,16 @@ export default function Events() {
           </div>
 
           {/* Nos Événements */}
-          <div className="mb-16">
-            <h3 className="text-2xl font-playfair font-semibold text-gray-800 mb-6">Nos événements</h3>
-            <div className="space-y-6">
-              <div className="flex items-start space-x-4">
-                <div className="flex-shrink-0 w-12 h-12 bg-skd-events rounded-full flex items-center justify-center">
-                  <Heart className="text-white" />
+          <div className="mb-8 sm:mb-12 md:mb-16">
+            <h3 className="text-xl sm:text-2xl font-playfair font-semibold text-gray-800 mb-4 sm:mb-6">Nos événements</h3>
+            <div className="space-y-4 sm:space-y-6">
+              <div className="flex items-start space-x-3 sm:space-x-4">
+                <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-skd-events rounded-full flex items-center justify-center">
+                  <Heart className="text-white w-5 h-5 sm:w-6 sm:h-6" />
                 </div>
                 <div>
-                  <h4 className="font-semibold text-gray-800 mb-2">Mariages</h4>
-                  <p className="text-gray-600">Cérémonies et réceptions sur mesure, avec arches florales, centres de table et scénographies uniques.</p>
+                  <h4 className="text-sm sm:text-base font-semibold text-gray-800 mb-1 sm:mb-2">Mariages</h4>
+                  <p className="text-xs sm:text-sm text-gray-600">Cérémonies et réceptions sur mesure, avec arches florales, centres de table et scénographies uniques.</p>
                 </div>
               </div>
               <div className="flex items-start space-x-4">

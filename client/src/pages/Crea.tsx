@@ -8,22 +8,22 @@ export default function Crea() {
   return (
     <Layout>
       {/* Header */}
-      <section className="py-20 bg-gradient-to-br from-skd-crea/10 to-white">
-        <div className="max-w-6xl mx-auto px-4">
-          <div className="text-center mb-16">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-skd-crea rounded-full mb-6">
-              <Palette className="text-white text-2xl" />
+      <section className="py-12 sm:py-16 md:py-20 bg-gradient-to-br from-skd-crea/10 to-white">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <div className="text-center mb-8 sm:mb-12 md:mb-16">
+            <div className="inline-flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 bg-skd-crea rounded-full mb-4 sm:mb-6">
+              <Palette className="text-white text-xl sm:text-2xl" />
             </div>
-            <h1 className="text-4xl font-playfair font-bold text-gray-800 mb-4">SKD Créa</h1>
-            <p className="text-xl text-gray-600 mb-2">Personnalisation & papeterie</p>
-            <p className="text-lg font-playfair text-skd-crea italic">« Du sur-mesure pour vos plus belles attentions »</p>
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-playfair font-bold text-gray-800 mb-3 sm:mb-4">SKD Créa</h1>
+            <p className="text-base sm:text-lg md:text-xl text-gray-600 mb-2">Personnalisation & papeterie</p>
+            <p className="text-sm sm:text-base md:text-lg font-playfair text-skd-crea italic">« Du sur-mesure pour vos plus belles attentions »</p>
           </div>
           
-          <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-2xl font-playfair font-semibold text-gray-800 mb-6">
+          <div className="max-w-4xl mx-auto text-center px-2">
+            <h2 className="text-xl sm:text-2xl font-playfair font-semibold text-gray-800 mb-4 sm:mb-6">
               SKD CREA – Création & personnalisation sur mesure
             </h2>
-            <div className="space-y-4 text-gray-700 text-left">
+            <div className="space-y-3 sm:space-y-4 text-sm sm:text-base text-gray-700 text-left">
               <p>
                 Tous nos produits sont entièrement personnalisables, quel que soit le thème.
               </p>
@@ -39,10 +39,10 @@ export default function Crea() {
       </section>
 
       {/* Comment passer commande */}
-      <section className="py-20 bg-gray-50">
-        <div className="max-w-6xl mx-auto px-4">
-          <h3 className="text-2xl font-playfair font-semibold text-gray-800 mb-8 text-center">Comment passer commande ?</h3>
-          <div className="grid md:grid-cols-2 gap-8 mb-8">
+      <section className="py-12 sm:py-16 md:py-20 bg-gray-50">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <h3 className="text-xl sm:text-2xl font-playfair font-semibold text-gray-800 mb-6 sm:mb-8 text-center">Comment passer commande ?</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 mb-6 sm:mb-8">
             <Card className="border-l-4 border-skd-crea">
               <CardHeader>
                 <CardTitle className="font-playfair text-gray-800">Processus de commande</CardTitle>
@@ -92,7 +92,7 @@ export default function Crea() {
             </Card>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
             <Card className="border-l-4 border-skd-crea">
               <CardHeader>
                 <CardTitle className="font-playfair text-gray-800">Notre engagement</CardTitle>
@@ -145,10 +145,10 @@ export default function Crea() {
       </section>
 
       {/* Services */}
-      <section className="py-20">
-        <div className="max-w-6xl mx-auto px-4">
-          <h3 className="text-2xl font-playfair font-semibold text-gray-800 mb-8 text-center">Nos Créations Personnalisées</h3>
-          <div className="grid md:grid-cols-3 gap-6">
+      <section className="py-12 sm:py-16 md:py-20">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <h3 className="text-xl sm:text-2xl font-playfair font-semibold text-gray-800 mb-6 sm:mb-8 text-center">Nos Créations Personnalisées</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
             <Card className="border-l-4 border-skd-crea">
               <CardHeader>
                 <CardTitle className="font-playfair text-gray-800">Cadeaux Personnalisés</CardTitle>
@@ -189,11 +189,11 @@ export default function Crea() {
       </section>
 
       {/* Bouton Boutique */}
-      <section className="py-12 bg-gray-50">
-        <div className="max-w-6xl mx-auto px-4 text-center">
-          <Button asChild size="lg" className="bg-skd-crea hover:bg-skd-crea/90 text-white">
+      <section className="py-8 sm:py-12 bg-gray-50">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 text-center">
+          <Button asChild size="lg" className="bg-skd-crea hover:bg-skd-crea/90 text-white text-sm sm:text-base px-6 sm:px-10">
             <Link to="/shop">
-              <ShoppingBag className="mr-2 h-5 w-5" />
+              <ShoppingBag className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
               Voir la boutique
             </Link>
           </Button>

@@ -79,19 +79,19 @@ export default function Realisations() {
   return (
     <Layout>
       {/* Header */}
-      <section className="relative bg-gradient-to-br from-gold via-yellow-500 to-orange-500 py-20">
+      <section className="relative bg-gradient-to-br from-gold via-yellow-500 to-orange-500 py-12 sm:py-16 md:py-20">
         <div className="absolute inset-0 bg-black/20"></div>
-        <div className="relative z-10 max-w-6xl mx-auto px-4 text-center">
-          <div className="flex justify-center mb-6">
-            <Logo width={200} height={133} className="drop-shadow-lg" />
+        <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 text-center">
+          <div className="flex justify-center mb-4 sm:mb-6">
+            <Logo width={200} height={133} className="drop-shadow-lg w-32 sm:w-40 md:w-48 h-auto" />
           </div>
-          <h1 className="text-5xl md:text-6xl font-playfair font-bold text-white mb-6">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-playfair font-bold text-white mb-4 sm:mb-6">
             Nos Réalisations
           </h1>
-          <p className="text-xl text-white/90 mb-8 max-w-3xl mx-auto">
+          <p className="text-base sm:text-lg md:text-xl text-white/90 mb-6 sm:mb-8 max-w-3xl mx-auto px-2">
             Découvrez nos créations les plus marquantes et laissez-vous inspirer par notre expertise en décoration d'événements
           </p>
-          <div className="flex flex-wrap justify-center gap-4">
+          <div className="flex flex-wrap justify-center gap-2 sm:gap-4">
             {categories.map((category) => (
               <Badge 
                 key={category} 

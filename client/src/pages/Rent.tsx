@@ -123,7 +123,7 @@ const Rent: React.FC = () => {
       </div>
 
       {/* Grille des produits */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
         {getFilteredProducts().map((product) => (
           <Card key={product._id} className="hover:shadow-lg transition-shadow">
             <CardHeader className="p-0">

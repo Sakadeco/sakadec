@@ -89,29 +89,29 @@ export default function Contact() {
   return (
     <Layout>
       {/* Header */}
-      <section className="py-20 bg-gradient-to-br from-gold/10 to-white">
-        <div className="max-w-6xl mx-auto px-4">
-          <div className="text-center mb-16">
-            <div className="flex justify-center mb-6">
-              <Logo width={180} height={120} className="drop-shadow-lg" />
+      <section className="py-12 sm:py-16 md:py-20 bg-gradient-to-br from-gold/10 to-white">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <div className="text-center mb-8 sm:mb-12 md:mb-16">
+            <div className="flex justify-center mb-4 sm:mb-6">
+              <Logo width={180} height={120} className="drop-shadow-lg w-32 sm:w-40 md:w-48 h-auto" />
             </div>
-            <h1 className="text-4xl font-playfair font-bold text-gray-800 mb-4">Contactez-nous</h1>
-            <p className="text-xl text-gray-600 mb-2">Prêts à donner vie à vos projets ?</p>
-            <p className="text-lg font-playfair text-gold italic">« Transformons vos idées en réalité »</p>
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-playfair font-bold text-gray-800 mb-3 sm:mb-4">Contactez-nous</h1>
+            <p className="text-base sm:text-lg md:text-xl text-gray-600 mb-2">Prêts à donner vie à vos projets ?</p>
+            <p className="text-sm sm:text-base md:text-lg font-playfair text-gold italic">« Transformons vos idées en réalité »</p>
           </div>
         </div>
       </section>
 
       {/* Contact Information & Form */}
-      <section className="py-20">
-        <div className="max-w-6xl mx-auto px-4">
-          <div className="grid lg:grid-cols-2 gap-12">
+      <section className="py-12 sm:py-16 md:py-20">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-10 md:gap-12">
             
             {/* Contact Information */}
-            <div className="space-y-8">
+            <div className="space-y-6 sm:space-y-8">
               <div>
-                <h2 className="text-2xl md:text-3xl font-playfair font-bold text-gray-800 mb-6">Informations de contact</h2>
-                <div className="space-y-6">
+                <h2 className="text-xl sm:text-2xl md:text-3xl font-playfair font-bold text-gray-800 mb-4 sm:mb-6">Informations de contact</h2>
+                <div className="space-y-4 sm:space-y-6">
                   
                   <div className="flex items-start gap-4">
                     <div className="flex-shrink-0 w-12 h-12 bg-gold/20 rounded-full flex items-center justify-center">
@@ -160,8 +160,8 @@ export default function Contact() {
 
               {/* Social Media */}
               <div>
-                <h3 className="text-xl font-playfair font-semibold text-gray-800 mb-4">Suivez-nous</h3>
-                <div className="flex space-x-4">
+                <h3 className="text-lg sm:text-xl font-playfair font-semibold text-gray-800 mb-3 sm:mb-4">Suivez-nous</h3>
+                <div className="flex space-x-3 sm:space-x-4">
                   <Button 
                     variant="outline" 
                     size="icon" 
@@ -198,13 +198,13 @@ export default function Contact() {
 
             {/* Contact Form */}
             <Card className="border-2 border-gold/20">
-              <CardHeader>
-                <CardTitle className="text-2xl font-playfair">Demande de devis gratuit</CardTitle>
-                <p className="text-gray-600">Décrivez-nous votre projet et recevez une estimation personnalisée</p>
+              <CardHeader className="p-4 sm:p-6">
+                <CardTitle className="text-xl sm:text-2xl font-playfair">Demande de devis gratuit</CardTitle>
+                <p className="text-sm sm:text-base text-gray-600">Décrivez-nous votre projet et recevez une estimation personnalisée</p>
               </CardHeader>
-              <CardContent>
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="grid grid-cols-2 gap-4">
+              <CardContent className="p-4 sm:p-6">
+                <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="firstName">Prénom *</Label>
                       <Input 
@@ -212,6 +212,7 @@ export default function Contact() {
                         required 
                         value={formData.firstName}
                         onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                        className="text-sm sm:text-base"
                       />
                     </div>
                     <div className="space-y-2">
@@ -221,6 +222,7 @@ export default function Contact() {
                         required 
                         value={formData.lastName}
                         onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                        className="text-sm sm:text-base"
                       />
                     </div>
                   </div>

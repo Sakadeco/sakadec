@@ -75,27 +75,27 @@ const Shop: React.FC = () => {
 
   return (
     <Layout>
-      <div className="container mx-auto px-4 py-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Boutique</h1>
-        <p className="text-gray-600">Découvrez nos produits disponibles à la vente</p>
+      <div className="container mx-auto px-4 sm:px-6 py-6 sm:py-8">
+      <div className="mb-6 sm:mb-8">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Boutique</h1>
+        <p className="text-sm sm:text-base text-gray-600">Découvrez nos produits disponibles à la vente</p>
       </div>
 
       {/* Filtres */}
-      <div className="flex flex-col sm:flex-row gap-4 mb-6">
+      <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-4 sm:mb-6">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
           <Input
             placeholder="Rechercher un produit..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10"
+            className="pl-10 text-sm sm:text-base"
           />
         </div>
       </div>
 
       {/* Grille des produits */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
         {getFilteredProducts().map((product) => (
           <Card key={product._id} className="hover:shadow-lg transition-shadow">
             <CardHeader className="p-0">
@@ -112,24 +112,24 @@ const Shop: React.FC = () => {
                 )}
               </div>
             </CardHeader>
-            <CardContent className="p-4">
-              <CardTitle className="text-lg mb-2">{product.name}</CardTitle>
-              <p className="text-gray-600 text-sm mb-3 line-clamp-2 whitespace-pre-line">
+            <CardContent className="p-3 sm:p-4">
+              <CardTitle className="text-base sm:text-lg mb-2 line-clamp-2">{product.name}</CardTitle>
+              <p className="text-gray-600 text-xs sm:text-sm mb-3 line-clamp-2 whitespace-pre-line">
                 {product.description}
               </p>
-              <div className="flex justify-between items-center mb-3">
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 sm:gap-0 mb-3">
                 <div>
-                  <span className="text-xl font-bold text-green-600">
+                  <span className="text-lg sm:text-xl font-bold text-green-600">
                     {(product.price * 1.20).toFixed(2)}€ TTC
                   </span>
                   <p className="text-xs text-gray-500">{product.price.toFixed(2)}€ HT</p>
                 </div>
-                <Badge variant={product.stockQuantity > 0 ? "default" : "destructive"}>
+                <Badge variant={product.stockQuantity > 0 ? "default" : "destructive"} className="w-fit">
                   {product.stockQuantity > 0 ? 'En stock' : 'Rupture'}
                 </Badge>
               </div>
               <Link to={`/product/${product._id.toString()}`}>
-                <Button className="w-full" disabled={product.stockQuantity === 0}>
+                <Button className="w-full text-sm sm:text-base" disabled={product.stockQuantity === 0}>
                   Voir le produit
                 </Button>
               </Link>

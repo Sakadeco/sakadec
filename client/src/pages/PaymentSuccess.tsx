@@ -55,26 +55,26 @@ const PaymentSuccess: React.FC = () => {
   return (
     <Layout>
       {/* Header */}
-      <section className="py-8 bg-gradient-to-br from-green-50 to-white">
-        <div className="max-w-4xl mx-auto px-4 text-center">
-          <div className="flex justify-center mb-6">
-            <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center">
-              <CheckCircle className="w-12 h-12 text-green-600" />
+      <section className="py-6 sm:py-8 bg-gradient-to-br from-green-50 to-white">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
+          <div className="flex justify-center mb-4 sm:mb-6">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 bg-green-100 rounded-full flex items-center justify-center">
+              <CheckCircle className="w-10 h-10 sm:w-12 sm:h-12 text-green-600" />
             </div>
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-4">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3 sm:mb-4">
             Paiement réussi !
           </h1>
-          <p className="text-lg text-gray-600">
+          <p className="text-base sm:text-lg text-gray-600">
             Votre commande a été confirmée et sera traitée dans les plus brefs délais.
           </p>
         </div>
       </section>
 
       {/* Content */}
-      <section className="py-12">
-        <div className="max-w-4xl mx-auto px-4">
-          <div className="grid md:grid-cols-2 gap-8">
+      <section className="py-8 sm:py-10 md:py-12">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
             {/* Détails de la commande */}
             <Card>
               <CardHeader>

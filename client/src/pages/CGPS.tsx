@@ -4,20 +4,20 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 export default function CGPS() {
   return (
     <Layout>
-      <div className="container mx-auto px-4 py-12 max-w-4xl">
-        <h1 className="text-4xl font-playfair font-bold text-gray-800 mb-8">
+      <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-10 md:py-12 max-w-4xl">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-playfair font-bold text-gray-800 mb-6 sm:mb-8">
           Conditions Générales de Prestations de Services
         </h1>
-        <p className="text-gray-600 mb-8">
+        <p className="text-sm sm:text-base text-gray-600 mb-6 sm:mb-8">
           SKD GROUP – SKD Events/ SKD home/ SKD & Co
         </p>
 
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle>Préambule</CardTitle>
+        <Card className="mb-4 sm:mb-6">
+          <CardHeader className="p-4 sm:p-6">
+            <CardTitle className="text-lg sm:text-xl">Préambule</CardTitle>
           </CardHeader>
-          <CardContent>
-            <p className="text-gray-700 mb-2">
+          <CardContent className="p-4 sm:p-6">
+            <p className="text-sm sm:text-base text-gray-700 mb-2">
               Les présentes Conditions Générales de Prestations de Services (ci-après « CGPS ») régissent l'ensemble des prestations proposées par SKD GROUP, exploité sous le statut d'Entreprise Individuelle (EI) par Youlou Pajusly, dans le domaine de la décoration, de l'organisation et de la coordination événementielle.
             </p>
             <p className="text-gray-700">

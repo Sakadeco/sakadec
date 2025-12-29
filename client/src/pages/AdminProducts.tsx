@@ -173,27 +173,27 @@ export default function AdminProducts() {
       {/* Header */}
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-4">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0 py-3 sm:py-0 sm:h-16">
+            <div className="flex items-center space-x-3 sm:space-x-4">
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setLocation("/admin/dashboard")}
-                className="flex items-center space-x-2"
+                className="flex items-center space-x-2 text-xs sm:text-sm"
               >
                 <ArrowLeft className="h-4 w-4" />
                 <span>Retour</span>
               </Button>
-              <div className="w-8 h-8 bg-gradient-to-r from-gold to-yellow-500 rounded-lg flex items-center justify-center">
-                <Package className="h-5 w-5 text-white" />
+              <div className="w-7 h-7 sm:w-8 sm:h-8 bg-gradient-to-r from-gold to-yellow-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                <Package className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
               </div>
-              <h1 className="text-xl font-bold text-gray-900">
+              <h1 className="text-lg sm:text-xl font-bold text-gray-900">
                 Gestion des Produits
               </h1>
             </div>
             <Button
               onClick={() => setLocation("/admin/products/add")}
-              className="bg-gradient-to-r from-gold to-yellow-500 hover:from-yellow-500 hover:to-gold text-white"
+              className="bg-gradient-to-r from-gold to-yellow-500 hover:from-yellow-500 hover:to-gold text-white text-xs sm:text-sm w-full sm:w-auto"
             >
               <Plus className="h-4 w-4 mr-2" />
               Ajouter un produit
@@ -203,17 +203,17 @@ export default function AdminProducts() {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         {/* Filters */}
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <Filter className="h-5 w-5" />
+        <Card className="mb-4 sm:mb-6">
+          <CardHeader className="p-4 sm:p-6">
+            <CardTitle className="flex items-center space-x-2 text-base sm:text-lg">
+              <Filter className="h-4 w-4 sm:h-5 sm:w-5" />
               <span>Filtres et Recherche</span>
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <CardContent className="p-4 sm:p-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
               <div className="relative">
                 <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                 <Input
@@ -247,7 +247,7 @@ export default function AdminProducts() {
         </Card>
 
         {/* Products Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {products.map((product) => (
             <Card key={product._id} className="hover:shadow-lg transition-shadow">
               <div className="aspect-video bg-gray-200 rounded-t-lg overflow-hidden">

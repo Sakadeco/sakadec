@@ -103,26 +103,26 @@ export default function AdminDashboard() {
       {/* Header */}
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-4">
-              <div className="w-8 h-8 bg-gradient-to-r from-gold to-yellow-500 rounded-lg flex items-center justify-center">
-                <Settings className="h-5 w-5 text-white" />
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0 py-3 sm:py-0 sm:h-16">
+            <div className="flex items-center space-x-3 sm:space-x-4">
+              <div className="w-7 h-7 sm:w-8 sm:h-8 bg-gradient-to-r from-gold to-yellow-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                <Settings className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
               </div>
-              <h1 className="text-xl font-bold text-gray-900">
+              <h1 className="text-lg sm:text-xl font-bold text-gray-900">
                 Administration SakaDeco
               </h1>
             </div>
-            <div className="flex items-center space-x-4">
-              <span className="text-sm text-gray-600">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 w-full sm:w-auto">
+              <span className="text-xs sm:text-sm text-gray-600">
                 Connecté en tant que {adminInfo?.name}
               </span>
               <Button
                 variant="outline"
                 size="sm"
                 onClick={handleLogout}
-                className="flex items-center space-x-2"
+                className="flex items-center space-x-2 text-xs sm:text-sm w-full sm:w-auto"
               >
-                <LogOut className="h-4 w-4" />
+                <LogOut className="h-3 w-3 sm:h-4 sm:w-4" />
                 <span>Déconnexion</span>
               </Button>
             </div>
@@ -131,20 +131,20 @@ export default function AdminDashboard() {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         {/* Welcome Section */}
-        <div className="mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">
+        <div className="mb-6 sm:mb-8">
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">
             Bienvenue, {adminInfo?.name} !
           </h2>
-          <p className="text-gray-600">
+          <p className="text-sm sm:text-base text-gray-600">
             Gérez vos produits, commandes et paramètres depuis ce tableau de bord.
           </p>
         </div>
 
         {/* Stats Cards */}
         {stats && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Total Produits</CardTitle>
@@ -200,7 +200,7 @@ export default function AdminDashboard() {
         )}
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setLocation("/admin/products")}>
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">

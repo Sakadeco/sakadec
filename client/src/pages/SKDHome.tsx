@@ -77,25 +77,25 @@ export default function SKDHome() {
   return (
     <Layout>
       {/* Header */}
-      <section className="py-20 bg-gradient-to-br from-skd-home/10 to-white">
-        <div className="max-w-6xl mx-auto px-4">
-          <div className="text-center mb-16">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-skd-home rounded-full mb-6">
-              <Home className="text-white text-2xl" />
+      <section className="py-12 sm:py-16 md:py-20 bg-gradient-to-br from-skd-home/10 to-white">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <div className="text-center mb-8 sm:mb-12 md:mb-16">
+            <div className="inline-flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 bg-skd-home rounded-full mb-4 sm:mb-6">
+              <Home className="text-white text-xl sm:text-2xl" />
             </div>
-            <h1 className="text-4xl font-playfair font-bold text-gray-800 mb-4">SKD Home</h1>
-            <p className="text-xl text-gray-600 mb-2">Décoration intérieure & Home organizing</p>
-            <p className="text-lg font-playfair text-skd-home italic">« Des espaces qui vous ressemblent »</p>
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-playfair font-bold text-gray-800 mb-3 sm:mb-4">SKD Home</h1>
+            <p className="text-base sm:text-lg md:text-xl text-gray-600 mb-2">Décoration intérieure & Home organizing</p>
+            <p className="text-sm sm:text-base md:text-lg font-playfair text-skd-home italic">« Des espaces qui vous ressemblent »</p>
           </div>
         </div>
       </section>
 
       {/* Services */}
-      <section className="py-20">
-        <div className="max-w-6xl mx-auto px-4">
-          <div className="grid lg:grid-cols-2 gap-12 items-start">
+      <section className="py-12 sm:py-16 md:py-20">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 md:gap-12 items-start">
             <div>
-              <h2 className="text-2xl font-playfair font-semibold text-gray-800 mb-6">Transformez votre Intérieur</h2>
+              <h2 className="text-xl sm:text-2xl font-playfair font-semibold text-gray-800 mb-4 sm:mb-6">Transformez votre Intérieur</h2>
               <div className="space-y-6">
                 {services.map((service, index) => {
                   const IconComponent = service.icon;

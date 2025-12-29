@@ -378,12 +378,12 @@ export default function ProductDetail() {
       </AlertDialog>
 
       {/* Header */}
-      <section className="py-8 bg-gradient-to-br from-skd-shop/10 to-white">
-        <div className="max-w-6xl mx-auto px-4">
+      <section className="py-6 sm:py-8 bg-gradient-to-br from-skd-shop/10 to-white">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <Button
             variant="ghost"
             onClick={() => setLocation("/shop")}
-            className="mb-4"
+            className="mb-3 sm:mb-4 text-sm sm:text-base"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Retour à la boutique
@@ -392,9 +392,9 @@ export default function ProductDetail() {
       </section>
 
       {/* Product Detail */}
-      <section className="py-12">
-        <div className="max-w-6xl mx-auto px-4">
-          <div className="grid lg:grid-cols-2 gap-12">
+      <section className="py-8 sm:py-10 md:py-12">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 md:gap-12">
             {/* Product Images */}
             <div className="space-y-4">
               {/* Main Image */}
@@ -466,31 +466,33 @@ export default function ProductDetail() {
             </div>
 
             {/* Product Info */}
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-6">
               <div>
-                <Badge variant="outline" className="mb-2">
-                  {product.subcategory}
-                </Badge>
-                <h1 className="text-3xl font-playfair font-bold text-gray-800 mb-2">
+                {product.subcategory && (
+                  <Badge variant="outline" className="mb-2 text-xs sm:text-sm">
+                    {product.subcategory}
+                  </Badge>
+                )}
+                <h1 className="text-2xl sm:text-3xl font-playfair font-bold text-gray-800 mb-2 sm:mb-3">
                   {product.name}
                 </h1>
-                <p className="text-gray-600 mb-4 whitespace-pre-wrap">
+                <p className="text-sm sm:text-base text-gray-600 mb-4 whitespace-pre-wrap">
                   {product.description}
                 </p>
-                <div className="flex items-center space-x-4">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
                   <div>
-                    <span className="text-3xl font-bold text-skd-shop">
+                    <span className="text-2xl sm:text-3xl font-bold text-skd-shop">
                       {(totalPrice * 1.20).toFixed(2)}€ TTC
                     </span>
                     <p className="text-xs text-gray-500 mt-1">{totalPrice.toFixed(2)}€ HT</p>
                     {quantity > 1 && (
-                      <span className="text-sm text-gray-500 ml-2 block mt-1">
+                      <span className="text-xs sm:text-sm text-gray-500 block mt-1">
                         ({(totalPrice / quantity).toFixed(2)}€ HT l'unité)
                       </span>
                     )}
                   </div>
                   {product.isRentable && product.dailyRentalPrice && (
-                    <span className="text-sm text-gray-500">
+                    <span className="text-xs sm:text-sm text-gray-500">
                       ou {(product.dailyRentalPrice * 1.20).toFixed(2)}€ TTC
                     </span>
                   )}
@@ -524,10 +526,10 @@ export default function ProductDetail() {
 
               {/* Quantity and Add to Cart */}
               <Card>
-                <CardContent className="pt-6">
-                  <div className="space-y-4">
+                <CardContent className="pt-4 sm:pt-6 p-4 sm:p-6">
+                  <div className="space-y-3 sm:space-y-4">
                     {/* Quantity Selector */}
-                    <div className="flex items-center space-x-4">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
                       <span className="text-sm font-medium">Quantité:</span>
                       <div className="flex items-center space-x-2">
                         <Button
@@ -535,6 +537,7 @@ export default function ProductDetail() {
                           size="sm"
                           onClick={() => setQuantity(Math.max(1, quantity - 1))}
                           disabled={quantity <= 1}
+                          className="h-8 w-8 p-0"
                         >
                           <Minus className="w-4 h-4" />
                         </Button>
@@ -548,13 +551,14 @@ export default function ProductDetail() {
                             const newQuantity = Math.max(1, Math.min(value, product.stockQuantity));
                             setQuantity(newQuantity);
                           }}
-                          className="w-16 text-center font-medium"
+                          className="w-16 text-center font-medium text-sm sm:text-base"
                         />
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={() => setQuantity(quantity + 1)}
                           disabled={quantity >= product.stockQuantity}
+                          className="h-8 w-8 p-0"
                         >
                           <Plus className="w-4 h-4" />
                         </Button>
@@ -562,12 +566,12 @@ export default function ProductDetail() {
                     </div>
 
                     {/* Price Display */}
-                    <div className="text-center mb-4">
-                      <span className="text-2xl font-bold text-gray-900">
+                    <div className="text-center mb-3 sm:mb-4">
+                      <span className="text-xl sm:text-2xl font-bold text-gray-900">
                         {(totalPrice * quantity).toFixed(2)}€ HT
                       </span>
                       {quantity > 1 && (
-                        <span className="text-sm text-gray-500 ml-2">
+                        <span className="text-xs sm:text-sm text-gray-500 ml-2 block sm:inline mt-1 sm:mt-0">
                           ({totalPrice.toFixed(2)}€ HT l'unité)
                         </span>
                       )}
@@ -578,7 +582,7 @@ export default function ProductDetail() {
                     <Button
                       onClick={handleAddToCart}
                       disabled={isAddingToCart || product.stockQuantity === 0}
-                      className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold shadow-lg disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
                       size="lg"
                     >
                       {isAddingToCart ? (
@@ -588,14 +592,14 @@ export default function ProductDetail() {
                         </>
                       ) : (
                         <>
-                          <ShoppingCart className="w-5 h-5 mr-2" />
+                          <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                           Ajouter au panier
                         </>
                       )}
                     </Button>
 
                     {product.stockQuantity === 0 && (
-                      <p className="text-sm text-red-600 text-center">
+                      <p className="text-xs sm:text-sm text-red-600 text-center">
                         Ce produit n'est plus disponible
                       </p>
                     )}

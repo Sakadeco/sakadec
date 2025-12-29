@@ -166,28 +166,28 @@ const Invoice: React.FC = () => {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-gray-50 py-8">
+      <div className="min-h-screen bg-gray-50 py-6 sm:py-8">
       {/* Header avec boutons d'action */}
-      <div className="max-w-4xl mx-auto px-4 mb-8 print:hidden">
-        <div className="bg-white rounded-lg shadow-sm p-6">
-          <div className="flex justify-between items-center">
-            <h1 className="text-2xl font-bold text-gray-800">Facture #{invoice.orderNumber}</h1>
-            <div className="flex gap-3">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 mb-6 sm:mb-8 print:hidden">
+        <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-800">Facture #{invoice.orderNumber}</h1>
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full sm:w-auto">
               <button
                 onClick={handleResendEmail}
-                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                className="bg-blue-600 text-white px-3 sm:px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm sm:text-base w-full sm:w-auto"
               >
                 Renvoyer par email
               </button>
               <button
                 onClick={handleDownloadPDF}
-                className="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
+                className="bg-gray-600 text-white px-3 sm:px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors text-sm sm:text-base w-full sm:w-auto"
               >
                 📄 Télécharger PDF
               </button>
               <button
                 onClick={handlePrint}
-                className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
+                className="bg-green-600 text-white px-3 sm:px-4 py-2 rounded-lg hover:bg-green-700 transition-colors text-sm sm:text-base w-full sm:w-auto"
               >
                 🖨️ Imprimer
               </button>
@@ -197,28 +197,28 @@ const Invoice: React.FC = () => {
       </div>
 
       {/* Contenu de la facture */}
-      <div className="max-w-4xl mx-auto px-4">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6">
         <div className="bg-white rounded-lg shadow-sm overflow-hidden">
           {/* En-tête de la facture */}
-          <div className="p-8 border-b border-gray-200">
-            <div className="flex justify-between items-start">
+          <div className="p-4 sm:p-6 md:p-8 border-b border-gray-200">
+            <div className="flex flex-col sm:flex-row justify-between items-start gap-4 sm:gap-0">
               <div>
-                <h1 className="text-3xl font-bold text-gray-800 mb-2">SakaDeco</h1>
-                <p className="text-gray-600">Décoration et aménagement</p>
-                <p className="text-gray-600">123 Rue de la Décoration</p>
-                <p className="text-gray-600">75001 Paris, France</p>
-                <p className="text-gray-600">sakadeco.contact@gmail.com</p>
+                <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2">SakaDeco</h1>
+                <p className="text-xs sm:text-sm text-gray-600">Décoration et aménagement</p>
+                <p className="text-xs sm:text-sm text-gray-600">123 Rue de la Décoration</p>
+                <p className="text-xs sm:text-sm text-gray-600">75001 Paris, France</p>
+                <p className="text-xs sm:text-sm text-gray-600">sakadeco.contact@gmail.com</p>
               </div>
-              <div className="text-right">
-                <h2 className="text-2xl font-bold text-gray-800 mb-4">FACTURE</h2>
-                <p className="text-gray-600">N° {invoice.orderNumber}</p>
-                <p className="text-gray-600">
+              <div className="text-left sm:text-right">
+                <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-3 sm:mb-4">FACTURE</h2>
+                <p className="text-xs sm:text-sm text-gray-600">N° {invoice.orderNumber}</p>
+                <p className="text-xs sm:text-sm text-gray-600">
                   Date: {format(new Date(invoice.createdAt), 'dd MMMM yyyy', { locale: fr })}
                 </p>
-                <p className="text-gray-600">
+                <p className="text-xs sm:text-sm text-gray-600">
                   Statut: <span className="font-semibold text-green-600">{invoice.status}</span>
                 </p>
-                <p className="text-gray-600">
+                <p className="text-xs sm:text-sm text-gray-600">
                   Paiement: <span className="font-semibold text-green-600">{invoice.paymentStatus}</span>
                 </p>
               </div>
@@ -226,62 +226,62 @@ const Invoice: React.FC = () => {
           </div>
 
           {/* Informations client */}
-          <div className="p-8 border-b border-gray-200">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+          <div className="p-4 sm:p-6 md:p-8 border-b border-gray-200">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8">
               <div>
-                <h3 className="text-lg font-semibold text-gray-800 mb-4">Adresse de facturation</h3>
-                <p className="text-gray-600">
+                <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4">Adresse de facturation</h3>
+                <p className="text-xs sm:text-sm text-gray-600">
                   {invoice.billingAddress.firstName} {invoice.billingAddress.lastName}
                 </p>
-                <p className="text-gray-600">{invoice.billingAddress.address}</p>
-                <p className="text-gray-600">
+                <p className="text-xs sm:text-sm text-gray-600">{invoice.billingAddress.address}</p>
+                <p className="text-xs sm:text-sm text-gray-600">
                   {invoice.billingAddress.postalCode} {invoice.billingAddress.city}
                 </p>
-                <p className="text-gray-600">{invoice.billingAddress.country}</p>
+                <p className="text-xs sm:text-sm text-gray-600">{invoice.billingAddress.country}</p>
                 {invoice.user?.email && (
-                  <p className="text-gray-600 mt-2">{invoice.user.email}</p>
+                  <p className="text-xs sm:text-sm text-gray-600 mt-2">{invoice.user.email}</p>
                 )}
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-gray-800 mb-4">Adresse de livraison</h3>
-                <p className="text-gray-600">
+                <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4">Adresse de livraison</h3>
+                <p className="text-xs sm:text-sm text-gray-600">
                   {invoice.shippingAddress.firstName} {invoice.shippingAddress.lastName}
                 </p>
-                <p className="text-gray-600">{invoice.shippingAddress.address}</p>
-                <p className="text-gray-600">
+                <p className="text-xs sm:text-sm text-gray-600">{invoice.shippingAddress.address}</p>
+                <p className="text-xs sm:text-sm text-gray-600">
                   {invoice.shippingAddress.postalCode} {invoice.shippingAddress.city}
                 </p>
-                <p className="text-gray-600">{invoice.shippingAddress.country}</p>
+                <p className="text-xs sm:text-sm text-gray-600">{invoice.shippingAddress.country}</p>
               </div>
             </div>
           </div>
 
           {/* Détails des produits */}
-          <div className="p-8">
-            <h3 className="text-lg font-semibold text-gray-800 mb-6">Détails de la commande</h3>
+          <div className="p-4 sm:p-6 md:p-8">
+            <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-4 sm:mb-6">Détails de la commande</h3>
             <div className="overflow-x-auto">
-              <table className="w-full">
+              <table className="w-full text-xs sm:text-sm">
                 <thead>
                   <tr className="border-b border-gray-200">
-                    <th className="text-left py-3 px-4 font-semibold text-gray-800">Produit</th>
-                    <th className="text-center py-3 px-4 font-semibold text-gray-800">Quantité</th>
-                    <th className="text-right py-3 px-4 font-semibold text-gray-800">Prix unitaire</th>
-                    <th className="text-right py-3 px-4 font-semibold text-gray-800">Total</th>
+                    <th className="text-left py-2 sm:py-3 px-2 sm:px-4 font-semibold text-gray-800">Produit</th>
+                    <th className="text-center py-2 sm:py-3 px-2 sm:px-4 font-semibold text-gray-800">Quantité</th>
+                    <th className="text-right py-2 sm:py-3 px-2 sm:px-4 font-semibold text-gray-800">Prix unitaire</th>
+                    <th className="text-right py-2 sm:py-3 px-2 sm:px-4 font-semibold text-gray-800">Total</th>
                   </tr>
                 </thead>
                 <tbody>
                   {invoice.items.map((item, index) => (
                     <tr key={index} className="border-b border-gray-100">
-                      <td className="py-4 px-4">
+                      <td className="py-3 sm:py-4 px-2 sm:px-4">
                         <div className="flex items-center">
                           <img
                             src={item.product.mainImageUrl}
                             alt={item.product?.name || 'Produit supprimé'}
-                            className="w-12 h-12 object-cover rounded-lg mr-4"
+                            className="w-10 h-10 sm:w-12 sm:h-12 object-cover rounded-lg mr-2 sm:mr-4"
                           />
                           <div>
-                            <p className="font-medium text-gray-800">{item.product?.name || 'Produit supprimé'}</p>
-                            <p className="text-sm text-gray-600">Ref: {item.product?._id || 'N/A'}</p>
+                            <p className="font-medium text-gray-800 text-xs sm:text-sm">{item.product?.name || 'Produit supprimé'}</p>
+                            <p className="text-xs text-gray-600">Ref: {item.product?._id || 'N/A'}</p>
                             {/* Personnalisations */}
                             {item.customizations && (() => {
                               // Convertir Map en objet si nécessaire

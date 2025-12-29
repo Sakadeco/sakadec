@@ -91,42 +91,42 @@ export default function HomePage() {
               ✨ Personnalisation à l'infini ✨
             </Badge>
           </div>
-          <h1 className="text-6xl md:text-8xl font-playfair font-bold mb-6 leading-tight">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-8xl font-playfair font-bold mb-4 sm:mb-6 leading-tight px-2">
             <span className="bg-gradient-to-r from-gold via-yellow-500 to-gold bg-clip-text text-transparent">SakaDeco</span>
             <span className="text-gray-800 dark:text-gray-100"> Group</span>
           </h1>
-          <p className="text-2xl md:text-3xl text-gray-700 dark:text-gray-300 mb-6 font-light">
+          <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-gray-700 dark:text-gray-300 mb-4 sm:mb-6 font-light px-2">
             L'élégance au service de vos moments
           </p>
-          <p className="text-lg text-gray-600 dark:text-gray-400 mb-8 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-sm sm:text-base md:text-lg text-gray-600 dark:text-gray-400 mb-6 sm:mb-8 max-w-3xl mx-auto leading-relaxed px-2">
             6 pôles d'expertise pour sublimer tous vos événements. 
             De la personnalisation artisanale à l'organisation complète, 
             nous transformons vos idées en réalité.
           </p>
-          <div className="flex flex-col sm:flex-row gap-6 justify-center mb-8">
-            <Button asChild size="lg" className="bg-gradient-to-r from-gold to-yellow-500 hover:from-yellow-500 hover:to-gold text-white px-10 py-6 text-lg font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+          <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center mb-6 sm:mb-8 px-2">
+            <Button asChild size="lg" className="bg-gradient-to-r from-gold to-yellow-500 hover:from-yellow-500 hover:to-gold text-white px-6 sm:px-10 py-4 sm:py-6 text-sm sm:text-base md:text-lg font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 w-full sm:w-auto">
               <Link to="/shop">
-                <ShoppingBag className="mr-2 h-5 w-5" />
+                <ShoppingBag className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
                 Découvrir nos produits
               </Link>
             </Button>
-            <Button asChild variant="outline" size="lg" className="border-2 border-gold text-gold hover:bg-gold hover:text-white px-10 py-6 text-lg font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+            <Button asChild variant="outline" size="lg" className="border-2 border-gold text-gold hover:bg-gold hover:text-white px-6 sm:px-10 py-4 sm:py-6 text-sm sm:text-base md:text-lg font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 w-full sm:w-auto">
               <Link to="/contact">
                 Demander un devis
               </Link>
             </Button>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-2xl mx-auto">
-            <div className="flex items-center justify-center gap-2 text-gray-600 dark:text-gray-400">
-              <Star className="h-5 w-5 text-yellow-400 fill-current" />
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 max-w-2xl mx-auto px-2">
+            <div className="flex items-center justify-center gap-2 text-gray-600 dark:text-gray-400 text-sm sm:text-base">
+              <Star className="h-4 w-4 sm:h-5 sm:w-5 text-yellow-400 fill-current flex-shrink-0" />
               <span className="font-semibold">Fabrication fait main</span>
             </div>
-            <div className="flex items-center justify-center gap-2 text-gray-600 dark:text-gray-400">
-              <MapPin className="h-5 w-5 text-green-500" />
+            <div className="flex items-center justify-center gap-2 text-gray-600 dark:text-gray-400 text-sm sm:text-base">
+              <MapPin className="h-4 w-4 sm:h-5 sm:w-5 text-green-500 flex-shrink-0" />
               <span className="font-semibold">Expédition Europe</span>
             </div>
-            <div className="flex items-center justify-center gap-2 text-gray-600 dark:text-gray-400">
-              <Palette className="h-5 w-5 text-purple-500" />
+            <div className="flex items-center justify-center gap-2 text-gray-600 dark:text-gray-400 text-sm sm:text-base">
+              <Palette className="h-4 w-4 sm:h-5 sm:w-5 text-purple-500 flex-shrink-0" />
               <span className="font-semibold">Thèmes personnalisés</span>
             </div>
           </div>
@@ -134,14 +134,14 @@ export default function HomePage() {
       </section>
 
       {/* Services Grid */}
-      <section className="py-20">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-playfair font-bold text-gray-800 mb-4">Nos Services</h2>
-            <p className="text-xl text-gray-600">Six pôles d'expertise pour tous vos besoins</p>
+      <section className="py-12 sm:py-16 md:py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="text-center mb-8 sm:mb-12 md:mb-16">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-playfair font-bold text-gray-800 mb-2 sm:mb-4">Nos Services</h2>
+            <p className="text-base sm:text-lg md:text-xl text-gray-600">Six pôles d'expertise pour tous vos besoins</p>
           </div>
           
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
             {services.map((service) => {
               return (
                 <Link key={service.name} href={service.path} className="block">
@@ -174,45 +174,45 @@ export default function HomePage() {
       </section>
 
       {/* À propos de Pajusly */}
-      <section className="py-20 bg-gray-50">
-        <div className="max-w-6xl mx-auto px-4">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div>
+      <section className="py-12 sm:py-16 md:py-20 bg-gray-50">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 md:gap-12 items-center">
+            <div className="order-2 lg:order-1">
               <img 
                 src={DSC6216} 
                 alt="Portrait professionnel de Pajusly, fondatrice" 
                 className="rounded-2xl shadow-2xl w-full"
               />
             </div>
-            <div>
-              <h2 className="text-4xl font-playfair font-bold text-gray-800 mb-6">
+            <div className="order-1 lg:order-2">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-playfair font-bold text-gray-800 mb-4 sm:mb-6">
                 À propos de <span className="metallic-gold">Pajusly</span>
               </h2>
-              <p className="text-lg text-gray-700 mb-6 leading-relaxed">
+              <p className="text-sm sm:text-base md:text-lg text-gray-700 mb-4 sm:mb-6 leading-relaxed">
                 Je me présente, je suis Pajusly ! J'habite à Bordeaux et je suis l'heureuse maman de deux enfants. 
                 Depuis toujours, ma véritable passion, c'est la décoration.
               </p>
-              <p className="text-gray-600 mb-6 leading-relaxed">
+              <p className="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6 leading-relaxed">
                 Forte de plusieurs années d'expérience dans la décoration événementielle, j'ai choisi, en 2024, 
                 de structurer mes activités sous une identité unique, à la fois créative et professionnelle.
               </p>
-              <div className="grid grid-cols-2 gap-4 mb-8">
-                <div className="text-center p-4 bg-white rounded-lg shadow-sm">
-                  <div className="text-3xl font-playfair font-bold text-gold mb-2">8+</div>
-                  <div className="text-sm text-gray-600">Années d'expérience</div>
+              <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-6 sm:mb-8">
+                <div className="text-center p-3 sm:p-4 bg-white rounded-lg shadow-sm">
+                  <div className="text-2xl sm:text-3xl font-playfair font-bold text-gold mb-1 sm:mb-2">8+</div>
+                  <div className="text-xs sm:text-sm text-gray-600">Années d'expérience</div>
                 </div>
-                <div className="text-center p-4 bg-white rounded-lg shadow-sm">
-                  <div className="text-3xl font-playfair font-bold text-gold mb-2">6</div>
-                  <div className="text-sm text-gray-600">Pôles d'expertise</div>
+                <div className="text-center p-3 sm:p-4 bg-white rounded-lg shadow-sm">
+                  <div className="text-2xl sm:text-3xl font-playfair font-bold text-gold mb-1 sm:mb-2">6</div>
+                  <div className="text-xs sm:text-sm text-gray-600">Pôles d'expertise</div>
                 </div>
               </div>
-              <div className="flex items-center space-x-4">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
                 <div className="flex items-center space-x-2">
-                  <span className="text-gray-600">Bordeaux Métropole</span>
+                  <span className="text-sm sm:text-base text-gray-600">Bordeaux Métropole</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <span className="text-gold">📞</span>
-                  <span className="text-gray-600">06 88 00 39 28</span>
+                  <span className="text-sm sm:text-base text-gray-600 whitespace-nowrap">06 88 00 39 28</span>
                 </div>
               </div>
             </div>
@@ -247,55 +247,55 @@ export default function HomePage() {
       </section>
 
       {/* Contact Section */}
-      <section className="py-20 bg-gradient-to-br from-gold/10 via-pink-50/50 to-gray-50 dark:from-gray-900 dark:to-gray-800">
-        <div className="max-w-6xl mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-playfair font-bold text-gray-800 dark:text-gray-100 mb-6">
+      <section className="py-12 sm:py-16 md:py-20 bg-gradient-to-br from-gold/10 via-pink-50/50 to-gray-50 dark:from-gray-900 dark:to-gray-800">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <div className="text-center mb-8 sm:mb-12 md:mb-16">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-playfair font-bold text-gray-800 dark:text-gray-100 mb-4 sm:mb-6">
               Prêts à concrétiser votre projet ?
             </h2>
-            <p className="text-xl text-gray-600 dark:text-gray-400 mb-8 max-w-3xl mx-auto">
+            <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-600 dark:text-gray-400 mb-6 sm:mb-8 max-w-3xl mx-auto px-2">
               Que ce soit pour un événement exceptionnel, une décoration personnalisée ou une organisation complète, 
               nous sommes là pour transformer vos rêves en réalité.
             </p>
           </div>
           
-          <div className="grid md:grid-cols-3 gap-8 mb-12">
-            <Card className="text-center p-6 border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white dark:bg-gray-800">
-              <div className="w-16 h-16 bg-gradient-to-r from-gold to-yellow-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Phone className="text-white h-8 w-8" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 md:gap-8 mb-8 sm:mb-12">
+            <Card className="text-center p-4 sm:p-6 border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white dark:bg-gray-800">
+              <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-r from-gold to-yellow-500 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                <Phone className="text-white h-6 w-6 sm:h-8 sm:w-8" />
               </div>
-              <h4 className="font-semibold text-gray-800 dark:text-gray-100 mb-2">Appelez-nous</h4>
-              <p className="text-gray-600 dark:text-gray-400 mb-4">Parlons de votre projet</p>
-              <p className="text-gold font-bold text-lg">06 88 00 39 28</p>
+              <h4 className="font-semibold text-sm sm:text-base text-gray-800 dark:text-gray-100 mb-1 sm:mb-2">Appelez-nous</h4>
+              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mb-2 sm:mb-4">Parlons de votre projet</p>
+              <p className="text-gold font-bold text-sm sm:text-base md:text-lg whitespace-nowrap">06 88 00 39 28</p>
             </Card>
             
-            <Card className="text-center p-6 border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white dark:bg-gray-800">
-              <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                <MapPin className="text-white h-8 w-8" />
+            <Card className="text-center p-4 sm:p-6 border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white dark:bg-gray-800">
+              <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                <MapPin className="text-white h-6 w-6 sm:h-8 sm:w-8" />
               </div>
-              <h4 className="font-semibold text-gray-800 dark:text-gray-100 mb-2">Zone d'intervention</h4>
-              <p className="text-gray-600 dark:text-gray-400 mb-4">Nous intervenons dans</p>
-              <p className="text-purple-500 font-bold">Île-de-France & Bordeaux Métropole</p>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">Déplacements dans toute la France et à l'international</p>
+              <h4 className="font-semibold text-sm sm:text-base text-gray-800 dark:text-gray-100 mb-1 sm:mb-2">Zone d'intervention</h4>
+              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mb-2 sm:mb-4">Nous intervenons dans</p>
+              <p className="text-purple-500 font-bold text-xs sm:text-sm md:text-base">Île-de-France & Bordeaux Métropole</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 sm:mt-2">Déplacements dans toute la France et à l'international</p>
             </Card>
 
-            <Card className="text-center p-6 border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white dark:bg-gray-800">
-              <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-teal-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Phone className="text-white h-8 w-8" />
+            <Card className="text-center p-4 sm:p-6 border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white dark:bg-gray-800 sm:col-span-2 md:col-span-1">
+              <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-r from-green-500 to-teal-500 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                <Phone className="text-white h-6 w-6 sm:h-8 sm:w-8" />
               </div>
-              <h4 className="font-semibold text-gray-800 dark:text-gray-100 mb-2">Devis gratuit</h4>
-              <p className="text-gray-600 dark:text-gray-400 mb-4">Estimation personnalisée</p>
-              <p className="text-green-500 font-bold">100% gratuit</p>
+              <h4 className="font-semibold text-sm sm:text-base text-gray-800 dark:text-gray-100 mb-1 sm:mb-2">Devis gratuit</h4>
+              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mb-2 sm:mb-4">Estimation personnalisée</p>
+              <p className="text-green-500 font-bold text-sm sm:text-base md:text-lg">100% gratuit</p>
             </Card>
           </div>
           
-          <div className="text-center">
-            <Button asChild size="lg" className="bg-gradient-to-r from-gold to-yellow-500 hover:from-yellow-500 hover:to-gold text-white px-12 py-6 text-lg font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+          <div className="text-center px-2">
+            <Button asChild size="lg" className="bg-gradient-to-r from-gold to-yellow-500 hover:from-yellow-500 hover:to-gold text-white px-6 sm:px-10 md:px-12 py-4 sm:py-5 md:py-6 text-sm sm:text-base md:text-lg font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 w-full sm:w-auto">
               <Link to="/contact">
                 Recevez votre devis personnalisé
               </Link>
             </Button>
-            <p className="mt-4 text-sm text-gray-500 dark:text-gray-400">
+            <p className="mt-3 sm:mt-4 text-xs sm:text-sm text-gray-500 dark:text-gray-400">
               Gratuit et sans engagement – réponse sous 48h.
             </p>
           </div>

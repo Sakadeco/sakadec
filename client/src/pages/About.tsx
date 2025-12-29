@@ -51,26 +51,26 @@ export default function About() {
   return (
     <Layout>
       {/* Header */}
-      <section className="py-20 bg-gradient-to-br from-gold/10 to-white">
-        <div className="max-w-6xl mx-auto px-4 text-center">
-          <div className="flex justify-center mb-6">
-            <Logo width={180} height={120} className="drop-shadow-lg" />
+      <section className="py-12 sm:py-16 md:py-20 bg-gradient-to-br from-gold/10 to-white">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 text-center">
+          <div className="flex justify-center mb-4 sm:mb-6">
+            <Logo width={180} height={120} className="drop-shadow-lg w-32 sm:w-40 md:w-48 h-auto" />
           </div>
-          <h1 className="text-4xl md:text-6xl font-playfair font-bold text-gray-800 mb-4">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-playfair font-bold text-gray-800 mb-3 sm:mb-4">
             À propos de <span className="metallic-gold">Pajusly</span>
           </h1>
-          <p className="text-xl text-gray-600 mb-8">Fondatrice de SakaDeco Group</p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 text-gray-600">
+          <p className="text-base sm:text-lg md:text-xl text-gray-600 mb-6 sm:mb-8">Fondatrice de SakaDeco Group</p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 md:gap-6 text-sm sm:text-base text-gray-600">
             <div className="flex items-center space-x-2">
-              <MapPin className="text-gold w-5 h-5" />
+              <MapPin className="text-gold w-4 h-4 sm:w-5 sm:h-5" />
               <span>Bordeaux</span>
             </div>
             <div className="flex items-center space-x-2">
-              <Phone className="text-gold w-5 h-5" />
-              <span>06 88 00 39 28</span>
+              <Phone className="text-gold w-4 h-4 sm:w-5 sm:h-5" />
+              <span className="whitespace-nowrap">06 88 00 39 28</span>
             </div>
             <div className="flex items-center space-x-2">
-              <Calendar className="text-gold w-5 h-5" />
+              <Calendar className="text-gold w-4 h-4 sm:w-5 sm:h-5" />
               <span>Depuis 2017</span>
             </div>
           </div>
@@ -78,19 +78,19 @@ export default function About() {
       </section>
 
       {/* About Pajusly */}
-      <section className="py-20">
-        <div className="max-w-6xl mx-auto px-4">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div>
+      <section className="py-12 sm:py-16 md:py-20">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 md:gap-12 items-center">
+            <div className="order-2 lg:order-1">
               <img 
                 src={DSC6216} 
                 alt="Portrait professionnel de Pajusly, fondatrice" 
                 className="rounded-2xl shadow-2xl w-full"
               />
             </div>
-            <div>
-              <h2 className="text-3xl font-playfair font-bold text-gray-800 mb-6">Mon histoire</h2>
-              <div className="space-y-4 text-gray-700 leading-relaxed">
+            <div className="order-1 lg:order-2">
+              <h2 className="text-2xl sm:text-3xl font-playfair font-bold text-gray-800 mb-4 sm:mb-6">Mon histoire</h2>
+              <div className="space-y-3 sm:space-y-4 text-sm sm:text-base text-gray-700 leading-relaxed">
                 <p>
                   Je me présente, je suis Pajusly ! J'habite à Bordeaux et je suis l'heureuse maman de deux enfants, 
                   de véritables petits bouts en train !
@@ -120,14 +120,14 @@ export default function About() {
       </section>
 
       {/* Timeline */}
-      <section className="py-20 bg-gray-50">
-        <div className="max-w-6xl mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-playfair font-bold text-gray-800 mb-4">Dates clés</h2>
-            <p className="text-xl text-gray-600">L'évolution de SakaDeco Group</p>
+      <section className="py-12 sm:py-16 md:py-20 bg-gray-50">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <div className="text-center mb-8 sm:mb-12 md:mb-16">
+            <h2 className="text-2xl sm:text-3xl font-playfair font-bold text-gray-800 mb-3 sm:mb-4">Dates clés</h2>
+            <p className="text-base sm:text-lg md:text-xl text-gray-600">L'évolution de SakaDeco Group</p>
           </div>
           
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
             {timeline.map((item) => (
               <Card key={item.year} className="text-center border-2 border-gold/20">
                 <CardHeader>

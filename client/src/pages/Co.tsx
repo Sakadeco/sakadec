@@ -65,23 +65,23 @@ export default function Co() {
   return (
     <Layout>
       {/* Header */}
-      <section className="py-20 bg-gradient-to-br from-skd-co/10 to-white">
-        <div className="max-w-6xl mx-auto px-4">
-          <div className="text-center mb-16">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-skd-co rounded-full mb-6">
-              <Users className="text-white text-2xl" />
+      <section className="py-12 sm:py-16 md:py-20 bg-gradient-to-br from-skd-co/10 to-white">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <div className="text-center mb-8 sm:mb-12 md:mb-16">
+            <div className="inline-flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 bg-skd-co rounded-full mb-4 sm:mb-6">
+              <Users className="text-white text-xl sm:text-2xl" />
             </div>
-            <h1 className="text-4xl font-playfair font-bold text-gray-800 mb-4">SKD & Co</h1>
-            <p className="text-xl text-gray-600 mb-2">Organisation d'événements</p>
-            <p className="text-lg font-playfair text-skd-co italic">« On s'occupe de tout, vous profitez de l'instant »</p>
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-playfair font-bold text-gray-800 mb-3 sm:mb-4">SKD & Co</h1>
+            <p className="text-base sm:text-lg md:text-xl text-gray-600 mb-2">Organisation d'événements</p>
+            <p className="text-sm sm:text-base md:text-lg font-playfair text-skd-co italic">« On s'occupe de tout, vous profitez de l'instant »</p>
           </div>
         </div>
       </section>
 
       {/* Services */}
-      <section className="py-20">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <section className="py-12 sm:py-16 md:py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             {services.map((service, index) => {
               const IconComponent = service.icon;
               return (

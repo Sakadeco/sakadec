@@ -350,26 +350,26 @@ const CartPage: React.FC = () => {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-gray-50 py-12">
+      <div className="min-h-screen bg-gray-50 py-6 sm:py-8 md:py-12">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header */}
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
-            <div className="flex items-center space-x-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 mb-6 sm:mb-8">
+            <div className="flex items-center space-x-3 sm:space-x-4">
               <Button 
                 variant="ghost" 
                 onClick={() => setLocation('/shop')}
-                className="flex items-center space-x-2"
+                className="flex items-center space-x-2 text-sm sm:text-base"
               >
                 <ArrowLeft className="w-4 h-4" />
                 <span className="hidden sm:inline">Continuer les achats</span>
                 <span className="sm:hidden">Retour</span>
               </Button>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Votre Panier</h1>
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900">Votre Panier</h1>
             <Button 
               variant="outline" 
               onClick={clearCart}
-              className="text-red-600 hover:text-red-700 text-sm sm:text-base"
+              className="text-red-600 hover:text-red-700 text-xs sm:text-sm md:text-base"
             >
               <span className="hidden sm:inline">Vider le panier</span>
               <span className="sm:hidden">Vider</span>
@@ -377,7 +377,7 @@ const CartPage: React.FC = () => {
           </div>
 
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
             {/* Cart Items */}
             <div className="lg:col-span-2">
               <Card>

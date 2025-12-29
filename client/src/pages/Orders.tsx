@@ -145,23 +145,23 @@ const Orders: React.FC = () => {
   return (
     <Layout>
       {/* Header */}
-      <section className="py-8 bg-gradient-to-br from-skd-shop/10 to-white">
-        <div className="max-w-6xl mx-auto px-4">
+      <section className="py-6 sm:py-8 bg-gradient-to-br from-skd-shop/10 to-white">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <Button
             variant="ghost"
             onClick={() => setLocation("/")}
-            className="mb-4"
+            className="mb-3 sm:mb-4 text-sm sm:text-base"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Retour à l'accueil
           </Button>
-          <h1 className="text-3xl font-bold text-gray-900">Mes Commandes</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Mes Commandes</h1>
         </div>
       </section>
 
       {/* Content */}
-      <section className="py-12">
-        <div className="max-w-6xl mx-auto px-4">
+      <section className="py-8 sm:py-10 md:py-12">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
           {orders.length === 0 ? (
             <div className="text-center py-12">
               <Package className="w-16 h-16 mx-auto text-gray-400 mb-4" />

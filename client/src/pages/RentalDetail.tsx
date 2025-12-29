@@ -247,10 +247,10 @@ const RentalDetail: React.FC = () => {
         </AlertDialogContent>
       </AlertDialog>
 
-      <div className="container mx-auto px-4 py-8">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="container mx-auto px-4 sm:px-6 py-6 sm:py-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
         {/* Images du produit avec galerie */}
-        <div className="space-y-4">
+        <div className="space-y-3 sm:space-y-4">
           {/* Image principale */}
           <Card>
             <CardHeader className="p-0">
@@ -315,10 +315,10 @@ const RentalDetail: React.FC = () => {
         {/* Détails et configuration */}
         <div className="space-y-6">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">{product.name}</h1>
-            <p className="text-gray-600 mb-4 whitespace-pre-wrap">{product.description}</p>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">{product.name}</h1>
+            <p className="text-sm sm:text-base text-gray-600 mb-4 whitespace-pre-wrap">{product.description}</p>
             <div className="flex items-center gap-2 mb-4">
-              <Badge className="bg-orange-500">Location</Badge>
+              <Badge className="bg-orange-500 text-xs sm:text-sm">Location</Badge>
               {product.isCustomizable && (
                 <Badge className="bg-blue-500">Personnalisable</Badge>
               )}

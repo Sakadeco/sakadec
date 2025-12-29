@@ -66,22 +66,22 @@ export default function Themes() {
       {!selectedTheme ? (
         <>
           {/* Hero Section */}
-          <section className="relative py-20 bg-gradient-to-br from-gold/10 via-pink-50/50 to-purple-50">
-            <div className="max-w-6xl mx-auto px-4">
-              <div className="text-center mb-16">
-                <Badge className="mb-4 px-4 py-2 bg-gradient-to-r from-gold to-yellow-500 text-white border-none text-sm font-semibold">
+          <section className="relative py-12 sm:py-16 md:py-20 bg-gradient-to-br from-gold/10 via-pink-50/50 to-purple-50">
+            <div className="max-w-6xl mx-auto px-4 sm:px-6">
+              <div className="text-center mb-8 sm:mb-12 md:mb-16">
+                <Badge className="mb-3 sm:mb-4 px-3 sm:px-4 py-1 sm:py-2 bg-gradient-to-r from-gold to-yellow-500 text-white border-none text-xs sm:text-sm font-semibold">
                   Personnalisation à l'infini
                 </Badge>
-                <h1 className="text-5xl md:text-6xl font-playfair font-bold mb-6 leading-tight">
+                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-playfair font-bold mb-4 sm:mb-6 leading-tight">
                   <span className="bg-gradient-to-r from-gold via-yellow-500 to-gold bg-clip-text text-transparent">
                     Nos Thèmes
                   </span>
                 </h1>
-                <p className="text-xl md:text-2xl text-gray-700 mb-8 max-w-4xl mx-auto leading-relaxed">
+                <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-700 mb-6 sm:mb-8 max-w-4xl mx-auto leading-relaxed px-2">
                   Découvrez notre collection de thèmes personnalisables pour sublimer tous vos événements. 
                   Chaque thème est conçu avec soin pour créer une ambiance unique et mémorable.
                 </p>
-                <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center">
                   <div className="flex items-center gap-2 text-gray-600">
                     <Palette className="h-5 w-5 text-gold" />
                     <span className="font-medium">Personnalisation complète</span>
