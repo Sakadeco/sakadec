@@ -57,9 +57,9 @@ export default function Navigation() {
           <div className="flex justify-between items-center h-8">
             <div className="flex items-center space-x-4 lg:space-x-6">
               <div className="flex items-center space-x-2">
-                <Phone className="h-3 w-3" />
-                <span className="hidden sm:inline">06 88 00 39 28</span>
-                <span className="sm:hidden">06 88 00 39 28</span>
+                <Phone className="h-3 w-3 flex-shrink-0" />
+                <span className="hidden sm:inline whitespace-nowrap">06 88 00 39 28</span>
+                <span className="sm:hidden whitespace-nowrap">06 88 00 39 28</span>
               </div>
               <div className="hidden md:flex items-center space-x-2">
                 <Mail className="h-3 w-3" />

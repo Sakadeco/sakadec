@@ -149,7 +149,7 @@ export default function Landing() {
                 </div>
                 <div className="flex items-center space-x-2">
                   <span className="text-gold">📞</span>
-                  <span className="text-gray-600">06 88 00 39 28</span>
+                  <span className="text-gray-600 whitespace-nowrap">06 88 00 39 28</span>
                 </div>
               </div>
             </div>

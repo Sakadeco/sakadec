@@ -53,7 +53,7 @@ export default function Layout({ children }: LayoutProps) {
             <div>
               <h4 className="font-semibold mb-4">Contact</h4>
               <ul className="space-y-2 text-gray-300">
-                <li>06 88 00 39 28</li>
+                <li className="whitespace-nowrap">06 88 00 39 28</li>
                 <li>Île-de-France & Bordeaux Métropole</li>
                 <li>Sur rendez-vous</li>
                 <li><a href="/orders" className="hover:text-gold transition-colors">Mes commandes</a></li>

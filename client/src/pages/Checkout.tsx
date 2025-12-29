@@ -58,7 +58,7 @@ export default function CheckoutPage() {
                     <p className="text-green-700 dark:text-green-300 text-sm mb-2">
                       Parlons de votre projet directement
                     </p>
-                    <p className="text-green-600 dark:text-green-400 font-bold text-lg">
+                    <p className="text-green-600 dark:text-green-400 font-bold text-lg whitespace-nowrap">
                       06 88 00 39 28
                     </p>
                   </div>
