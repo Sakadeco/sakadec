@@ -246,6 +246,80 @@ export default function ProductCustomization({
             case 'text_image_upload':
         const engravingType = option.engravingType || 'text'; // Par défaut 'text' si non défini
         
+        // Interface pour gravure texte ET image (both) - Vérifier en premier car c'est le cas le plus spécifique
+         if (engravingType === 'both') {
+           return (
+             <div className="space-y-4">
+               <div>
+                 <Label className="text-sm font-medium">
+                   Inscription souhaitée + date de l'événement
+                   {option.required && <span className="text-red-500 ml-1">*</span>}
+                 </Label>
+                 <Textarea
+                   value={customText}
+                   onChange={(e) => {
+                     setCustomText(e.target.value);
+                     handleTextImageUploadChange(key, 'text', e.target.value);
+                   }}
+                   placeholder={option.required ? "Entrez l'inscription souhaitée + date de l'événement" : "Entrez l'inscription souhaitée + date de l'événement (optionnel)"}
+                   maxLength={option.maxLength}
+                   rows={2}
+                   required={option.required}
+                 />
+                 <div className="flex justify-between text-sm text-gray-500 mt-1">
+                   <span>{customText.length}/{option.maxLength || 50} caractères</span>
+                   <span className="text-gray-600 font-medium">
+                     Gratuit
+                   </span>
+                 </div>
+               </div>
+
+               <div>
+                 <Label>
+                   Image pour l'inscription
+                   {!option.required && <span className="text-gray-500 ml-1">(optionnel)</span>}
+                 </Label>
+                 <ImageUpload
+                   onImageUpload={(imageUrl) => {
+                     if (typeof handleImageUpload === 'function') {
+                       handleImageUpload(key, imageUrl);
+                     } else {
+                       console.error('handleImageUpload is not a function:', handleImageUpload);
+                     }
+                   }}
+                   maxFileSize={option.maxFileSize}
+                   allowedFileTypes={option.allowedFileTypes}
+                   placeholder={option.required ? "Téléchargez l'image pour l'inscription" : "Téléchargez l'image pour l'inscription (optionnel)"}
+                 />
+                 <div className="flex justify-between text-sm text-gray-500 mt-1">
+                   <span>Gratuit</span>
+                   <span className="text-gray-600 font-medium">
+                     Gratuit
+                   </span>
+                 </div>
+                 {customImage && (
+                   <div className="mt-2 relative">
+                     <img
+                       src={customImage}
+                       alt="Image pour l'inscription"
+                       className="w-20 h-20 object-cover rounded border"
+                     />
+                     <Button
+                       type="button"
+                       variant="destructive"
+                       size="sm"
+                       onClick={() => removeImage(key)}
+                       className="absolute -top-2 -right-2 w-6 h-6 p-0"
+                     >
+                       <X className="w-3 h-3" />
+                     </Button>
+                   </div>
+                 )}
+               </div>
+             </div>
+           );
+         }
+        
                  // Interface pour gravure texte uniquement
          if (engravingType === 'text') {
            return (
@@ -326,80 +400,6 @@ export default function ProductCustomization({
                    </Button>
                  </div>
                )}
-             </div>
-           );
-         }
-        
-                 // Interface pour gravure texte ET image
-         if (engravingType === 'both') {
-           return (
-             <div className="space-y-4">
-               <div>
-                 <Label className="text-sm font-medium">
-                   Inscription souhaitée + date de l'événement
-                   {option.required && <span className="text-red-500 ml-1">*</span>}
-                 </Label>
-                 <Textarea
-                   value={customText}
-                   onChange={(e) => {
-                     setCustomText(e.target.value);
-                     handleTextImageUploadChange(key, 'text', e.target.value);
-                   }}
-                   placeholder={option.required ? "Entrez l'inscription souhaitée + date de l'événement" : "Entrez l'inscription souhaitée + date de l'événement (optionnel)"}
-                   maxLength={option.maxLength}
-                   rows={2}
-                   required={option.required}
-                 />
-                                   <div className="flex justify-between text-sm text-gray-500 mt-1">
-                    <span>{customText.length}/{option.maxLength || 50} caractères</span>
-                    <span className="text-gray-600 font-medium">
-                      Gratuit
-                    </span>
-                  </div>
-               </div>
-
-               <div>
-                 <Label>
-                   Image pour l'inscription
-                   {!option.required && <span className="text-gray-500 ml-1">(optionnel)</span>}
-                 </Label>
-                 <ImageUpload
-                   onImageUpload={(imageUrl) => {
-                     if (typeof handleImageUpload === 'function') {
-                       handleImageUpload(key, imageUrl);
-                     } else {
-                       console.error('handleImageUpload is not a function:', handleImageUpload);
-                     }
-                   }}
-                   maxFileSize={option.maxFileSize}
-                   allowedFileTypes={option.allowedFileTypes}
-                   placeholder={option.required ? "Téléchargez l'image pour l'inscription" : "Téléchargez l'image pour l'inscription (optionnel)"}
-                 />
-                 <div className="flex justify-between text-sm text-gray-500 mt-1">
-                   <span>Gratuit</span>
-                   <span className="text-gray-600 font-medium">
-                     Gratuit
-                   </span>
-                 </div>
-                 {customImage && (
-                   <div className="mt-2 relative">
-                     <img
-                       src={customImage}
-                       alt="Image pour l'inscription"
-                       className="w-20 h-20 object-cover rounded border"
-                     />
-                     <Button
-                       type="button"
-                       variant="destructive"
-                       size="sm"
-                       onClick={() => removeImage(key)}
-                       className="absolute -top-2 -right-2 w-6 h-6 p-0"
-                     >
-                       <X className="w-3 h-3" />
-                     </Button>
-                   </div>
-                 )}
-               </div>
              </div>
            );
          }
