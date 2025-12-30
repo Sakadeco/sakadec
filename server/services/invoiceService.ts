@@ -135,10 +135,25 @@ export class InvoiceService {
        .text(invoiceData.isRental ? 'FACTURE DE LOCATION' : 'FACTURE DE VENTE', 400, 50, { align: 'right' });
 
     // Espacement supplémentaire pour éviter le chevauchement
+    // Réduire la taille de la police pour le numéro de facture si trop long
+    const invoiceNumberText = `N° ${invoiceNumber}`;
+    const maxInvoiceNumberWidth = 150; // Largeur maximale disponible
+    
     doc.fontSize(12)
        .font('Helvetica')
-       .fillColor('#4A5568')
-       .text(`N° ${invoiceNumber}`, 400, 90, { align: 'right' })
+       .fillColor('#4A5568');
+    
+    // Vérifier si le numéro de facture est trop long
+    const invoiceNumberWidth = doc.widthOfString(invoiceNumberText);
+    if (invoiceNumberWidth > maxInvoiceNumberWidth) {
+      // Réduire la taille de la police pour que ça tienne sur une ligne
+      doc.fontSize(9);
+    }
+    
+    doc.text(invoiceNumberText, 400, 90, { align: 'right', width: maxInvoiceNumberWidth });
+    
+    // Remettre la taille normale pour la date
+    doc.fontSize(12)
        .text(`Date: ${invoiceDate}`, 400, 105, { align: 'right' });
 
     // Ligne de séparation
@@ -369,10 +384,13 @@ export class InvoiceService {
     const subtotalTTC = subtotalHT + tvaAmount;
     
     const pageHeight = doc.page.height;
-    let yStart = doc.y + 40; // Plus d'espacement après le tableau (40px au lieu de 20px)
+    // Marge de 2-3 cm (environ 75-110px) entre le tableau et les totaux
+    const marginBetweenTableAndTotals = 80; // ~2.8 cm
+    let yStart = doc.y + marginBetweenTableAndTotals;
     
-    // Vérifier si on a assez d'espace pour les totaux (au moins 150px)
-    if (yStart > pageHeight - 150) {
+    // Vérifier si on a assez d'espace pour les totaux (au moins 200px pour tous les éléments)
+    const totalsHeight = 200; // Hauteur approximative pour tous les totaux
+    if (yStart > pageHeight - totalsHeight) {
       doc.addPage();
       yStart = 50;
     }
@@ -380,37 +398,27 @@ export class InvoiceService {
     let currentY = yStart;
     
     // Positions fixes pour l'alignement : descriptions alignées avec "Prix unitaire HT" du tableau, prix à droite
-    // La page A4 fait 595px de large, avec une marge de 50px de chaque côté = 495px de contenu utilisable
-    // "Prix unitaire HT" est à X = 260 dans le tableau, on aligne les descriptions à cette position
     const labelX = 260; // Position X pour les descriptions (labels) - aligné avec "Prix unitaire HT" du tableau
     const priceX = 470; // Position X de départ pour les prix - grand espacement (210px entre label et prix)
-    const priceWidth = 75; // Largeur suffisante pour éviter les retours à la ligne même pour les grands montants (jusqu'à 545px max)
+    const priceWidth = 75; // Largeur suffisante pour éviter les retours à la ligne même pour les grands montants
     
-    // Total HT avant réduction (si code promo)
-    if (promoDiscount > 0) {
-      doc.fontSize(12)
-         .font('Helvetica')
-         .fillColor('#4A5568')
-         .text('Total HT:', labelX, currentY);
-      doc.text(`${invoiceData.subtotal.toFixed(2)}€`, priceX, currentY, { width: priceWidth, align: 'right' });
-      currentY += 20;
-      
-      // Ligne remise
-      doc.text(`Remise (${invoiceData.promoCode || 'Code promo'}):`, labelX, currentY);
+    // Toujours afficher Total HT en premier
+    doc.fontSize(12)
+       .font('Helvetica')
+       .fillColor('#4A5568')
+       .text('Total HT:', labelX, currentY);
+    doc.text(`${invoiceData.subtotal.toFixed(2)}€`, priceX, currentY, { width: priceWidth, align: 'right' });
+    currentY += 20;
+    
+    // Remise (si code promo)
+    if (promoDiscount > 0 && invoiceData.promoCode) {
+      doc.text(`Remise (${invoiceData.promoCode}):`, labelX, currentY);
       doc.text(`-${promoDiscount.toFixed(2)}€`, priceX, currentY, { width: priceWidth, align: 'right' });
       currentY += 20;
       
-      // Total HT après réduction
+      // Total HT après remise
       doc.font('Helvetica-Bold')
          .text('Total HT après remise:', labelX, currentY);
-      doc.text(`${subtotalHT.toFixed(2)}€`, priceX, currentY, { width: priceWidth, align: 'right' });
-      currentY += 20;
-    } else {
-      // Total HT (pas de code promo)
-      doc.fontSize(12)
-         .font('Helvetica')
-         .fillColor('#4A5568')
-         .text('Total HT:', labelX, currentY);
       doc.text(`${subtotalHT.toFixed(2)}€`, priceX, currentY, { width: priceWidth, align: 'right' });
       currentY += 20;
     }
@@ -445,6 +453,9 @@ export class InvoiceService {
        .fillColor('#2D3748')
        .text('TOTAL TTC:', labelX, finalY);
     doc.text(`${totalTTC.toFixed(2)}€`, priceX, finalY, { width: priceWidth, align: 'right' });
+    
+    // Mettre à jour la position Y du document pour le footer
+    doc.y = finalY + 30;
   }
 
   private static addFooter(doc: PDFDocument) {
@@ -454,20 +465,15 @@ export class InvoiceService {
     // Calculer la hauteur nécessaire pour le footer (environ 100px)
     const footerHeight = 100;
     
+    // Marge de 2-3 cm (environ 75-110px) entre les totaux et les mentions légales
+    const marginBetweenTotalsAndFooter = 80; // ~2.8 cm
+    let yPos = currentY + marginBetweenTotalsAndFooter;
+    
     // Vérifier si on a assez d'espace pour le footer
     // Si on n'a pas assez d'espace, créer une nouvelle page
-    if (currentY > pageHeight - footerHeight) {
+    if (yPos + footerHeight > pageHeight - 50) {
       doc.addPage();
-    }
-    
-    const yPos = doc.y;
-    
-    // Vérifier que le footer ne dépasse pas la page
-    // Si le contenu du footer est trop long, ajuster la position
-    const maxY = pageHeight - 50; // Laisser 50px de marge en bas
-    if (yPos + footerHeight > maxY) {
-      // Si le footer ne rentre pas, créer une nouvelle page
-      doc.addPage();
+      yPos = 50;
     }
     
     // Mentions légales uniquement (suppression des infos en double)
@@ -500,9 +506,10 @@ export class InvoiceService {
       customerName: order.customerName,
       shippingAddress: order.shippingAddress,
       items: order.items.map((item: any) => {
-        let description = item.product?.description || '';
+        // Construire la désignation avec le nom du produit et les personnalisations
+        let designation = item.product?.name || 'Produit';
         
-        // Ajouter les personnalisations à la description
+        // Ajouter les personnalisations à la désignation (pas la description du produit)
         if (item.customizations) {
           // Convertir Map en objet si nécessaire
           const customizationsObj = item.customizations instanceof Map 
@@ -510,24 +517,24 @@ export class InvoiceService {
             : item.customizations;
           
           if (customizationsObj && Object.keys(customizationsObj).length > 0) {
-            description += '\n\nPersonnalisations:';
+            designation += '\n\nPersonnalisations:';
             Object.entries(customizationsObj).forEach(([key, value]) => {
               if (typeof value === 'object' && value !== null) {
                 // Gérer les différents types de personnalisations
                 if (value.type === 'both') {
                   if (value.textValue) {
-                    description += `\n- ${key.replace(/_/g, ' ')} (texte): ${value.textValue}`;
+                    designation += `\n- ${key.replace(/_/g, ' ')} (texte): ${value.textValue}`;
                   }
                   if (value.imageValue) {
-                    description += `\n- ${key.replace(/_/g, ' ')} (image): Image personnalisée`;
+                    designation += `\n- ${key.replace(/_/g, ' ')} (image): Image personnalisée`;
                   }
                 } else if (value.type === 'text' && value.value) {
-                  description += `\n- ${key.replace(/_/g, ' ')} (texte): ${value.value}`;
+                  designation += `\n- ${key.replace(/_/g, ' ')} (texte): ${value.value}`;
                 } else if (value.type === 'image' && value.value) {
-                  description += `\n- ${key.replace(/_/g, ' ')} (image): Image personnalisée`;
+                  designation += `\n- ${key.replace(/_/g, ' ')} (image): Image personnalisée`;
                 }
               } else if (typeof value === 'string') {
-                description += `\n- ${key.replace(/_/g, ' ')}: ${value}`;
+                designation += `\n- ${key.replace(/_/g, ' ')}: ${value}`;
               }
             });
           }
@@ -535,7 +542,7 @@ export class InvoiceService {
         
         return {
           name: item.product?.name || 'Produit',
-          description: description,
+          description: designation, // Utiliser la désignation construite au lieu de la description
           quantity: item.quantity,
           unitPrice: item.price,
           totalPrice: item.price * item.quantity,
