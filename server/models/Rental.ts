@@ -105,6 +105,22 @@ const rentalSchema = new mongoose.Schema({
   orderNumber: {
     type: String,
     unique: true
+  },
+  promoCode: {
+    type: String,
+    default: null
+  },
+  promoDiscount: {
+    type: Number,
+    default: 0
+  },
+  subtotalAfterDiscount: {
+    type: Number,
+    default: 0
+  },
+  shipping: {
+    type: Number,
+    default: 0
   }
 }, {
   timestamps: true

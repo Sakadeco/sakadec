@@ -20,16 +20,20 @@ router.post('/create-checkout-session', async (req: Request, res: Response) => {
       return res.status(503).json({ message: 'Stripe non configuré' });
     }
 
-    const { items, customerEmail, shippingAddress, isMixedCart, cartType } = req.body;
+    const { items, customerEmail, shippingAddress, isMixedCart, cartType, promoCode, promoDiscount, shipping } = req.body;
 
     if (!items || items.length === 0) {
       return res.status(400).json({ message: 'Aucun article dans la location' });
     }
 
+    // Récupérer le montant de réduction du code promo
+    const discountAmount = promoDiscount ? parseFloat(promoDiscount) : 0;
+
     // Calculer les totaux
     let subtotal = 0;
     const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = [];
 
+    // Première passe : calculer le subtotal sans réduction
     for (const item of items) {
       const product = await Product.findById(item.productId);
       if (!product) {
@@ -64,9 +68,51 @@ router.post('/create-checkout-session', async (req: Request, res: Response) => {
       if (rentalDays < 3) {
         return res.status(400).json({ message: 'La durée minimum de location est de 3 jours' });
       }
+      
       // Le prix ne dépend pas du nombre de jours, seulement de la quantité
-      const itemTotal = (product.dailyRentalPrice || 0) * item.quantity;
+      // Utiliser le prix du panier si disponible, sinon le prix du produit
+      let price = item.price !== undefined ? item.price : (product.dailyRentalPrice || 0);
+      const itemTotal = price * item.quantity;
       subtotal += itemTotal;
+    }
+
+    // Calculer le ratio de réduction si code promo présent
+    const discountRatio = (promoCode && discountAmount > 0 && subtotal > 0) 
+      ? discountAmount / subtotal 
+      : 0;
+    
+    console.log('🎟️ Code promo appliqué (location):', {
+      promoCode: promoCode || 'Aucun',
+      discountAmount: discountAmount.toFixed(2),
+      subtotal: subtotal.toFixed(2),
+      discountRatio: discountRatio.toFixed(4)
+    });
+
+    // Deuxième passe : créer les line items avec réduction appliquée
+    for (const item of items) {
+      const product = await Product.findById(item.productId);
+      if (!product) {
+        continue; // Déjà vérifié dans la première passe
+      }
+
+      // Validation des dates
+      const startDate = new Date(item.rentalStartDate);
+      const endDate = new Date(item.rentalEndDate);
+      startDate.setHours(0, 0, 0, 0);
+      endDate.setHours(0, 0, 0, 0);
+      const timeDiff = endDate.getTime() - startDate.getTime();
+      const rentalDays = Math.floor(timeDiff / (1000 * 60 * 60 * 24)) + 1;
+
+      // Utiliser le prix du panier si disponible, sinon le prix du produit
+      let price = item.price !== undefined ? item.price : (product.dailyRentalPrice || 0);
+      
+      // Calculer le prix unitaire avec réduction si code promo appliqué
+      let finalUnitPrice = price;
+      if (discountRatio > 0) {
+        // Appliquer la réduction proportionnellement à chaque article
+        finalUnitPrice = price * (1 - discountRatio);
+        console.log(`  📦 ${product.name}: ${price.toFixed(2)}€ → ${finalUnitPrice.toFixed(2)}€ (réduction: ${(discountRatio * 100).toFixed(2)}%)`);
+      }
 
       lineItems.push({
         price_data: {
@@ -76,28 +122,79 @@ router.post('/create-checkout-session', async (req: Request, res: Response) => {
             description: `Location du ${new Date(item.rentalStartDate).toLocaleDateString('fr-FR')} au ${new Date(item.rentalEndDate).toLocaleDateString('fr-FR')} (${rentalDays} jours)`,
             images: product.mainImageUrl && product.mainImageUrl.startsWith('http') ? [product.mainImageUrl] : []
           },
-          unit_amount: Math.round((product.dailyRentalPrice || 0) * 100) // Stripe utilise les centimes
+          unit_amount: Math.round(finalUnitPrice * 100) // Stripe utilise les centimes
         },
         quantity: item.quantity
       });
     }
 
-    // TVA à 20%
-    const tax = subtotal * 0.20;
-    const total = subtotal + tax;
+    // La réduction du code promo est déjà appliquée dans les prix unitaires des line items
+    // Calculer le subtotal après réduction à partir des line items
+    const subtotalAfterDiscount = lineItems.reduce((sum, item) => {
+      const itemTotal = (item.price_data?.unit_amount || 0) * (item.quantity || 0);
+      return sum + itemTotal;
+    }, 0) / 100; // Convertir de centimes en euros
+
+    // TVA à 20% calculée sur le subtotal APRÈS réduction
+    const tax = subtotalAfterDiscount * 0.20;
+    // Utiliser les frais de livraison fournis par le client, ou 0 par défaut
+    const shippingCost = shipping ? parseFloat(shipping.toString()) : 0;
+    
+    // Calculer le total avec le subtotal après réduction
+    const total = Math.round((subtotalAfterDiscount + tax + shippingCost) * 100) / 100;
+
+    console.log('💰 Calcul des prix (location):', {
+      subtotal: subtotal.toFixed(2),
+      promoCode: promoCode || 'Aucun',
+      discountAmount: discountAmount.toFixed(2),
+      subtotalAfterDiscount: subtotalAfterDiscount.toFixed(2),
+      tax: tax.toFixed(2),
+      shipping: shippingCost.toFixed(2),
+      total: total.toFixed(2)
+    });
+
+    // Ajouter la TVA comme un line item séparé dans Stripe
+    const finalLineItems = [...lineItems];
+    if (tax > 0) {
+      finalLineItems.push({
+        price_data: {
+          currency: 'eur',
+          product_data: {
+            name: 'TVA (20%)',
+            description: 'Taxe sur la valeur ajoutée',
+          },
+          unit_amount: Math.round(tax * 100), // Stripe utilise les centimes
+        },
+        quantity: 1,
+      });
+    }
 
     // Créer la session Stripe
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
-      line_items: lineItems,
+      line_items: finalLineItems,
       mode: 'payment',
-      success_url: `https://sakadeco.fr/payment/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `https://sakadeco.fr/payment/cancel`,
+      success_url: `${req.headers.origin}/payment/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${req.headers.origin}/payment/cancel`,
       metadata: {
         rentalStartDate: items[0].rentalStartDate,
         rentalEndDate: items[0].rentalEndDate,
         isMixedCart: isMixedCart ? 'true' : 'false',
-        cartType: cartType || 'rental'
+        cartType: cartType || 'rental',
+        promoCode: promoCode || '',
+        promoDiscount: discountAmount.toFixed(2),
+      },
+      shipping_address_collection: {
+        allowed_countries: ['FR', 'BE', 'CH', 'CA'],
+      },
+      customer_email: customerEmail,
+      // Désactiver le calcul automatique de TVA de Stripe
+      automatic_tax: {
+        enabled: false
+      },
+      // Spécifier que les prix incluent déjà la TVA
+      tax_id_collection: {
+        enabled: false
       }
     });
 
@@ -111,12 +208,14 @@ router.post('/create-checkout-session', async (req: Request, res: Response) => {
         endDate.setHours(0, 0, 0, 0);
         const timeDiff = endDate.getTime() - startDate.getTime();
         const rentalDays = Math.floor(timeDiff / (1000 * 60 * 60 * 24)) + 1; // +1 car on inclut le jour de début
+        // Utiliser le prix du panier si disponible, sinon le prix du produit
+        const dailyPrice = item.price !== undefined ? item.price : (item.dailyPrice || 0);
         // Le prix ne dépend que de la quantité, pas du nombre de jours
-        const totalPrice = (item.dailyPrice || 0) * item.quantity;
+        const totalPrice = dailyPrice * item.quantity;
         return {
           product: item.productId,
           quantity: item.quantity,
-          dailyPrice: item.dailyPrice,
+          dailyPrice: dailyPrice,
           rentalStartDate: item.rentalStartDate,
           rentalEndDate: item.rentalEndDate,
           rentalDays: rentalDays,
@@ -128,7 +227,11 @@ router.post('/create-checkout-session', async (req: Request, res: Response) => {
       customerEmail,
       shippingAddress,
       subtotal,
+      promoCode: promoCode || null,
+      promoDiscount: discountAmount,
+      subtotalAfterDiscount,
       tax,
+      shipping: shippingCost,
       deposit: 0, // Acompte supprimé
       total,
       stripeSessionId: session.id
