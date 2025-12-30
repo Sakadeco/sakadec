@@ -317,7 +317,7 @@ router.post('/webhook', async (req: Request, res: Response) => {
         
         // Vérifier si c'est une commande (achat) ou une location
         let order = await Order.findOne({ stripeSessionId: session.id });
-        const rental = await Rental.findOne({ stripeSessionId: session.id });
+        let rental = await Rental.findOne({ stripeSessionId: session.id });
         
         if (order) {
           // Traitement d'un achat
