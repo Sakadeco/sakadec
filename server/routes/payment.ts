@@ -316,7 +316,7 @@ router.post('/webhook', async (req: Request, res: Response) => {
         const session = event.data.object as Stripe.Checkout.Session;
         
         // Vérifier si c'est une commande (achat) ou une location
-        const order = await Order.findOne({ stripeSessionId: session.id });
+        let order = await Order.findOne({ stripeSessionId: session.id });
         const rental = await Rental.findOne({ stripeSessionId: session.id });
         
         if (order) {
@@ -345,6 +345,14 @@ router.post('/webhook', async (req: Request, res: Response) => {
           
           console.log(`Commande ${order._id} marquée comme payée`);
           
+          // Peupler les produits avant d'envoyer la facture
+          order = await Order.findById(order._id).populate('items.product');
+          
+          if (!order) {
+            console.error('❌ Impossible de récupérer la commande peuplée');
+            return res.json({ received: true });
+          }
+          
           // Envoyer automatiquement la facture par email avec PDF
           try {
             console.log('📧 Envoi facture de vente avec PDF pour la commande:', order._id);
@@ -372,12 +380,21 @@ router.post('/webhook', async (req: Request, res: Response) => {
           
           console.log(`Location ${rental._id} confirmée`);
           
+          // Peupler les produits avant d'envoyer la facture
+          const { Rental } = await import('../models/Rental');
+          const populatedRental = await Rental.findById(rental._id).populate('items.product');
+          
+          if (!populatedRental) {
+            console.error('❌ Impossible de récupérer la location peuplée');
+            return res.json({ received: true });
+          }
+          
           // Envoyer automatiquement la facture de location avec PDF
           try {
-            console.log('📧 Envoi facture de location avec PDF pour:', rental._id);
+            console.log('📧 Envoi facture de location avec PDF pour:', populatedRental._id);
             
             // Envoyer facture au client avec PDF
-            const clientResult = await emailService.sendRentalInvoiceWithPDF(rental);
+            const clientResult = await emailService.sendRentalInvoiceWithPDF(populatedRental);
             
             // Envoyer notification admin avec facture PDF
             const adminResult = await emailService.sendAdminInvoiceNotification(rental, true);

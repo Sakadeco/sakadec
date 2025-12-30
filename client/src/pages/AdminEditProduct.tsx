@@ -512,7 +512,7 @@ export default function AdminEditProduct() {
                 <div className="space-y-4">
                   {/* Images existantes */}
                   {(existingMainImageUrl || existingAdditionalImages.length > 0) && (
-                    <div>
+                <div>
                       <Label className="text-sm text-gray-600 mb-2 block">Images actuelles</Label>
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                         {/* Image principale */}
@@ -557,12 +557,12 @@ export default function AdminEditProduct() {
                           </div>
                         ))}
                       </div>
-                    </div>
+                </div>
                   )}
 
                   {/* Nouvelles images uploadées */}
                   {newImageUrls.length > 0 && (
-                    <div>
+                <div>
                       <Label className="text-sm text-gray-600 mb-2 block">Nouvelles images</Label>
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                         {newImageUrls.map((imageUrl, index) => (
