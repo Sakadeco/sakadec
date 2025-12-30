@@ -563,32 +563,53 @@ export class InvoiceService {
   }
 
   static async generateInvoiceForRental(rental: any): Promise<Buffer> {
+    // Utiliser orderNumber de la location au lieu de générer un nouveau numéro
+    const invoiceNumber = rental.orderNumber || rental.rentalNumber || rental._id.toString();
+    
     const invoiceData: InvoiceData = {
-      invoiceNumber: this.generateInvoiceNumber(),
+      invoiceNumber: invoiceNumber,
       date: new Date(),
       customerEmail: rental.customerEmail,
       customerName: rental.customerName,
       shippingAddress: rental.shippingAddress,
       items: rental.items.map((item: any) => {
-        let description = item.product.description || '';
+        // Construire la désignation avec le nom du produit et les personnalisations
+        let designation = item.product?.name || 'Produit';
         
-        // Ajouter les personnalisations à la description
-        if (item.customizations && Object.keys(item.customizations).length > 0) {
-          description += '\n\nPersonnalisations:';
-          Object.entries(item.customizations).forEach(([key, value]) => {
-            if (typeof value === 'object' && value.type === 'text' && value.value) {
-              description += `\n- ${key.replace(/_/g, ' ')} (texte): ${value.value}`;
-            } else if (typeof value === 'object' && value.type === 'image' && value.value) {
-              description += `\n- ${key.replace(/_/g, ' ')} (image): Image personnalisée`;
-            } else if (typeof value === 'string') {
-              description += `\n- ${key.replace(/_/g, ' ')}: ${value}`;
-            }
-          });
+        // Ajouter les personnalisations à la désignation (pas la description du produit)
+        if (item.customizations) {
+          // Convertir Map en objet si nécessaire
+          const customizationsObj = item.customizations instanceof Map 
+            ? Object.fromEntries(item.customizations)
+            : item.customizations;
+          
+          if (customizationsObj && Object.keys(customizationsObj).length > 0) {
+            designation += '\n\nPersonnalisations:';
+            Object.entries(customizationsObj).forEach(([key, value]) => {
+              if (typeof value === 'object' && value !== null) {
+                // Gérer les différents types de personnalisations
+                if (value.type === 'both') {
+                  if (value.textValue) {
+                    designation += `\n- ${key.replace(/_/g, ' ')} (texte): ${value.textValue}`;
+                  }
+                  if (value.imageValue) {
+                    designation += `\n- ${key.replace(/_/g, ' ')} (image): Image personnalisée`;
+                  }
+                } else if (value.type === 'text' && value.value) {
+                  designation += `\n- ${key.replace(/_/g, ' ')} (texte): ${value.value}`;
+                } else if (value.type === 'image' && value.value) {
+                  designation += `\n- ${key.replace(/_/g, ' ')} (image): Image personnalisée`;
+                }
+              } else if (typeof value === 'string') {
+                designation += `\n- ${key.replace(/_/g, ' ')}: ${value}`;
+              }
+            });
+          }
         }
         
         return {
-          name: item.product.name,
-          description: description,
+          name: item.product?.name || 'Produit',
+          description: designation, // Utiliser la désignation construite au lieu de la description
           quantity: item.quantity,
           unitPrice: item.dailyPrice,
           totalPrice: item.totalPrice,
@@ -598,9 +619,12 @@ export class InvoiceService {
         };
       }),
       subtotal: rental.subtotal,
-      tax: rental.subtotal * 0.20, // TVA à 20%
-      shipping: 0,
-      total: rental.subtotal * 1.20, // TTC
+      promoCode: rental.promoCode || undefined,
+      promoDiscount: rental.promoDiscount || 0,
+      subtotalAfterDiscount: rental.subtotalAfterDiscount !== undefined ? rental.subtotalAfterDiscount : rental.subtotal,
+      tax: (rental.subtotalAfterDiscount !== undefined ? rental.subtotalAfterDiscount : rental.subtotal) * 0.20, // TVA à 20% sur le subtotal après réduction
+      shipping: rental.shipping || 0,
+      total: rental.total || ((rental.subtotalAfterDiscount !== undefined ? rental.subtotalAfterDiscount : rental.subtotal) * 1.20 + (rental.shipping || 0)), // TTC
       isRental: true,
       deposit: 0 // Acompte supprimé
     };

@@ -393,31 +393,43 @@ router.post('/webhook', async (req: Request, res: Response) => {
           console.log(`Location ${rental._id} confirmée`);
           
           // Peupler les produits avant d'envoyer la facture
-          const { Rental } = await import('../models/Rental');
-          const populatedRental = await Rental.findById(rental._id).populate('items.product');
-          
-          if (!populatedRental) {
-            console.error('❌ Impossible de récupérer la location peuplée');
-            return res.json({ received: true });
+          try {
+            const { Rental } = await import('../models/Rental');
+            const populatedRental = await Rental.findById(rental._id).populate('items.product');
+            if (populatedRental) {
+              rental = populatedRental;
+              console.log('✅ Location peuplée avec succès pour la génération de la facture');
+            } else {
+              console.warn('⚠️  Impossible de peupler la location, utilisation de la location originale');
+            }
+          } catch (populateError) {
+            console.error('❌ Erreur lors du populate de la location:', populateError);
+            console.warn('⚠️  Continuation avec la location non peuplée (les noms de produits pourraient être manquants)');
           }
           
           // Envoyer automatiquement la facture de location avec PDF
           try {
-            console.log('📧 Envoi facture de location avec PDF pour:', populatedRental._id);
+            console.log('📧 Envoi facture de location avec PDF pour:', rental._id);
+            console.log('📧 Email client:', rental.customerEmail);
             
             // Envoyer facture au client avec PDF
-            const clientResult = await emailService.sendRentalInvoiceWithPDF(populatedRental);
+            const clientResult = await emailService.sendRentalInvoiceWithPDF(rental);
             
             // Envoyer notification admin avec facture PDF
-            const adminResult = await emailService.sendAdminInvoiceNotification(populatedRental, true);
+            const adminResult = await emailService.sendAdminInvoiceNotification(rental, true);
             
             console.log('📧 Résultats envoi emails:');
             console.log('  - Facture client (avec PDF):', clientResult ? '✅' : '❌');
             console.log('  - Notification admin (avec PDF):', adminResult ? '✅' : '❌');
             
+            if (!clientResult) {
+              console.error('❌ ÉCHEC envoi facture client - vérifiez la configuration email');
+            }
+            
             console.log(`✅ Factures PDF de location envoyées automatiquement pour ${rental._id}`);
           } catch (emailError) {
             console.error('❌ Erreur envoi factures PDF location:', emailError);
+            console.error('❌ Stack trace:', emailError instanceof Error ? emailError.stack : 'N/A');
           }
         } else {
           console.log(`⚠️ Session ${session.id} non trouvée dans les commandes ni les locations`);
