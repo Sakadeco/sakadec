@@ -346,16 +346,23 @@ router.post('/webhook', async (req: Request, res: Response) => {
           console.log(`Commande ${order._id} marquée comme payée`);
           
           // Peupler les produits avant d'envoyer la facture
-          order = await Order.findById(order._id).populate('items.product');
-          
-          if (!order) {
-            console.error('❌ Impossible de récupérer la commande peuplée');
-            return res.json({ received: true });
+          try {
+            const populatedOrder = await Order.findById(order._id).populate('items.product');
+            if (populatedOrder) {
+              order = populatedOrder;
+              console.log('✅ Commande peuplée avec succès pour la génération de la facture');
+            } else {
+              console.warn('⚠️  Impossible de peupler la commande, utilisation de la commande originale');
+            }
+          } catch (populateError) {
+            console.error('❌ Erreur lors du populate de la commande:', populateError);
+            console.warn('⚠️  Continuation avec la commande non peuplée (les noms de produits pourraient être manquants)');
           }
           
           // Envoyer automatiquement la facture par email avec PDF
           try {
             console.log('📧 Envoi facture de vente avec PDF pour la commande:', order._id);
+            console.log('📧 Email client:', order.customerEmail);
             
             // Envoyer facture au client avec PDF
             const clientResult = await emailService.sendSaleInvoiceWithPDF(order);
@@ -367,9 +374,14 @@ router.post('/webhook', async (req: Request, res: Response) => {
             console.log('  - Facture client (avec PDF):', clientResult ? '✅' : '❌');
             console.log('  - Notification admin (avec PDF):', adminResult ? '✅' : '❌');
             
+            if (!clientResult) {
+              console.error('❌ ÉCHEC envoi facture client - vérifiez la configuration email');
+            }
+            
             console.log(`✅ Factures PDF envoyées automatiquement pour la commande ${order._id}`);
           } catch (emailError) {
             console.error('❌ Erreur envoi factures PDF:', emailError);
+            console.error('❌ Stack trace:', emailError instanceof Error ? emailError.stack : 'N/A');
           }
         } else if (rental) {
           // Traitement d'une location
@@ -397,7 +409,7 @@ router.post('/webhook', async (req: Request, res: Response) => {
             const clientResult = await emailService.sendRentalInvoiceWithPDF(populatedRental);
             
             // Envoyer notification admin avec facture PDF
-            const adminResult = await emailService.sendAdminInvoiceNotification(rental, true);
+            const adminResult = await emailService.sendAdminInvoiceNotification(populatedRental, true);
             
             console.log('📧 Résultats envoi emails:');
             console.log('  - Facture client (avec PDF):', clientResult ? '✅' : '❌');

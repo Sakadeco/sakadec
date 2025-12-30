@@ -384,11 +384,25 @@ class EmailService {
         }
       };
 
+      console.log('📧 Envoi de l\'email avec PDF...');
+      console.log('📧 Destinataire:', order.customerEmail);
+      console.log('📧 Expéditeur:', process.env.EMAIL_USER);
+      
       const info = await this.transporter.sendMail(mailOptions);
-      console.log('✅ Email de facture avec PDF envoyé:', info.messageId);
+      console.log('✅ Email de facture avec PDF envoyé avec succès!');
+      console.log('✅ Message ID:', info.messageId);
+      console.log('✅ Réponse serveur:', info.response);
       return true;
     } catch (error) {
       console.error('❌ Erreur envoi email facture:', error);
+      if (error instanceof Error) {
+        console.error('❌ Message d\'erreur:', error.message);
+        console.error('❌ Stack trace:', error.stack);
+      }
+      // Vérifier les erreurs spécifiques
+      if (error && typeof error === 'object' && 'code' in error) {
+        console.error('❌ Code d\'erreur:', error.code);
+      }
       return false;
     }
   }
@@ -1013,10 +1027,15 @@ class EmailService {
     console.log('📧 Tentative d\'envoi facture de vente avec PDF...');
     console.log('📧 Transporter disponible:', !!this.transporter);
     console.log('📧 Email client:', order.customerEmail);
+    console.log('📧 Variables EMAIL configurées:');
+    console.log('  - EMAIL_HOST:', process.env.EMAIL_HOST || 'MANQUANTE');
+    console.log('  - EMAIL_USER:', process.env.EMAIL_USER ? 'CONFIGURÉE' : 'MANQUANTE');
+    console.log('  - EMAIL_PASS:', process.env.EMAIL_PASS ? 'CONFIGURÉE' : 'MANQUANTE');
     
     if (!this.transporter) {
-      console.warn('⚠️  Service email non configuré - facture de vente non envoyée');
-      console.warn('⚠️  Vérifiez les variables d\'environnement EMAIL_* sur Render');
+      console.error('❌ Service email non configuré - facture de vente non envoyée');
+      console.error('❌ Vérifiez les variables d\'environnement EMAIL_* sur Render');
+      console.error('❌ Variables requises: EMAIL_HOST, EMAIL_USER, EMAIL_PASS');
       return false;
     }
 
@@ -1024,7 +1043,9 @@ class EmailService {
       console.log('📧 Génération et envoi facture de vente avec PDF...');
       
       // Générer la facture PDF
+      console.log('📄 Génération du PDF de la facture...');
       const invoicePDF = await InvoiceService.generateInvoiceForOrder(order);
+      console.log('✅ PDF généré, taille:', invoicePDF.length, 'bytes');
       
       const mailOptions = {
         from: {
@@ -1085,11 +1106,25 @@ class EmailService {
         ]
       };
 
-      await this.transporter.sendMail(mailOptions);
-      console.log('✅ Facture de vente envoyée avec PDF');
+      console.log('📧 Envoi de l\'email avec PDF...');
+      console.log('📧 Destinataire:', order.customerEmail);
+      console.log('📧 Expéditeur:', process.env.EMAIL_USER);
+      
+      const info = await this.transporter.sendMail(mailOptions);
+      console.log('✅ Email de facture avec PDF envoyé avec succès!');
+      console.log('✅ Message ID:', info.messageId);
+      console.log('✅ Réponse serveur:', info.response);
       return true;
     } catch (error) {
       console.error('❌ Erreur envoi facture de vente:', error);
+      if (error instanceof Error) {
+        console.error('❌ Message d\'erreur:', error.message);
+        console.error('❌ Stack trace:', error.stack);
+      }
+      // Vérifier les erreurs spécifiques
+      if (error && typeof error === 'object' && 'code' in error) {
+        console.error('❌ Code d\'erreur:', error.code);
+      }
       return false;
     }
   }
