@@ -63,6 +63,9 @@ export default function AdminEditProduct() {
 
   // Extract product ID from URL
   const productId = location.split('/')[3]; // /admin/products/{id}/edit
+  
+  // Stocker le produit original pour préserver la structure des options
+  const [originalProduct, setOriginalProduct] = useState<Product | null>(null);
 
   // Form state
   const [formData, setFormData] = useState({
