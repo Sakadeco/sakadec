@@ -48,6 +48,7 @@ export default function ProductDetail() {
   const [location, setLocation] = useLocation();
   const [quantity, setQuantity] = useState(1);
   const [customizations, setCustomizations] = useState<CustomizationSelection>({});
+  const [eventDate, setEventDate] = useState<string>('');
   const [isAddingToCart, setIsAddingToCart] = useState(false);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [showRentalWarning, setShowRentalWarning] = useState(false);
@@ -212,7 +213,8 @@ export default function ProductDetail() {
         isRental: false,
         customizations: customizations,
         customizationPrice: 0, // Pas de frais supplémentaires pour les personnalisations
-        totalPrice: finalPrice
+        totalPrice: finalPrice,
+        eventDate: !product.isCustomizable && eventDate ? eventDate : undefined // Date de l'événement pour les produits non personnalisables
       };
 
       // Fonction pour comparer deux objets de personnalisation
@@ -482,12 +484,12 @@ export default function ProductDetail() {
                 <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
                   <div>
                     <span className="text-2xl sm:text-3xl font-bold text-skd-shop">
-                      {(totalPrice * 1.20).toFixed(2)}€ TTC
+                      {(totalPrice * quantity * 1.20).toFixed(2)}€ TTC
                     </span>
-                    <p className="text-xs text-gray-500 mt-1">{totalPrice.toFixed(2)}€ HT</p>
+                    <p className="text-xs text-gray-500 mt-1">{(totalPrice * quantity).toFixed(2)}€ HT</p>
                     {quantity > 1 && (
                       <span className="text-xs sm:text-sm text-gray-500 block mt-1">
-                        ({(totalPrice / quantity).toFixed(2)}€ HT l'unité)
+                        ({totalPrice.toFixed(2)}€ HT l'unité)
                       </span>
                     )}
                   </div>
@@ -522,6 +524,27 @@ export default function ProductDetail() {
                   initialCustomizations={customizations}
                   basePrice={product.price}
                 />
+              )}
+
+              {/* Date de l'événement pour les produits non personnalisables */}
+              {!product.isCustomizable && (
+                <Card>
+                  <CardContent className="pt-4 sm:pt-6 p-4 sm:p-6">
+                    <div className="space-y-2">
+                      <label htmlFor="eventDate" className="text-sm font-medium text-gray-700">
+                        Date de l'événement
+                        <span className="text-gray-500 ml-1 text-sm font-normal">(optionnel)</span>
+                      </label>
+                      <Input
+                        id="eventDate"
+                        type="date"
+                        value={eventDate}
+                        onChange={(e) => setEventDate(e.target.value)}
+                        className="w-full"
+                      />
+                    </div>
+                  </CardContent>
+                </Card>
               )}
 
               {/* Quantity and Add to Cart */}

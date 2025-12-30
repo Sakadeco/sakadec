@@ -335,10 +335,9 @@ export default function ProductCustomization({
            return (
              <div className="space-y-4">
                <div>
-                 <Label>
+                 <Label className="text-sm font-medium">
                    Inscription souhaitée + date de l'événement
                    {option.required && <span className="text-red-500 ml-1">*</span>}
-                   {!option.required && <span className="text-gray-500 ml-1">(optionnel)</span>}
                  </Label>
                  <Textarea
                    value={customText}
@@ -518,6 +517,10 @@ export default function ProductCustomization({
             }
             
             return optionsEntries.map(([key, option]) => {
+              // Pour les options text_image_upload avec engravingType === 'both', 
+              // le label est déjà affiché dans le champ, donc on ne l'affiche pas ici
+              const isBothEngraving = option.type === 'text_image_upload' && option.engravingType === 'both';
+              
               // Remplacer "Gravure personnalisée" par "Inscription souhaitée" pour l'affichage client
               // Vérifier que option.label existe avant d'utiliser toLowerCase
               const label = option.label || key; // Utiliser la clé comme fallback si label n'existe pas
@@ -527,13 +530,16 @@ export default function ProductCustomization({
               
               return (
                 <div key={key} className="space-y-2">
-                  <Label htmlFor={key} className="text-sm font-medium">
-                    {displayLabel}
-                    {option.required && <span className="text-red-500 ml-1">*</span>}
-                    {!option.required && <span className="text-gray-500 ml-1 text-sm font-normal">(optionnel)</span>}
-                  </Label>
+                  {/* Ne pas afficher le label principal pour engravingType === 'both' car il est déjà dans le champ */}
+                  {!isBothEngraving && (
+                    <Label htmlFor={key} className="text-sm font-medium">
+                      {displayLabel}
+                      {option.required && <span className="text-red-500 ml-1">*</span>}
+                      {!option.required && <span className="text-gray-500 ml-1 text-sm font-normal">(optionnel)</span>}
+                    </Label>
+                  )}
                   {renderCustomizationField(key, option)}
-                  {option.placeholder && (
+                  {option.placeholder && !isBothEngraving && (
                     <p className="text-xs text-gray-500">{option.placeholder}</p>
                   )}
                 </div>

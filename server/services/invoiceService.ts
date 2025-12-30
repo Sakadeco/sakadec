@@ -238,7 +238,19 @@ export class InvoiceService {
       const isEven = index % 2 === 0;
       const bgColor = isEven ? '#F7FAFC' : '#FFFFFF';
       
-      const rowHeight = item.isRental && item.rentalStartDate && item.rentalEndDate ? 40 : 30;
+      // Calculer la hauteur de la ligne en fonction de la description
+      let baseRowHeight = 30;
+      let descriptionLines = 0;
+      
+      if (item.description && item.description.trim()) {
+        descriptionLines = item.description.split('\n').filter(line => line.trim()).length;
+      }
+      
+      if (item.isRental && item.rentalStartDate && item.rentalEndDate) {
+        descriptionLines += 1; // Ligne pour la période de location
+      }
+      
+      const rowHeight = Math.max(30, baseRowHeight + (descriptionLines * 12));
       
       doc.rect(50, currentY, 500, rowHeight)
          .fill(bgColor);
@@ -249,14 +261,71 @@ export class InvoiceService {
          .fillColor('#2D3748')
          .text(item.name, 60, currentY + 8, { width: 150 });
 
-      // Description si c'est une location
+      // Description avec personnalisations
+      let descriptionY = currentY + 22;
+      
+      if (item.description && item.description.trim()) {
+        doc.fontSize(8)
+           .font('Helvetica')
+           .fillColor('#4A5568');
+        
+        const descriptionLinesArray = item.description.split('\n');
+        descriptionLinesArray.forEach((line: string) => {
+          if (line.trim()) {
+            // Vérifier si on doit créer une nouvelle page
+            if (descriptionY > doc.page.height - 100) {
+              doc.addPage();
+              descriptionY = 50;
+              // Réimprimer l'en-tête du tableau
+              doc.rect(50, descriptionY, 500, 30)
+                 .fill('#D4AF37');
+              doc.fontSize(10)
+                 .font('Helvetica-Bold')
+                 .fillColor('#FFFFFF')
+                 .text('Désignation', 60, descriptionY + 8)
+                 .text('Qté', 220, descriptionY + 8)
+                 .text('Prix unitaire HT', 260, descriptionY + 8)
+                 .text('Prix HT', 360, descriptionY + 8)
+                 .text('TVA 20%', 420, descriptionY + 8)
+                 .text('Prix TTC', 480, descriptionY + 8);
+              descriptionY += 30;
+            }
+            
+            doc.text(line.trim(), 60, descriptionY, { width: 150 });
+            descriptionY += 12;
+          }
+        });
+      }
+      
+      // Description si c'est une location (période de location)
       if (item.isRental && item.rentalStartDate && item.rentalEndDate) {
         const startDate = new Date(item.rentalStartDate).toLocaleDateString('fr-FR');
         const endDate = new Date(item.rentalEndDate).toLocaleDateString('fr-FR');
+        
+        // Vérifier si on doit créer une nouvelle page
+        if (descriptionY > doc.page.height - 100) {
+          doc.addPage();
+          descriptionY = 50;
+          // Réimprimer l'en-tête du tableau
+          doc.rect(50, descriptionY, 500, 30)
+             .fill('#D4AF37');
+          doc.fontSize(10)
+             .font('Helvetica-Bold')
+             .fillColor('#FFFFFF')
+             .text('Désignation', 60, descriptionY + 8)
+             .text('Qté', 220, descriptionY + 8)
+             .text('Prix unitaire HT', 260, descriptionY + 8)
+             .text('Prix HT', 360, descriptionY + 8)
+             .text('TVA 20%', 420, descriptionY + 8)
+             .text('Prix TTC', 480, descriptionY + 8);
+          descriptionY += 30;
+        }
+        
         doc.fontSize(8)
            .font('Helvetica')
            .fillColor('#4A5568')
-           .text(`Période: Du ${startDate} au ${endDate}`, 60, currentY + 22, { width: 150 });
+           .text(`Période: Du ${startDate} au ${endDate}`, 60, descriptionY, { width: 150 });
+        descriptionY += 12;
       }
 
       // Quantité
@@ -421,31 +490,51 @@ export class InvoiceService {
   }
 
   static async generateInvoiceForOrder(order: any): Promise<Buffer> {
+    // Utiliser orderNumber de la commande au lieu de générer un nouveau numéro
+    const invoiceNumber = order.orderNumber || order._id.toString();
+    
     const invoiceData: InvoiceData = {
-      invoiceNumber: this.generateInvoiceNumber(),
+      invoiceNumber: invoiceNumber,
       date: new Date(),
       customerEmail: order.customerEmail,
       customerName: order.customerName,
       shippingAddress: order.shippingAddress,
       items: order.items.map((item: any) => {
-        let description = item.product.description || '';
+        let description = item.product?.description || '';
         
         // Ajouter les personnalisations à la description
-        if (item.customizations && Object.keys(item.customizations).length > 0) {
-          description += '\n\nPersonnalisations:';
-          Object.entries(item.customizations).forEach(([key, value]) => {
-            if (typeof value === 'object' && value.type === 'text' && value.value) {
-              description += `\n- ${key.replace(/_/g, ' ')} (texte): ${value.value}`;
-            } else if (typeof value === 'object' && value.type === 'image' && value.value) {
-              description += `\n- ${key.replace(/_/g, ' ')} (image): Image personnalisée`;
-            } else if (typeof value === 'string') {
-              description += `\n- ${key.replace(/_/g, ' ')}: ${value}`;
-            }
-          });
+        if (item.customizations) {
+          // Convertir Map en objet si nécessaire
+          const customizationsObj = item.customizations instanceof Map 
+            ? Object.fromEntries(item.customizations)
+            : item.customizations;
+          
+          if (customizationsObj && Object.keys(customizationsObj).length > 0) {
+            description += '\n\nPersonnalisations:';
+            Object.entries(customizationsObj).forEach(([key, value]) => {
+              if (typeof value === 'object' && value !== null) {
+                // Gérer les différents types de personnalisations
+                if (value.type === 'both') {
+                  if (value.textValue) {
+                    description += `\n- ${key.replace(/_/g, ' ')} (texte): ${value.textValue}`;
+                  }
+                  if (value.imageValue) {
+                    description += `\n- ${key.replace(/_/g, ' ')} (image): Image personnalisée`;
+                  }
+                } else if (value.type === 'text' && value.value) {
+                  description += `\n- ${key.replace(/_/g, ' ')} (texte): ${value.value}`;
+                } else if (value.type === 'image' && value.value) {
+                  description += `\n- ${key.replace(/_/g, ' ')} (image): Image personnalisée`;
+                }
+              } else if (typeof value === 'string') {
+                description += `\n- ${key.replace(/_/g, ' ')}: ${value}`;
+              }
+            });
+          }
         }
         
         return {
-          name: item.product.name,
+          name: item.product?.name || 'Produit',
           description: description,
           quantity: item.quantity,
           unitPrice: item.price,
