@@ -393,11 +393,12 @@ router.post('/webhook', async (req: Request, res: Response) => {
           console.log(`Location ${rental._id} confirmée`);
           
           // Peupler les produits avant d'envoyer la facture
+          let rentalToUse = rental;
           try {
             const { Rental } = await import('../models/Rental');
             const populatedRental = await Rental.findById(rental._id).populate('items.product');
             if (populatedRental) {
-              rental = populatedRental;
+              rentalToUse = populatedRental;
               console.log('✅ Location peuplée avec succès pour la génération de la facture');
             } else {
               console.warn('⚠️  Impossible de peupler la location, utilisation de la location originale');
@@ -409,14 +410,14 @@ router.post('/webhook', async (req: Request, res: Response) => {
           
           // Envoyer automatiquement la facture de location avec PDF
           try {
-            console.log('📧 Envoi facture de location avec PDF pour:', rental._id);
-            console.log('📧 Email client:', rental.customerEmail);
+            console.log('📧 Envoi facture de location avec PDF pour:', rentalToUse._id);
+            console.log('📧 Email client:', rentalToUse.customerEmail);
             
             // Envoyer facture au client avec PDF
-            const clientResult = await emailService.sendRentalInvoiceWithPDF(rental);
+            const clientResult = await emailService.sendRentalInvoiceWithPDF(rentalToUse);
             
             // Envoyer notification admin avec facture PDF
-            const adminResult = await emailService.sendAdminInvoiceNotification(rental, true);
+            const adminResult = await emailService.sendAdminInvoiceNotification(rentalToUse, true);
             
             console.log('📧 Résultats envoi emails:');
             console.log('  - Facture client (avec PDF):', clientResult ? '✅' : '❌');
@@ -426,7 +427,7 @@ router.post('/webhook', async (req: Request, res: Response) => {
               console.error('❌ ÉCHEC envoi facture client - vérifiez la configuration email');
             }
             
-            console.log(`✅ Factures PDF de location envoyées automatiquement pour ${rental._id}`);
+            console.log(`✅ Factures PDF de location envoyées automatiquement pour ${rentalToUse._id}`);
           } catch (emailError) {
             console.error('❌ Erreur envoi factures PDF location:', emailError);
             console.error('❌ Stack trace:', emailError instanceof Error ? emailError.stack : 'N/A');
