@@ -154,6 +154,9 @@ export default function AdminEditProduct() {
         setIsLoadingProduct(false);
         return;
       }
+      
+      // Stocker le produit original pour préserver la structure des options
+      setOriginalProduct(product);
 
       // Populate form data with safe defaults
       setFormData({
@@ -174,13 +177,35 @@ export default function AdminEditProduct() {
       setExistingAdditionalImages(product.additionalImages || []);
 
       // Populate customization options
+      // Les options doivent être préservées telles quelles (objets avec type, label, required, etc.)
       if (product.customizationOptions) {
         try {
-          const options: CustomizationOption[] = Object.entries(product.customizationOptions).map(([type, values]) => ({
-            type,
-            values: Array.isArray(values) ? values : []
-          }));
-          setCustomizationOptions(options);
+          // Si les options sont déjà des objets valides, les préserver
+          const optionsEntries = Object.entries(product.customizationOptions);
+          const validOptions: CustomizationOption[] = [];
+          
+          optionsEntries.forEach(([key, option]: [string, any]) => {
+            // Si l'option est un objet avec toutes ses propriétés
+            if (option && typeof option === 'object' && option.type) {
+              // C'est une option valide, la préserver telle quelle
+              // Mais pour l'affichage dans le formulaire simplifié, on extrait juste type et values
+              const values = option.options || (Array.isArray(option) ? option : []);
+              validOptions.push({
+                type: key, // Utiliser la clé comme type pour l'affichage
+                values: Array.isArray(values) ? values : []
+              });
+            } else if (Array.isArray(option)) {
+              // Si c'est juste un tableau (ancien format), le convertir
+              validOptions.push({
+                type: key,
+                values: option
+              });
+            } else {
+              console.warn(`Option ${key} a un format inattendu:`, option);
+            }
+          });
+          
+          setCustomizationOptions(validOptions);
         } catch (parseError) {
           console.warn("Erreur parsing customizationOptions:", parseError);
           setCustomizationOptions([]);
@@ -259,9 +284,42 @@ export default function AdminEditProduct() {
       }
 
       // Build customization options object
+      // IMPORTANT: Préserver la structure complète des options existantes
       const customizationOptionsObj: any = {};
+      
+      // Récupérer les options existantes du produit original pour préserver leur structure
+      const existingOptions = originalProduct?.customizationOptions || {};
+      
       customizationOptions.forEach(option => {
-        customizationOptionsObj[option.type] = option.values;
+        const optionKey = option.type;
+        // Si l'option existe déjà avec sa structure complète, la préserver
+        if (existingOptions[optionKey] && typeof existingOptions[optionKey] === 'object' && existingOptions[optionKey].type) {
+          // Préserver la structure complète mais mettre à jour les valeurs si nécessaire
+          customizationOptionsObj[optionKey] = {
+            ...existingOptions[optionKey],
+            // Si l'option a une propriété 'options', la mettre à jour avec les nouvelles valeurs
+            ...(option.values.length > 0 && { options: option.values })
+          };
+        } else {
+          // Si l'option n'existe pas ou n'a pas de structure complète, créer une structure minimale
+          if (Array.isArray(existingOptions[optionKey])) {
+            // Ancien format (juste un tableau), créer une structure complète
+            customizationOptionsObj[optionKey] = {
+              type: 'dropdown',
+              label: optionKey,
+              required: false,
+              options: option.values
+            };
+          } else {
+            // Nouvelle option ou format inconnu
+            customizationOptionsObj[optionKey] = {
+              type: 'dropdown',
+              label: optionKey,
+              required: false,
+              options: option.values
+            };
+          }
+        }
       });
 
       // Définir automatiquement la catégorie selon la destination

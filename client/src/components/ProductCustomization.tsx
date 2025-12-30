@@ -530,6 +530,19 @@ export default function ProductCustomization({
             }
             
             return optionsEntries.map(([key, option]) => {
+              // Vérifier que l'option est un objet valide avec une propriété 'type'
+              if (!option || typeof option !== 'object' || !option.type) {
+                console.warn(`⚠️  Option ${key} n'est pas un objet valide:`, option);
+                // Si l'option n'est pas valide, ne pas l'afficher ou afficher un message d'erreur
+                return (
+                  <div key={key} className="space-y-2 p-2 bg-red-50 border border-red-200 rounded">
+                    <p className="text-sm text-red-600">
+                      Option "{key}" invalide. Veuillez contacter l'administrateur.
+                    </p>
+                  </div>
+                );
+              }
+              
               // Pour les options text_image_upload, le label est déjà affiché dans le champ,
               // donc on ne l'affiche pas dans le label principal pour éviter la duplication
               const isTextImageUpload = option.type === 'text_image_upload';

@@ -673,23 +673,73 @@ export async function registerRoutes(app: Express): Promise<Server> {
               } else if (typeof value === 'string') {
                 // Si la valeur est une chaîne, essayer de la parser comme JSON
                 try {
-                  customizationOptionsObj[key] = JSON.parse(value);
+                  const parsed = JSON.parse(value);
+                  // S'assurer que c'est un objet avec les propriétés nécessaires
+                  if (typeof parsed === 'object' && parsed !== null) {
+                    customizationOptionsObj[key] = parsed;
+                  } else {
+                    // Si ce n'est pas un objet valide, créer une structure par défaut
+                    console.warn(`⚠️  Option ${key} n'est pas un objet valide, création d'une structure par défaut`);
+                    customizationOptionsObj[key] = { type: 'text', label: key, required: false };
+                  }
                 } catch {
-                  customizationOptionsObj[key] = value;
+                  // Si le parsing échoue, créer une structure par défaut
+                  console.warn(`⚠️  Impossible de parser l'option ${key}, création d'une structure par défaut`);
+                  customizationOptionsObj[key] = { type: 'text', label: key, required: false };
                 }
-              } else {
+              } else if (typeof value === 'object' && value !== null) {
+                // Si c'est déjà un objet, s'assurer qu'il a les propriétés nécessaires
+                if (!value.type) {
+                  console.warn(`⚠️  Option ${key} n'a pas de propriété 'type', ajout d'une valeur par défaut`);
+                  value.type = 'text';
+                }
                 customizationOptionsObj[key] = value;
+              } else {
+                // Si ce n'est ni une Map, ni une chaîne, ni un objet, créer une structure par défaut
+                console.warn(`⚠️  Option ${key} a un type inattendu: ${typeof value}, création d'une structure par défaut`);
+                customizationOptionsObj[key] = { type: 'text', label: key, required: false };
               }
             });
             productObj.customizationOptions = customizationOptionsObj;
           } else if (typeof productObj.customizationOptions === 'string') {
             // Si customizationOptions est une chaîne, essayer de la parser
             try {
-              productObj.customizationOptions = JSON.parse(productObj.customizationOptions);
+              const parsed = JSON.parse(productObj.customizationOptions);
+              if (typeof parsed === 'object' && parsed !== null) {
+                productObj.customizationOptions = parsed;
+              } else {
+                console.warn('⚠️  customizationOptions parsé n\'est pas un objet valide');
+                productObj.customizationOptions = {};
+              }
             } catch (e) {
               console.warn('⚠️  Impossible de parser customizationOptions comme JSON:', e);
               productObj.customizationOptions = {};
             }
+          } else if (typeof productObj.customizationOptions === 'object' && productObj.customizationOptions !== null) {
+            // Si c'est déjà un objet, vérifier que toutes les options sont des objets valides
+            const validatedOptions: any = {};
+            Object.entries(productObj.customizationOptions).forEach(([key, value]: [string, any]) => {
+              if (typeof value === 'object' && value !== null && value.type) {
+                validatedOptions[key] = value;
+              } else if (typeof value === 'string') {
+                try {
+                  const parsed = JSON.parse(value);
+                  if (typeof parsed === 'object' && parsed !== null && parsed.type) {
+                    validatedOptions[key] = parsed;
+                  } else {
+                    console.warn(`⚠️  Option ${key} parsée n'est pas valide, création d'une structure par défaut`);
+                    validatedOptions[key] = { type: 'text', label: key, required: false };
+                  }
+                } catch {
+                  console.warn(`⚠️  Impossible de parser l'option ${key}, création d'une structure par défaut`);
+                  validatedOptions[key] = { type: 'text', label: key, required: false };
+                }
+              } else {
+                console.warn(`⚠️  Option ${key} n'est pas un objet valide, création d'une structure par défaut`);
+                validatedOptions[key] = { type: 'text', label: key, required: false };
+              }
+            });
+            productObj.customizationOptions = validatedOptions;
           }
         }
         

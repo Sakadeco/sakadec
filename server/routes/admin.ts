@@ -510,20 +510,78 @@ router.put('/products/:id', adminAuth, upload.fields([
 
     // Convertir les Map en objets pour le frontend
     const productObj = product.toObject();
-    if (productObj.customizationOptions && productObj.customizationOptions instanceof Map) {
-      const customizationOptionsObj: any = {};
-      productObj.customizationOptions.forEach((value: any, key: string) => {
-        if (value instanceof Map) {
-          customizationOptionsObj[key] = Object.fromEntries(value);
-          // Convertir aussi valuePrices si c'est une Map
-          if (customizationOptionsObj[key].valuePrices instanceof Map) {
-            customizationOptionsObj[key].valuePrices = Object.fromEntries(customizationOptionsObj[key].valuePrices);
+    if (productObj.customizationOptions) {
+      if (productObj.customizationOptions instanceof Map) {
+        const customizationOptionsObj: any = {};
+        productObj.customizationOptions.forEach((value: any, key: string) => {
+          if (value instanceof Map) {
+            customizationOptionsObj[key] = Object.fromEntries(value);
+            // Convertir aussi valuePrices si c'est une Map
+            if (customizationOptionsObj[key] && customizationOptionsObj[key].valuePrices instanceof Map) {
+              customizationOptionsObj[key].valuePrices = Object.fromEntries(customizationOptionsObj[key].valuePrices);
+            }
+          } else if (typeof value === 'string') {
+            // Si la valeur est une chaîne, essayer de la parser comme JSON
+            try {
+              const parsed = JSON.parse(value);
+              if (typeof parsed === 'object' && parsed !== null && parsed.type) {
+                customizationOptionsObj[key] = parsed;
+              } else {
+                console.warn(`⚠️  Option ${key} parsée n'est pas valide, création d'une structure par défaut`);
+                customizationOptionsObj[key] = { type: 'text', label: key, required: false };
+              }
+            } catch {
+              console.warn(`⚠️  Impossible de parser l'option ${key}, création d'une structure par défaut`);
+              customizationOptionsObj[key] = { type: 'text', label: key, required: false };
+            }
+          } else if (typeof value === 'object' && value !== null) {
+            // Si c'est déjà un objet, s'assurer qu'il a les propriétés nécessaires
+            if (!value.type) {
+              console.warn(`⚠️  Option ${key} n'a pas de propriété 'type', ajout d'une valeur par défaut`);
+              value.type = 'text';
+            }
+            customizationOptionsObj[key] = value;
+          } else {
+            // Si ce n'est ni une Map, ni une chaîne, ni un objet, créer une structure par défaut
+            console.warn(`⚠️  Option ${key} a un type inattendu: ${typeof value}, création d'une structure par défaut`);
+            customizationOptionsObj[key] = { type: 'text', label: key, required: false };
           }
-        } else {
-          customizationOptionsObj[key] = value;
+        });
+        productObj.customizationOptions = customizationOptionsObj;
+      } else if (typeof productObj.customizationOptions === 'string') {
+        try {
+          const parsed = JSON.parse(productObj.customizationOptions);
+          if (typeof parsed === 'object' && parsed !== null) {
+            productObj.customizationOptions = parsed;
+          } else {
+            productObj.customizationOptions = {};
+          }
+        } catch {
+          productObj.customizationOptions = {};
         }
-      });
-      productObj.customizationOptions = customizationOptionsObj;
+      } else if (typeof productObj.customizationOptions === 'object' && productObj.customizationOptions !== null) {
+        // Valider que toutes les options sont des objets valides
+        const validatedOptions: any = {};
+        Object.entries(productObj.customizationOptions).forEach(([key, value]: [string, any]) => {
+          if (typeof value === 'object' && value !== null && value.type) {
+            validatedOptions[key] = value;
+          } else if (typeof value === 'string') {
+            try {
+              const parsed = JSON.parse(value);
+              if (typeof parsed === 'object' && parsed !== null && parsed.type) {
+                validatedOptions[key] = parsed;
+              } else {
+                validatedOptions[key] = { type: 'text', label: key, required: false };
+              }
+            } catch {
+              validatedOptions[key] = { type: 'text', label: key, required: false };
+            }
+          } else {
+            validatedOptions[key] = { type: 'text', label: key, required: false };
+          }
+        });
+        productObj.customizationOptions = validatedOptions;
+      }
     }
 
     console.log('✅ Produit modifié avec succès, image principale:', finalMainImageUrl);
