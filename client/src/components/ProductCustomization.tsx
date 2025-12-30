@@ -244,7 +244,7 @@ export default function ProductCustomization({
         );
 
             case 'text_image_upload':
-        const engravingType = option.engravingType;
+        const engravingType = option.engravingType || 'text'; // Par défaut 'text' si non défini
         
                  // Interface pour gravure texte uniquement
          if (engravingType === 'text') {
@@ -517,29 +517,36 @@ export default function ProductCustomization({
             }
             
             return optionsEntries.map(([key, option]) => {
-              // Pour les options text_image_upload avec engravingType === 'both', 
-              // le label est déjà affiché dans le champ, donc on ne l'affiche pas ici
-              const isBothEngraving = option.type === 'text_image_upload' && option.engravingType === 'both';
-              
-              // Remplacer "Gravure personnalisée" par "Inscription souhaitée" pour l'affichage client
-              // Vérifier que option.label existe avant d'utiliser toLowerCase
-              const label = option.label || key; // Utiliser la clé comme fallback si label n'existe pas
-              const displayLabel = label && typeof label === 'string' && label.toLowerCase().includes('gravure') 
-                ? label.replace(/gravure personnalisée/gi, 'Inscription souhaitée')
-                : label;
+              // Pour les options text_image_upload, le label est déjà affiché dans le champ,
+              // donc on ne l'affiche pas dans le label principal pour éviter la duplication
+              const isTextImageUpload = option.type === 'text_image_upload';
+              const engravingType = option.engravingType || 'text'; // Par défaut 'text' si non défini
+              // Masquer le label principal pour tous les types text_image_upload (text, image, both)
+              const shouldHideLabel = isTextImageUpload;
               
               return (
                 <div key={key} className="space-y-2">
-                  {/* Ne pas afficher le label principal pour engravingType === 'both' car il est déjà dans le champ */}
-                  {!isBothEngraving && (
-                    <Label htmlFor={key} className="text-sm font-medium">
-                      {displayLabel}
-                      {option.required && <span className="text-red-500 ml-1">*</span>}
-                      {!option.required && <span className="text-gray-500 ml-1 text-sm font-normal">(optionnel)</span>}
-                    </Label>
+                  {/* Ne pas afficher le label principal pour text_image_upload car il est déjà dans le champ */}
+                  {!shouldHideLabel && (
+                    <>
+                      {/* Remplacer "Gravure personnalisée" par "Inscription souhaitée" pour l'affichage client */}
+                      {(() => {
+                        const label = option.label || key;
+                        const displayLabel = label && typeof label === 'string' && label.toLowerCase().includes('gravure') 
+                          ? label.replace(/gravure personnalisée/gi, 'Inscription souhaitée')
+                          : label;
+                        return (
+                          <Label htmlFor={key} className="text-sm font-medium">
+                            {displayLabel}
+                            {option.required && <span className="text-red-500 ml-1">*</span>}
+                            {!option.required && <span className="text-gray-500 ml-1 text-sm font-normal">(optionnel)</span>}
+                          </Label>
+                        );
+                      })()}
+                    </>
                   )}
                   {renderCustomizationField(key, option)}
-                  {option.placeholder && !isBothEngraving && (
+                  {option.placeholder && !shouldHideLabel && (
                     <p className="text-xs text-gray-500">{option.placeholder}</p>
                   )}
                 </div>
