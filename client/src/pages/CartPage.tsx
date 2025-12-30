@@ -544,7 +544,8 @@ const CartPage: React.FC = () => {
                         </Button>
                       </div>
                     </div>
-                  ))}
+                    );
+                  })}
                 </CardContent>
               </Card>
             </div>
