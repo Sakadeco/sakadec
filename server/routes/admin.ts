@@ -1407,19 +1407,35 @@ router.post('/realisations', adminAuth, upload.fields([
       for (const file of files) {
         if (isCloudinaryConfigured) {
           try {
+            console.log('☁️  Upload image réalisation vers Cloudinary...');
             const result = await cloudinary.uploader.upload(file.path, {
               folder: 'sakadeco/realisations',
               public_id: `realisation-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
             });
             imageUrls.push(result.secure_url);
+            console.log('✅ Image réalisation uploadée vers Cloudinary:', result.secure_url);
+            
+            // Supprimer le fichier local après upload réussi vers Cloudinary
+            try {
+              const fs = await import('fs');
+              if (fs.existsSync(file.path)) {
+                fs.unlinkSync(file.path);
+                console.log('🗑️  Fichier local supprimé après upload Cloudinary');
+              }
+            } catch (deleteError) {
+              console.warn('⚠️  Impossible de supprimer le fichier local:', deleteError);
+            }
           } catch (cloudinaryError) {
-            console.error('Erreur upload Cloudinary:', cloudinaryError);
+            console.error('❌ Erreur upload Cloudinary:', cloudinaryError);
             imageUrls.push(`/uploads/realisations/${file.filename}`);
+            console.warn('⚠️  Utilisation de l\'image locale (sera perdue après redéploiement)');
+            console.warn('⚠️  Vérifiez vos variables d\'environnement CLOUDINARY_* sur Render');
           }
         } else {
           // ⚠️ ATTENTION: Stockage local - les images disparaîtront après redémarrage du serveur
           // Il est fortement recommandé de configurer Cloudinary pour un stockage persistant
-          console.warn('⚠️  Stockage local utilisé pour les réalisations - les images peuvent disparaître après redémarrage');
+          console.warn('⚠️  Cloudinary non configuré - image stockée localement (sera perdue après redéploiement)');
+          console.warn('⚠️  Configurez CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY et CLOUDINARY_API_SECRET sur Render');
           imageUrls.push(`/uploads/realisations/${file.filename}`);
         }
       }
@@ -1429,6 +1445,13 @@ router.post('/realisations', adminAuth, upload.fields([
     if (existingImages) {
       const parsedImages = typeof existingImages === 'string' ? JSON.parse(existingImages) : existingImages;
       if (Array.isArray(parsedImages)) {
+        // Vérifier si certaines images existantes sont locales et que Cloudinary est configuré
+        parsedImages.forEach((imgUrl: string) => {
+          if (imgUrl.startsWith('/uploads/') && isCloudinaryConfigured) {
+            console.warn('⚠️  Image locale détectée alors que Cloudinary est configuré:', imgUrl);
+            console.warn('⚠️  Cette image sera perdue après redéploiement. Veuillez re-uploader l\'image.');
+          }
+        });
         imageUrls = [...imageUrls, ...parsedImages];
       }
     }
@@ -1484,6 +1507,16 @@ router.put('/realisations/:id', adminAuth, upload.fields([
       ? (typeof existingImages === 'string' ? JSON.parse(existingImages) : existingImages)
       : realisation.images;
 
+    // Vérifier si certaines images existantes sont locales et que Cloudinary est configuré
+    if (Array.isArray(imageUrls)) {
+      imageUrls.forEach((imgUrl: string) => {
+        if (imgUrl && imgUrl.startsWith('/uploads/') && isCloudinaryConfigured) {
+          console.warn('⚠️  Image locale détectée alors que Cloudinary est configuré:', imgUrl);
+          console.warn('⚠️  Cette image sera perdue après redéploiement. Veuillez re-uploader l\'image.');
+        }
+      });
+    }
+
     // Traiter les nouvelles images uploadées
     if (req.files && req.files.images) {
       const files = Array.isArray(req.files.images) ? req.files.images : [req.files.images];
@@ -1491,19 +1524,35 @@ router.put('/realisations/:id', adminAuth, upload.fields([
       for (const file of files) {
         if (isCloudinaryConfigured) {
           try {
+            console.log('☁️  Upload image réalisation vers Cloudinary...');
             const result = await cloudinary.uploader.upload(file.path, {
               folder: 'sakadeco/realisations',
               public_id: `realisation-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
             });
             imageUrls.push(result.secure_url);
+            console.log('✅ Image réalisation uploadée vers Cloudinary:', result.secure_url);
+            
+            // Supprimer le fichier local après upload réussi vers Cloudinary
+            try {
+              const fs = await import('fs');
+              if (fs.existsSync(file.path)) {
+                fs.unlinkSync(file.path);
+                console.log('🗑️  Fichier local supprimé après upload Cloudinary');
+              }
+            } catch (deleteError) {
+              console.warn('⚠️  Impossible de supprimer le fichier local:', deleteError);
+            }
           } catch (cloudinaryError) {
-            console.error('Erreur upload Cloudinary:', cloudinaryError);
+            console.error('❌ Erreur upload Cloudinary:', cloudinaryError);
             imageUrls.push(`/uploads/realisations/${file.filename}`);
+            console.warn('⚠️  Utilisation de l\'image locale (sera perdue après redéploiement)');
+            console.warn('⚠️  Vérifiez vos variables d\'environnement CLOUDINARY_* sur Render');
           }
         } else {
           // ⚠️ ATTENTION: Stockage local - les images disparaîtront après redémarrage du serveur
           // Il est fortement recommandé de configurer Cloudinary pour un stockage persistant
-          console.warn('⚠️  Stockage local utilisé pour les réalisations - les images peuvent disparaître après redémarrage');
+          console.warn('⚠️  Cloudinary non configuré - image stockée localement (sera perdue après redéploiement)');
+          console.warn('⚠️  Configurez CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY et CLOUDINARY_API_SECRET sur Render');
           imageUrls.push(`/uploads/realisations/${file.filename}`);
         }
       }
@@ -1763,9 +1812,10 @@ router.post('/themes', adminAuth, uploadThemes.single('image'), async (req: Admi
     if (req.body.existingImageUrl && !req.file) {
       imageUrl = req.body.existingImageUrl;
       // Vérifier si l'URL existante est locale - si oui et que Cloudinary est configuré, c'est un problème
-      if (imageUrl.startsWith('/uploads/') && isCloudinaryConfigured) {
+      if (imageUrl && imageUrl.startsWith('/uploads/') && isCloudinaryConfigured) {
         console.warn('⚠️  URL locale détectée alors que Cloudinary est configuré:', imageUrl);
         console.warn('⚠️  Cette image sera perdue après redéploiement. Veuillez re-uploader l\'image.');
+        console.warn('⚠️  Pour corriger: supprimez l\'image actuelle et re-uploadez-la.');
       }
     }
 
@@ -1799,6 +1849,13 @@ router.put('/themes/:id', adminAuth, uploadThemes.single('image'), async (req: A
     }
 
     let imageUrl = existingImageUrl || existingTheme.imageUrl;
+
+    // Vérifier si l'image existante est locale et que Cloudinary est configuré
+    if (imageUrl && imageUrl.startsWith('/uploads/') && isCloudinaryConfigured) {
+      console.warn('⚠️  Image locale détectée alors que Cloudinary est configuré:', imageUrl);
+      console.warn('⚠️  Cette image sera perdue après redéploiement. Veuillez re-uploader l\'image.');
+      console.warn('⚠️  Pour corriger: supprimez l\'image actuelle et re-uploadez-la.');
+    }
 
     // Traiter la nouvelle image si uploadée
     if (req.file) {
