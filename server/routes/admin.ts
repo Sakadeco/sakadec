@@ -339,16 +339,196 @@ router.get('/products/:id', adminAuth, async (req: AdminRequest, res: Response) 
 
     // Convertir les Map en objets pour le frontend
     const productObj = product.toObject();
-    if (productObj.customizationOptions && productObj.customizationOptions instanceof Map) {
-      const customizationOptionsObj: any = {};
-      productObj.customizationOptions.forEach((value: any, key: string) => {
-        customizationOptionsObj[key] = value instanceof Map ? Object.fromEntries(value) : value;
-        // Convertir aussi valuePrices si c'est une Map
-        if (customizationOptionsObj[key] && customizationOptionsObj[key].valuePrices instanceof Map) {
-          customizationOptionsObj[key].valuePrices = Object.fromEntries(customizationOptionsObj[key].valuePrices);
+    
+    // Vérifier si les options ont besoin d'être restaurées
+    let needsUpdate = false;
+    const originalOptions = product.customizationOptions;
+    
+    if (productObj.customizationOptions) {
+      if (productObj.customizationOptions instanceof Map) {
+        const customizationOptionsObj: any = {};
+        productObj.customizationOptions.forEach((value: any, key: string) => {
+          // Vérifier si l'option originale était corrompue
+          if (Array.isArray(value)) {
+            needsUpdate = true;
+          }
+          
+          if (value instanceof Map) {
+            customizationOptionsObj[key] = Object.fromEntries(value);
+            // Convertir aussi valuePrices si c'est une Map
+            if (customizationOptionsObj[key] && customizationOptionsObj[key].valuePrices instanceof Map) {
+              customizationOptionsObj[key].valuePrices = Object.fromEntries(customizationOptionsObj[key].valuePrices);
+            }
+          } else if (Array.isArray(value)) {
+            // Si c'est un tableau (format corrompu), restaurer la structure
+            console.warn(`⚠️  Option ${key} est un tableau (format corrompu), restauration de la structure`);
+            let optionType: 'dropdown' | 'text' | 'textarea' | 'text_image_upload' = 'dropdown';
+            const keyLower = key.toLowerCase();
+            if (keyLower.includes('gravure') || keyLower.includes('inscription') || keyLower.includes('texte') || keyLower.includes('text')) {
+              optionType = 'text_image_upload';
+            } else if (keyLower.includes('description') || keyLower.includes('message')) {
+              optionType = 'textarea';
+            }
+            
+            customizationOptionsObj[key] = {
+              type: optionType,
+              label: key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, ' '),
+              required: false,
+              options: value,
+              ...(optionType === 'text_image_upload' && {
+                engravingType: 'text',
+                maxLength: 50,
+                maxFileSize: 5,
+                allowedFileTypes: ['image/jpeg', 'image/png', 'image/gif'],
+                pricePerCharacter: 0,
+                basePrice: 0
+              })
+            };
+          } else if (typeof value === 'string') {
+            try {
+              const parsed = JSON.parse(value);
+              if (typeof parsed === 'object' && parsed !== null && parsed.type) {
+                customizationOptionsObj[key] = parsed;
+              } else {
+                needsUpdate = true;
+                customizationOptionsObj[key] = { type: 'text', label: key, required: false };
+              }
+            } catch {
+              needsUpdate = true;
+              customizationOptionsObj[key] = { type: 'text', label: key, required: false };
+            }
+          } else if (typeof value === 'object' && value !== null) {
+            if (!value.type) {
+              needsUpdate = true;
+              if (value.options && Array.isArray(value.options)) {
+                value.type = 'dropdown';
+              } else if (value.engravingType) {
+                value.type = 'text_image_upload';
+              } else {
+                value.type = 'text';
+              }
+            }
+            if (!value.label) {
+              value.label = key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, ' ');
+            }
+            if (value.required === undefined) {
+              value.required = false;
+            }
+            customizationOptionsObj[key] = value;
+          } else {
+            needsUpdate = true;
+            customizationOptionsObj[key] = { type: 'text', label: key, required: false };
+          }
+        });
+        productObj.customizationOptions = customizationOptionsObj;
+      } else if (typeof productObj.customizationOptions === 'string') {
+        try {
+          const parsed = JSON.parse(productObj.customizationOptions);
+          if (typeof parsed === 'object' && parsed !== null) {
+            productObj.customizationOptions = parsed;
+          } else {
+            productObj.customizationOptions = {};
+          }
+        } catch {
+          productObj.customizationOptions = {};
         }
-      });
-      productObj.customizationOptions = customizationOptionsObj;
+      } else if (typeof productObj.customizationOptions === 'object' && productObj.customizationOptions !== null) {
+        // Valider que toutes les options sont des objets valides
+        const validatedOptions: any = {};
+        Object.entries(productObj.customizationOptions).forEach(([key, value]: [string, any]) => {
+          if (Array.isArray(value)) {
+            needsUpdate = true;
+            let optionType: 'dropdown' | 'text' | 'textarea' | 'text_image_upload' = 'dropdown';
+            const keyLower = key.toLowerCase();
+            if (keyLower.includes('gravure') || keyLower.includes('inscription') || keyLower.includes('texte') || keyLower.includes('text')) {
+              optionType = 'text_image_upload';
+            } else if (keyLower.includes('description') || keyLower.includes('message')) {
+              optionType = 'textarea';
+            }
+            
+            validatedOptions[key] = {
+              type: optionType,
+              label: key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, ' '),
+              required: false,
+              options: value,
+              ...(optionType === 'text_image_upload' && {
+                engravingType: 'text',
+                maxLength: 50,
+                maxFileSize: 5,
+                allowedFileTypes: ['image/jpeg', 'image/png', 'image/gif'],
+                pricePerCharacter: 0,
+                basePrice: 0
+              })
+            };
+          } else if (typeof value === 'object' && value !== null && value.type) {
+            if (!value.label) {
+              value.label = key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, ' ');
+            }
+            if (value.required === undefined) {
+              value.required = false;
+            }
+            validatedOptions[key] = value;
+          } else if (typeof value === 'object' && value !== null && !value.type) {
+            needsUpdate = true;
+            if (value.options && Array.isArray(value.options)) {
+              value.type = 'dropdown';
+            } else if (value.engravingType) {
+              value.type = 'text_image_upload';
+            } else {
+              value.type = 'text';
+            }
+            if (!value.label) {
+              value.label = key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, ' ');
+            }
+            if (value.required === undefined) {
+              value.required = false;
+            }
+            validatedOptions[key] = value;
+          } else if (typeof value === 'string') {
+            try {
+              const parsed = JSON.parse(value);
+              if (typeof parsed === 'object' && parsed !== null) {
+                if (parsed.type) {
+                  validatedOptions[key] = parsed;
+                } else if (Array.isArray(parsed)) {
+                  needsUpdate = true;
+                  validatedOptions[key] = {
+                    type: 'dropdown',
+                    label: key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, ' '),
+                    required: false,
+                    options: parsed
+                  };
+                } else {
+                  needsUpdate = true;
+                  validatedOptions[key] = { type: 'text', label: key, required: false, ...parsed };
+                }
+              } else {
+                needsUpdate = true;
+                validatedOptions[key] = { type: 'text', label: key, required: false };
+              }
+            } catch {
+              needsUpdate = true;
+              validatedOptions[key] = { type: 'text', label: key, required: false };
+            }
+          } else {
+            needsUpdate = true;
+            validatedOptions[key] = { type: 'text', label: key, required: false };
+          }
+        });
+        productObj.customizationOptions = validatedOptions;
+      }
+    }
+    
+    // Sauvegarder la structure restaurée si nécessaire
+    if (needsUpdate && productObj.customizationOptions) {
+      try {
+        await Product.findByIdAndUpdate(req.params.id, {
+          customizationOptions: new Map(Object.entries(productObj.customizationOptions))
+        });
+        console.log(`✅ Structure des options restaurée et sauvegardée pour le produit ${req.params.id}`);
+      } catch (updateError) {
+        console.warn('⚠️  Impossible de sauvegarder la structure restaurée:', updateError);
+      }
     }
 
     res.json({ product: productObj });
@@ -510,6 +690,9 @@ router.put('/products/:id', adminAuth, upload.fields([
 
     // Convertir les Map en objets pour le frontend
     const productObj = product.toObject();
+    let needsUpdate = false;
+    const originalOptions = product.customizationOptions;
+    
     if (productObj.customizationOptions) {
       if (productObj.customizationOptions instanceof Map) {
         const customizationOptionsObj: any = {};
@@ -534,15 +717,56 @@ router.put('/products/:id', adminAuth, upload.fields([
               console.warn(`⚠️  Impossible de parser l'option ${key}, création d'une structure par défaut`);
               customizationOptionsObj[key] = { type: 'text', label: key, required: false };
             }
+          } else if (Array.isArray(value)) {
+            // Si c'est un tableau (format corrompu de l'ancien code), restaurer la structure
+            console.warn(`⚠️  Option ${key} est un tableau (format corrompu), restauration de la structure`);
+            // Déterminer le type basé sur la clé
+            let optionType: 'dropdown' | 'text' | 'textarea' | 'text_image_upload' = 'dropdown';
+            const keyLower = key.toLowerCase();
+            if (keyLower.includes('gravure') || keyLower.includes('inscription') || keyLower.includes('texte') || keyLower.includes('text')) {
+              optionType = 'text_image_upload';
+            } else if (keyLower.includes('description') || keyLower.includes('message')) {
+              optionType = 'textarea';
+            }
+            
+            customizationOptionsObj[key] = {
+              type: optionType,
+              label: key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, ' '),
+              required: false,
+              options: value,
+              ...(optionType === 'text_image_upload' && {
+                engravingType: 'text',
+                maxLength: 50,
+                maxFileSize: 5,
+                allowedFileTypes: ['image/jpeg', 'image/png', 'image/gif'],
+                pricePerCharacter: 0,
+                basePrice: 0
+              })
+            };
           } else if (typeof value === 'object' && value !== null) {
             // Si c'est déjà un objet, s'assurer qu'il a les propriétés nécessaires
             if (!value.type) {
-              console.warn(`⚠️  Option ${key} n'a pas de propriété 'type', ajout d'une valeur par défaut`);
-              value.type = 'text';
+              // Si l'objet n'a pas de type mais a des propriétés, essayer de deviner le type
+              if (value.options && Array.isArray(value.options)) {
+                value.type = 'dropdown';
+              } else if (value.engravingType) {
+                value.type = 'text_image_upload';
+              } else {
+                value.type = 'text';
+              }
+              console.warn(`⚠️  Option ${key} n'a pas de propriété 'type', ajout d'une valeur par défaut: ${value.type}`);
+            }
+            // S'assurer que label existe
+            if (!value.label) {
+              value.label = key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, ' ');
+            }
+            // S'assurer que required existe
+            if (value.required === undefined) {
+              value.required = false;
             }
             customizationOptionsObj[key] = value;
           } else {
-            // Si ce n'est ni une Map, ni une chaîne, ni un objet, créer une structure par défaut
+            // Si ce n'est ni une Map, ni une chaîne, ni un objet, ni un tableau, créer une structure par défaut
             console.warn(`⚠️  Option ${key} a un type inattendu: ${typeof value}, création d'une structure par défaut`);
             customizationOptionsObj[key] = { type: 'text', label: key, required: false };
           }
@@ -563,13 +787,72 @@ router.put('/products/:id', adminAuth, upload.fields([
         // Valider que toutes les options sont des objets valides
         const validatedOptions: any = {};
         Object.entries(productObj.customizationOptions).forEach(([key, value]: [string, any]) => {
-          if (typeof value === 'object' && value !== null && value.type) {
+          if (Array.isArray(value)) {
+            // Si c'est un tableau (format corrompu), restaurer la structure
+            console.warn(`⚠️  Option ${key} est un tableau (format corrompu), restauration de la structure`);
+            let optionType: 'dropdown' | 'text' | 'textarea' | 'text_image_upload' = 'dropdown';
+            const keyLower = key.toLowerCase();
+            if (keyLower.includes('gravure') || keyLower.includes('inscription') || keyLower.includes('texte') || keyLower.includes('text')) {
+              optionType = 'text_image_upload';
+            } else if (keyLower.includes('description') || keyLower.includes('message')) {
+              optionType = 'textarea';
+            }
+            
+            validatedOptions[key] = {
+              type: optionType,
+              label: key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, ' '),
+              required: false,
+              options: value,
+              ...(optionType === 'text_image_upload' && {
+                engravingType: 'text',
+                maxLength: 50,
+                maxFileSize: 5,
+                allowedFileTypes: ['image/jpeg', 'image/png', 'image/gif'],
+                pricePerCharacter: 0,
+                basePrice: 0
+              })
+            };
+          } else if (typeof value === 'object' && value !== null && value.type) {
+            // S'assurer que toutes les propriétés nécessaires sont présentes
+            if (!value.label) {
+              value.label = key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, ' ');
+            }
+            if (value.required === undefined) {
+              value.required = false;
+            }
+            validatedOptions[key] = value;
+          } else if (typeof value === 'object' && value !== null && !value.type) {
+            // Objet sans type, essayer de deviner le type
+            if (value.options && Array.isArray(value.options)) {
+              value.type = 'dropdown';
+            } else if (value.engravingType) {
+              value.type = 'text_image_upload';
+            } else {
+              value.type = 'text';
+            }
+            if (!value.label) {
+              value.label = key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, ' ');
+            }
+            if (value.required === undefined) {
+              value.required = false;
+            }
             validatedOptions[key] = value;
           } else if (typeof value === 'string') {
             try {
               const parsed = JSON.parse(value);
-              if (typeof parsed === 'object' && parsed !== null && parsed.type) {
-                validatedOptions[key] = parsed;
+              if (typeof parsed === 'object' && parsed !== null) {
+                if (parsed.type) {
+                  validatedOptions[key] = parsed;
+                } else if (Array.isArray(parsed)) {
+                  validatedOptions[key] = {
+                    type: 'dropdown',
+                    label: key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, ' '),
+                    required: false,
+                    options: parsed
+                  };
+                } else {
+                  validatedOptions[key] = { type: 'text', label: key, required: false, ...parsed };
+                }
               } else {
                 validatedOptions[key] = { type: 'text', label: key, required: false };
               }
