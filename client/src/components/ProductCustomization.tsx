@@ -45,6 +45,8 @@ export default function ProductCustomization({
   const [customImage, setCustomImage] = useState<string>('');
   const [customizationType, setCustomizationType] = useState<'text' | 'image'>('text');
   const [customizationPrice, setCustomizationPrice] = useState(0);
+  // Stocker le prix de la taille sélectionnée pour le préserver
+  const [sizePrice, setSizePrice] = useState<number | null>(null);
 
   // Calculer le nouveau prix de base si une valeur a un prix défini
   // Si une valeur a un prix, ce prix remplace le prix de base du produit
@@ -81,13 +83,24 @@ export default function ProductCustomization({
     const option = customizationOptions[key];
     if (option && option.type === 'text_image_upload') {
       // Pour les gravures/personnalisations, pas de prix supplémentaire
+      // IMPORTANT: Préserver le prix de la taille si une taille a été sélectionnée
       setCustomizationPrice(0);
-      onCustomizationChange(newCustomizations, 0);
+      // Calculer l'ajustement basé sur la taille sélectionnée (si elle existe)
+      const currentSizePrice = calculateNewBasePrice(newCustomizations);
+      const adjustment = currentSizePrice !== basePrice ? currentSizePrice - basePrice : 0;
+      onCustomizationChange(newCustomizations, adjustment);
     } else {
       // Pour les autres options (dropdown avec valuePrices), calculer le nouveau prix de base
       const newBasePrice = calculateNewBasePrice(newCustomizations);
       const priceAdjustment = newBasePrice - basePrice;
       setCustomizationPrice(priceAdjustment);
+      // Si c'est une taille avec prix, la sauvegarder
+      if (option && option.valuePrices && typeof value === 'string' && option.valuePrices[value] !== undefined) {
+        setSizePrice(option.valuePrices[value]);
+      } else if (priceAdjustment === 0) {
+        // Si on revient au prix de base, réinitialiser sizePrice
+        setSizePrice(null);
+      }
       onCustomizationChange(newCustomizations, priceAdjustment);
     }
   };

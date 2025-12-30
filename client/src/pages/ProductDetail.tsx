@@ -74,21 +74,39 @@ export default function ProductDetail() {
 
   const [priceAdjustment, setPriceAdjustment] = useState(0);
   const [currentBasePrice, setCurrentBasePrice] = useState(0);
+  // Stocker le dernier adjustment de taille pour le préserver
+  const [sizeAdjustment, setSizeAdjustment] = useState(0);
 
   // Mettre à jour currentBasePrice quand le produit change
   useEffect(() => {
     if (product && product.price) {
       setCurrentBasePrice(product.price);
+      setSizeAdjustment(0); // Réinitialiser l'ajustement de taille quand le produit change
     }
   }, [product]);
 
   const handleCustomizationChange = (newCustomizations: CustomizationSelection, adjustment: number = 0) => {
     setCustomizations(newCustomizations);
-    setPriceAdjustment(adjustment);
-    // Mettre à jour le prix de base si un ajustement est appliqué
-    if (product) {
-      const newBasePrice = product.price + adjustment;
-      setCurrentBasePrice(newBasePrice);
+    
+    // Déterminer si c'est une sélection de taille (avec prix) ou une personnalisation (texte/image)
+    // Si adjustment !== 0, c'est une taille/couleur avec prix différent
+    // Si adjustment === 0, c'est une personnalisation texte/image
+    
+    if (adjustment !== 0) {
+      // C'est une sélection de taille/couleur avec prix différent
+      setPriceAdjustment(adjustment);
+      setSizeAdjustment(adjustment); // Sauvegarder l'ajustement de taille
+      if (product) {
+        const newBasePrice = product.price + adjustment;
+        setCurrentBasePrice(newBasePrice);
+      }
+    } else {
+      // C'est une personnalisation texte/image, préserver le prix de la taille si elle existe
+      setPriceAdjustment(sizeAdjustment); // Utiliser l'ajustement de taille sauvegardé
+      if (product) {
+        const newBasePrice = product.price + sizeAdjustment;
+        setCurrentBasePrice(newBasePrice);
+      }
     }
   };
 
@@ -204,6 +222,16 @@ export default function ProductDetail() {
       const finalPrice = currentBasePrice;
 
       // Préparer l'article pour le panier
+      // Générer un identifiant unique basé sur les personnalisations
+      const customizationsStr = JSON.stringify(customizations);
+      let hashValue = 0;
+      for (let i = 0; i < customizationsStr.length; i++) {
+        const char = customizationsStr.charCodeAt(i);
+        hashValue = ((hashValue << 5) - hashValue) + char;
+        hashValue = hashValue & hashValue;
+      }
+      const itemId = `item-${product._id}-${Math.abs(hashValue)}`;
+      
       const cartItem = {
         productId: product._id,
         name: product.name,
@@ -214,7 +242,8 @@ export default function ProductDetail() {
         customizations: customizations,
         customizationPrice: 0, // Pas de frais supplémentaires pour les personnalisations
         totalPrice: finalPrice,
-        eventDate: !product.isCustomizable && eventDate ? eventDate : undefined // Date de l'événement pour les produits non personnalisables
+        eventDate: !product.isCustomizable && eventDate ? eventDate : undefined, // Date de l'événement pour les produits non personnalisables
+        itemId: itemId // Identifiant unique pour différencier les items avec les mêmes personnalisations
       };
 
       // Fonction pour comparer deux objets de personnalisation

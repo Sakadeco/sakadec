@@ -660,20 +660,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
         
         // Convertir les Map en objets pour le frontend
         const productObj = product.toObject();
-        if (productObj.customizationOptions && productObj.customizationOptions instanceof Map) {
-          const customizationOptionsObj: any = {};
-          productObj.customizationOptions.forEach((value: any, key: string) => {
-            if (value instanceof Map) {
-              customizationOptionsObj[key] = Object.fromEntries(value);
-              // Convertir aussi valuePrices si c'est une Map
-              if (customizationOptionsObj[key].valuePrices instanceof Map) {
-                customizationOptionsObj[key].valuePrices = Object.fromEntries(customizationOptionsObj[key].valuePrices);
+        if (productObj.customizationOptions) {
+          if (productObj.customizationOptions instanceof Map) {
+            const customizationOptionsObj: any = {};
+            productObj.customizationOptions.forEach((value: any, key: string) => {
+              if (value instanceof Map) {
+                customizationOptionsObj[key] = Object.fromEntries(value);
+                // Convertir aussi valuePrices si c'est une Map
+                if (customizationOptionsObj[key].valuePrices instanceof Map) {
+                  customizationOptionsObj[key].valuePrices = Object.fromEntries(customizationOptionsObj[key].valuePrices);
+                }
+              } else if (typeof value === 'string') {
+                // Si la valeur est une chaîne, essayer de la parser comme JSON
+                try {
+                  customizationOptionsObj[key] = JSON.parse(value);
+                } catch {
+                  customizationOptionsObj[key] = value;
+                }
+              } else {
+                customizationOptionsObj[key] = value;
               }
-            } else {
-              customizationOptionsObj[key] = value;
+            });
+            productObj.customizationOptions = customizationOptionsObj;
+          } else if (typeof productObj.customizationOptions === 'string') {
+            // Si customizationOptions est une chaîne, essayer de la parser
+            try {
+              productObj.customizationOptions = JSON.parse(productObj.customizationOptions);
+            } catch (e) {
+              console.warn('⚠️  Impossible de parser customizationOptions comme JSON:', e);
+              productObj.customizationOptions = {};
             }
-          });
-          productObj.customizationOptions = customizationOptionsObj;
+          }
         }
         
         res.json(productObj);

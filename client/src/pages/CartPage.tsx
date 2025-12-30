@@ -28,6 +28,8 @@ interface CartItem {
   rentalDays?: number;
   dailyPrice?: number;
   totalPrice?: number;
+  // Identifiant unique pour différencier les items avec les mêmes personnalisations
+  itemId?: string;
 }
 
 const CartPage: React.FC = () => {
@@ -68,21 +70,42 @@ const CartPage: React.FC = () => {
     }
   };
 
-  const updateQuantity = (productId: string, newQuantity: number) => {
+  // Fonction pour générer un identifiant unique basé sur les personnalisations
+  const generateItemId = (item: CartItem): string => {
+    if (item.itemId) return item.itemId;
+    // Générer un hash basé sur productId + customizations + rental dates
+    const customizationsStr = item.customizations ? JSON.stringify(item.customizations) : '';
+    const rentalStr = item.isRental ? `${item.rentalStartDate}-${item.rentalEndDate}` : '';
+    const hash = `${item.productId}-${customizationsStr}-${rentalStr}`;
+    // Créer un hash simple
+    let hashValue = 0;
+    for (let i = 0; i < hash.length; i++) {
+      const char = hash.charCodeAt(i);
+      hashValue = ((hashValue << 5) - hashValue) + char;
+      hashValue = hashValue & hashValue; // Convert to 32bit integer
+    }
+    return `item-${Math.abs(hashValue)}`;
+  };
+
+  const updateQuantity = (itemId: string, newQuantity: number) => {
     if (newQuantity <= 0) {
-      removeItem(productId);
+      removeItem(itemId);
       return;
     }
 
-    const updatedItems = cartItems.map(item =>
-      item.productId === productId ? { ...item, quantity: newQuantity } : item
-    );
+    const updatedItems = cartItems.map(item => {
+      const currentItemId = generateItemId(item);
+      return currentItemId === itemId ? { ...item, quantity: newQuantity, itemId: currentItemId } : item;
+    });
     setCartItems(updatedItems);
     localStorage.setItem('cart', JSON.stringify(updatedItems));
   };
 
-  const removeItem = (productId: string) => {
-    const updatedItems = cartItems.filter(item => item.productId !== productId);
+  const removeItem = (itemId: string) => {
+    const updatedItems = cartItems.filter(item => {
+      const currentItemId = generateItemId(item);
+      return currentItemId !== itemId;
+    });
     setCartItems(updatedItems);
     localStorage.setItem('cart', JSON.stringify(updatedItems));
   };
@@ -385,8 +408,10 @@ const CartPage: React.FC = () => {
                   <CardTitle>Articles ({cartItems.length})</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  {cartItems.map((item) => (
-                    <div key={item.productId} className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 border rounded-lg">
+                  {cartItems.map((item, index) => {
+                    const itemId = generateItemId(item);
+                    return (
+                    <div key={itemId || `item-${index}`} className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 border rounded-lg">
                       <img 
                         src={item.image} 
                         alt={item.name}
@@ -480,7 +505,7 @@ const CartPage: React.FC = () => {
                             <Button
                               variant="outline"
                               size="sm"
-                              onClick={() => updateQuantity(item.productId, item.quantity - 1)}
+                              onClick={() => updateQuantity(itemId, item.quantity - 1)}
                             >
                               <Minus className="w-4 h-4" />
                             </Button>
@@ -488,7 +513,7 @@ const CartPage: React.FC = () => {
                             <Button
                               variant="outline"
                               size="sm"
-                              onClick={() => updateQuantity(item.productId, item.quantity + 1)}
+                              onClick={() => updateQuantity(itemId, item.quantity + 1)}
                             >
                               <Plus className="w-4 h-4" />
                             </Button>
@@ -512,7 +537,7 @@ const CartPage: React.FC = () => {
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => removeItem(item.productId)}
+                          onClick={() => removeItem(itemId)}
                           className="text-red-600 hover:text-red-700"
                         >
                           <Trash2 className="w-4 h-4" />
