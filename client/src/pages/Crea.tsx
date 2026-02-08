@@ -23,7 +23,7 @@ export default function Crea() {
             <h2 className="text-xl sm:text-2xl font-playfair font-semibold text-gray-800 mb-4 sm:mb-6">
               SKD CREA – Création & personnalisation sur mesure
             </h2>
-            <div className="space-y-3 sm:space-y-4 text-sm sm:text-base text-gray-700 text-left">
+            <div className="space-y-3 sm:space-y-4 text-sm sm:text-base text-gray-700 text-left mb-6 sm:mb-8">
               <p>
                 Tous nos produits sont entièrement personnalisables, quel que soit le thème.
               </p>
@@ -33,6 +33,14 @@ export default function Crea() {
               <p>
                 Fini les recherches interminables : votre thème est décliné sur l'ensemble des produits que vous choisissez, pour une décoration harmonieuse et unique.
               </p>
+            </div>
+            <div className="flex justify-center mt-6 sm:mt-8">
+              <Button asChild size="lg" className="bg-purple-600 hover:bg-purple-700 text-white px-6 sm:px-10 py-3 sm:py-4 text-sm sm:text-base md:text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+                <Link to="/shop">
+                  <ShoppingBag className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
+                  Découvrir la boutique
+                </Link>
+              </Button>
             </div>
           </div>
         </div>
