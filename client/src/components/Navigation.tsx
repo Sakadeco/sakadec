@@ -52,32 +52,32 @@ export default function Navigation() {
   return (
     <>
       {/* Top Bar with Contact Info */}
-      <div className="fixed top-0 w-full bg-gradient-to-r from-gold to-yellow-500 text-white text-sm z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-8">
-            <div className="flex items-center space-x-4 lg:space-x-6">
-              <div className="flex items-center space-x-2">
+      <div className="fixed top-0 w-full bg-gradient-to-r from-gold to-yellow-500 text-white text-xs sm:text-sm z-50">
+        <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8">
+          <div className="flex justify-between items-center h-7 sm:h-8 py-1">
+            <div className="flex items-center space-x-2 sm:space-x-4 lg:space-x-6 flex-1 min-w-0">
+              <div className="flex items-center space-x-1 sm:space-x-2">
                 <Phone className="h-3 w-3 flex-shrink-0" />
-                <span className="hidden sm:inline whitespace-nowrap">06 88 00 39 28</span>
-                <span className="sm:hidden whitespace-nowrap">06 88 00 39 28</span>
+                <a href="tel:0688003928" className="whitespace-nowrap hover:underline">06 88 00 39 28</a>
               </div>
               <div className="hidden md:flex items-center space-x-2">
                 <Mail className="h-3 w-3" />
-                <span>sakadeco.contact@gmail.com</span>
+                <a href="mailto:sakadeco.contact@gmail.com" className="hover:underline truncate">sakadeco.contact@gmail.com</a>
               </div>
             </div>
-            <div className="flex items-center space-x-2">
-              <span className="font-medium hidden sm:inline">Île-de-France & Bordeaux Métropole</span>
-              <span className="font-medium sm:hidden">Île-de-France & Bordeaux</span>
+            <div className="flex items-center space-x-1 sm:space-x-2 ml-2">
+              <span className="font-medium hidden lg:inline whitespace-nowrap">Île-de-France & Bordeaux Métropole</span>
+              <span className="font-medium hidden sm:inline lg:hidden whitespace-nowrap">Île-de-France & Bordeaux</span>
+              <span className="font-medium sm:hidden text-[10px]">IDF & Bordeaux</span>
             </div>
           </div>
         </div>
       </div>
 
       {/* Main Navigation */}
-      <nav className="fixed top-8 w-full bg-white/95 backdrop-blur-md z-40 border-b border-gold/20 shadow-lg">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
+      <nav className="fixed top-7 sm:top-8 w-full bg-white/95 backdrop-blur-md z-40 border-b border-gold/20 shadow-lg">
+        <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8">
+          <div className="flex justify-between items-center h-14 sm:h-16">
             <motion.div 
               className="flex items-center"
               initial={{ opacity: 0, x: -20 }}
@@ -85,11 +85,11 @@ export default function Navigation() {
               transition={{ duration: 0.5 }}
             >
               <Link href="/">
-                <div className="flex items-center space-x-2 lg:space-x-3 cursor-pointer group">
+                <div className="flex items-center space-x-1 sm:space-x-2 lg:space-x-3 cursor-pointer group">
                   <Logo 
-                    width={80} 
-                    height={53} 
-                    className="group-hover:scale-105 transition-transform duration-300"
+                    width={60} 
+                    height={40} 
+                    className="sm:w-20 sm:h-[53px] group-hover:scale-105 transition-transform duration-300"
                   />
                 </div>
               </Link>

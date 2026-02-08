@@ -373,10 +373,10 @@ const CartPage: React.FC = () => {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-gray-50 py-6 sm:py-8 md:py-12">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen bg-gray-50 py-4 sm:py-6 md:py-8 lg:py-12">
+        <div className="max-w-6xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
           {/* Header */}
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 mb-6 sm:mb-8">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-3 md:gap-4 mb-4 sm:mb-6 md:mb-8">
             <div className="flex items-center space-x-3 sm:space-x-4">
               <Button 
                 variant="ghost" 
@@ -388,7 +388,7 @@ const CartPage: React.FC = () => {
                 <span className="sm:hidden">Retour</span>
               </Button>
             </div>
-            <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900">Votre Panier</h1>
+            <h1 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-gray-900">Votre Panier</h1>
             <Button 
               variant="outline" 
               onClick={clearCart}
@@ -400,7 +400,7 @@ const CartPage: React.FC = () => {
           </div>
 
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
             {/* Cart Items */}
             <div className="lg:col-span-2">
               <Card>
@@ -551,14 +551,14 @@ const CartPage: React.FC = () => {
             </div>
 
             {/* Checkout Form */}
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-6">
               {/* Order Summary */}
                              <Card>
                  <CardHeader>
                    <CardTitle>Récapitulatif</CardTitle>
                  </CardHeader>
                  <CardContent className="space-y-4">
-                   <div className="flex justify-between items-center">
+                    <div className="flex justify-between items-center text-sm sm:text-base">
                      <span>Sous-total produits HT</span>
                      <span className="flex items-center whitespace-nowrap">
                        <span>{subtotal.toFixed(2)}</span>
@@ -589,8 +589,8 @@ const CartPage: React.FC = () => {
                          : 'Gratuit'}
                      </span>
                    </div>
-                   <div className="border-t pt-4">
-                     <div className="flex justify-between items-center font-bold text-lg">
+                   <div className="border-t pt-3 sm:pt-4">
+                     <div className="flex justify-between items-center font-bold text-base sm:text-lg">
                        <span>Total HT</span>
                        <span className="flex items-center whitespace-nowrap">
                          <span>{total.toFixed(2)}</span>
@@ -657,10 +657,10 @@ const CartPage: React.FC = () => {
 
               {/* Customer Information */}
               <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg font-bold text-green-600">Informations client</CardTitle>
+                <CardHeader className="pb-3 sm:pb-4">
+                  <CardTitle className="text-base sm:text-lg font-bold text-green-600">Informations client</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
+                <CardContent className="space-y-3 sm:space-y-4">
                   <div>
                     <Label htmlFor="email" className="text-sm font-semibold">Email *</Label>
                     <Input
@@ -679,10 +679,10 @@ const CartPage: React.FC = () => {
 
               {/* Shipping Address */}
               <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg font-bold text-green-600">🚚 Adresse de livraison</CardTitle>
+                <CardHeader className="pb-3 sm:pb-4">
+                  <CardTitle className="text-base sm:text-lg font-bold text-green-600">🚚 Adresse de livraison</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
+                <CardContent className="space-y-3 sm:space-y-4">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <Label htmlFor="firstName">Prénom *</Label>
@@ -746,10 +746,10 @@ const CartPage: React.FC = () => {
               {/* Livraison & Expédition - Seulement pour les produits personnalisés */}
               {hasCustomizedProducts && (
                 <Card>
-                  <CardHeader>
-                    <CardTitle className="text-lg font-bold text-blue-600">📦 Livraison & Expédition</CardTitle>
+                  <CardHeader className="pb-3 sm:pb-4">
+                    <CardTitle className="text-base sm:text-lg font-bold text-blue-600">📦 Livraison & Expédition</CardTitle>
                   </CardHeader>
-                  <CardContent className="space-y-4">
+                  <CardContent className="space-y-3 sm:space-y-4">
                     <RadioGroup value={deliveryMethod} onValueChange={setDeliveryMethod}>
                       {/* France métropolitaine */}
                       <div className="space-y-3">
@@ -1144,10 +1144,10 @@ const CartPage: React.FC = () => {
               </Card>
 
               {/* Checkout Button */}
-              <div className="space-y-4">
-                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                  <h3 className="font-semibold text-yellow-800 mb-2">💳 Informations de paiement</h3>
-                  <p className="text-sm text-yellow-700">
+              <div className="space-y-3 sm:space-y-4">
+                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 sm:p-4">
+                  <h3 className="font-semibold text-sm sm:text-base text-yellow-800 mb-2">💳 Informations de paiement</h3>
+                  <p className="text-xs sm:text-sm text-yellow-700">
                     Après avoir cliqué sur "Payer", vous serez redirigé vers Stripe pour saisir vos informations de paiement de manière sécurisée.
                   </p>
                 </div>
@@ -1155,7 +1155,7 @@ const CartPage: React.FC = () => {
                 <Button
                   onClick={handleCheckout}
                   disabled={isLoading || cartItems.length === 0 || !acceptedTerms}
-                  className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-4 text-xl shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 sm:py-4 text-base sm:text-lg md:text-xl shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
                   size="lg"
                 >
                   {isLoading ? (

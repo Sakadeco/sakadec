@@ -84,10 +84,10 @@ const Rent: React.FC = () => {
 
   return (
     <Layout>
-      <div className="container mx-auto px-4 py-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">SKD Rent</h1>
-        <div className="text-gray-600 space-y-4">
+      <div className="container mx-auto px-3 sm:px-4 md:px-6 py-4 sm:py-6 md:py-8">
+      <div className="mb-6 sm:mb-8">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-2 sm:mb-3">SKD Rent</h1>
+        <div className="text-sm sm:text-base text-gray-600 space-y-2 sm:space-y-3 md:space-y-4">
           <p className="text-lg font-semibold">SKD Rent, c'est la solution simple pour un évènement chic, bien pensé et maîtrisé en budget.</p>
           <p>Vous choisissez, vous louez, vous créez l'ambiance.</p>
           <p>Mariage, anniversaire, baptême, baby shower, EVJF, EVG, réception privée ou évènement professionnel…</p>
@@ -98,18 +98,18 @@ const Rent: React.FC = () => {
       </div>
 
       {/* Filtres */}
-      <div className="flex flex-col sm:flex-row gap-4 mb-6">
+      <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-4 sm:mb-6">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
           <Input
             placeholder="Rechercher un produit à louer..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10"
+            className="pl-10 text-sm sm:text-base"
           />
         </div>
         <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-          <SelectTrigger className="w-full sm:w-48">
+          <SelectTrigger className="w-full sm:w-48 text-sm sm:text-base">
             <SelectValue placeholder="Catégorie" />
           </SelectTrigger>
           <SelectContent>
@@ -123,7 +123,7 @@ const Rent: React.FC = () => {
       </div>
 
       {/* Grille des produits */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
         {getFilteredProducts().map((product) => (
           <Card key={product._id} className="hover:shadow-lg transition-shadow">
             <CardHeader className="p-0">
@@ -131,21 +131,21 @@ const Rent: React.FC = () => {
                 <ImageWithFallback
                   src={product.mainImageUrl}
                   alt={product.name}
-                  className="w-full h-48 object-cover rounded-t-lg"
+                  className="w-full h-40 sm:h-48 object-cover rounded-t-lg"
                 />
                 {product.isCustomizable && (
-                  <Badge className="absolute top-2 right-2 bg-blue-500">
+                  <Badge className="absolute top-2 right-2 bg-blue-500 text-xs">
                     Personnalisable
                   </Badge>
                 )}
-                <Badge className="absolute top-2 left-2 bg-orange-500">
+                <Badge className="absolute top-2 left-2 bg-orange-500 text-xs">
                   Location
                 </Badge>
               </div>
             </CardHeader>
-            <CardContent className="p-4">
-              <CardTitle className="text-lg mb-2">{product.name}</CardTitle>
-              <p className="text-gray-600 text-sm mb-3 line-clamp-2 whitespace-pre-line">
+            <CardContent className="p-3 sm:p-4">
+              <CardTitle className="text-base sm:text-lg mb-2 line-clamp-2">{product.name}</CardTitle>
+              <p className="text-gray-600 text-xs sm:text-sm mb-3 line-clamp-2 whitespace-pre-line">
                 {product.description}
               </p>
               <div className="flex justify-between items-center mb-3">

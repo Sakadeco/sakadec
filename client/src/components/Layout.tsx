@@ -12,19 +12,19 @@ export default function Layout({ children }: LayoutProps) {
     <div className="min-h-screen bg-background">
       <Navigation />
       <AnnouncementPopup />
-      <main className="pt-24">
+      <main className="pt-20 sm:pt-24">
         {children}
       </main>
       
       {/* Footer */}
-      <footer className="bg-gray-800 text-white py-12">
-        <div className="max-w-6xl mx-auto px-4">
-          <div className="grid lg:grid-cols-4 gap-8">
-            <div>
-                        <div className="mb-4">
-            <Logo width={120} height={80} className="filter brightness-0 invert" />
-          </div>
-              <p className="text-gray-300 mb-4">L'élégance au service de vos moments et de vos espaces</p>
+      <footer className="bg-gray-800 text-white py-8 sm:py-12">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+            <div className="sm:col-span-2 lg:col-span-1">
+              <div className="mb-4">
+                <Logo width={100} height={67} className="sm:w-[120px] sm:h-[80px] filter brightness-0 invert" />
+              </div>
+              <p className="text-sm sm:text-base text-gray-300 mb-4">L'élégance au service de vos moments et de vos espaces</p>
               <div className="flex space-x-4">
                 <a href="https://www.instagram.com/sakadeco_events/" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-gold transition-colors">
                   <Instagram className="w-5 h-5" />
@@ -61,8 +61,8 @@ export default function Layout({ children }: LayoutProps) {
             </div>
           </div>
           
-          <div className="border-t border-gray-700 mt-8 pt-8">
-            <div className="grid md:grid-cols-2 gap-4 mb-4">
+          <div className="border-t border-gray-700 mt-6 sm:mt-8 pt-6 sm:pt-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-4">
               <div>
                 <h4 className="font-semibold mb-2">Informations légales</h4>
                 <ul className="space-y-1 text-sm text-gray-300">

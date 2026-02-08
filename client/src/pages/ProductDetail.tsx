@@ -409,23 +409,24 @@ export default function ProductDetail() {
       </AlertDialog>
 
       {/* Header */}
-      <section className="py-6 sm:py-8 bg-gradient-to-br from-skd-shop/10 to-white">
+      <section className="py-4 sm:py-6 md:py-8 bg-gradient-to-br from-skd-shop/10 to-white">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <Button
             variant="ghost"
             onClick={() => setLocation("/shop")}
-            className="mb-3 sm:mb-4 text-sm sm:text-base"
+            className="mb-2 sm:mb-3 md:mb-4 text-xs sm:text-sm md:text-base"
           >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Retour à la boutique
+            <ArrowLeft className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+            <span className="hidden sm:inline">Retour à la boutique</span>
+            <span className="sm:hidden">Retour</span>
           </Button>
         </div>
       </section>
 
       {/* Product Detail */}
-      <section className="py-8 sm:py-10 md:py-12">
+      <section className="py-4 sm:py-6 md:py-8 lg:py-10 xl:py-12">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 md:gap-12">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 md:gap-8 lg:gap-12">
             {/* Product Images */}
             <div className="space-y-4">
               {/* Main Image */}
@@ -463,7 +464,7 @@ export default function ProductDetail() {
 
               {/* Thumbnail Gallery */}
               {allImages.length > 1 && (
-                <div className="grid grid-cols-4 gap-2">
+                <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-4 gap-2">
                   {allImages.map((image, index) => (
                     <button
                       key={index}
