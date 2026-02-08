@@ -20,7 +20,7 @@ router.post('/create-checkout-session', async (req: Request, res: Response) => {
       return res.status(503).json({ message: 'Stripe non configuré' });
     }
 
-    const { items, customerEmail, shippingAddress, isMixedCart, cartType, promoCode, promoDiscount, shipping } = req.body;
+    const { items, customerEmail, shippingAddress, isMixedCart, cartType, promoCode, promoDiscount, shipping, deliveryMethod } = req.body;
 
     if (!items || items.length === 0) {
       return res.status(400).json({ message: 'Aucun article dans la location' });
@@ -164,6 +164,31 @@ router.post('/create-checkout-session', async (req: Request, res: Response) => {
             description: 'Taxe sur la valeur ajoutée',
           },
           unit_amount: Math.round(tax * 100), // Stripe utilise les centimes
+        },
+        quantity: 1,
+      });
+    }
+
+    // Ajouter les frais de livraison comme un line item séparé dans Stripe
+    if (shippingCost > 0) {
+      // Déterminer le nom du mode de livraison
+      let shippingName = 'Frais de livraison';
+      if (deliveryMethod === 'colissimo') {
+        shippingName = 'Livraison Colissimo';
+      } else if (deliveryMethod === 'chrono-classic') {
+        shippingName = 'Livraison Chrono Classic';
+      } else if (deliveryMethod === 'retrait') {
+        shippingName = 'Retrait en magasin';
+      }
+
+      finalLineItems.push({
+        price_data: {
+          currency: 'eur',
+          product_data: {
+            name: shippingName,
+            description: 'Frais de livraison et expédition',
+          },
+          unit_amount: Math.round(shippingCost * 100), // Stripe utilise les centimes
         },
         quantity: 1,
       });

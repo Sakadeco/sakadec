@@ -218,6 +218,31 @@ router.post('/create-checkout-session', async (req: Request, res: Response) => {
       });
     }
 
+    // Ajouter les frais de livraison comme un line item séparé dans Stripe
+    if (shippingCost > 0) {
+      // Déterminer le nom du mode de livraison
+      let shippingName = 'Frais de livraison';
+      if (deliveryMethod === 'colissimo') {
+        shippingName = 'Livraison Colissimo';
+      } else if (deliveryMethod === 'chrono-classic') {
+        shippingName = 'Livraison Chrono Classic';
+      } else if (deliveryMethod === 'retrait') {
+        shippingName = 'Retrait en magasin';
+      }
+
+      finalLineItems.push({
+        price_data: {
+          currency: 'eur',
+          product_data: {
+            name: shippingName,
+            description: 'Frais de livraison et expédition',
+          },
+          unit_amount: Math.round(shippingCost * 100), // Stripe utilise les centimes
+        },
+        quantity: 1,
+      });
+    }
+
     // Créer la session Stripe
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
